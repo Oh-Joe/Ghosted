@@ -11,7 +11,6 @@ struct AccountDetailView: View {
     @EnvironmentObject var modelData: ModelData
     @State private var isShowingAddContactSheet: Bool = false
     @State private var isShowingAddOrderSheet: Bool = false
-
     @State private var isShowingSafariView: Bool = false
     @State private var isShowingInvalidURLAlert: Bool = false
     @State private var selectedAccount: Account?

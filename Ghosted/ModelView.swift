@@ -12,30 +12,27 @@ struct Account: Hashable, Codable, Identifiable {
     var id: UUID
     var name: String
     var accountType: AccountType
-
     var country: Country // enum Country in separate Countries.swift file in Helpers folder
-
     var status: Status
     var website: String
     var contacts: [Contact]
     var orders: [Order]
     var generalNotes: String
-    
+//    var interactions: [Note]
+
     enum AccountType: String, CaseIterable, Codable {
         case distri = "Distributor"
         case reseller = "Reseller"
         case kol = "Key Opinion Leader"
         case brand = "Brand"
-        case bitchesbitch = "They my bitch's bitch"
     }
-    
+
     enum Status: String, CaseIterable, Codable {
         case activeClient = "Active Client"
         case warmLead = "Warm Lead"
         case coldLead = "Cold Lead"
         case closedLost = "Not Interested"
-        case ghosting = "Them Bitches Ghosting Me"
-
+        case ghosting = "They Ghosting Me 🙄"
     }
 }
 
