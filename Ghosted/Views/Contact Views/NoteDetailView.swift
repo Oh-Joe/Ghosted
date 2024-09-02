@@ -38,6 +38,7 @@ struct NoteDetailView: View {
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     Text(note.title)
+                        .font(.title)
                         .fontWeight(.bold)
                 }
             }
@@ -46,7 +47,3 @@ struct NoteDetailView: View {
     }
 }
 
-
-#Preview {
-    NoteDetailView(note: ModelData().contacts[0].notes[0])
-}

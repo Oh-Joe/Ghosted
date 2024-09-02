@@ -29,22 +29,3 @@ struct OrderDetailView: View {
         }
     }
 }
-
-//struct CurrencySymbol: View {
-//    var body: some View {
-//        Image(systemName: symbol)
-//            .foregroundStyle(Color.gray)
-//        
-//        var symbol: String {
-//            switch Order.Currency() {
-//            case .eur:
-//                return "eurosign.circle"
-//            case .gbp:
-//                return "sterlingsign.circle"
-//            case .usd:
-//                return "dollarsign.circle"
-//            }
-//        }
-//    }
-//}
-

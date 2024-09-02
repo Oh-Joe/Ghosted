@@ -9,6 +9,9 @@ import SwiftUI
 
 struct AccountDetailView: View {
     @EnvironmentObject var modelData: ModelData
+    @State private var isShowingAddInteractionSheet: Bool = false
+    @State private var showInteractionSheet: Bool = false
+    @State private var selectedInteraction: Interaction? = nil
     @State private var isShowingAddContactSheet: Bool = false
     @State private var isShowingAddOrderSheet: Bool = false
     @State private var isShowingSafariView: Bool = false
@@ -19,9 +22,7 @@ struct AccountDetailView: View {
     
     var body: some View {
         NavigationStack {
-            // Other account details here
             List {
-                
                 Section {
                     HStack {
                         Image(systemName: "checkmark.circle")
@@ -69,6 +70,41 @@ struct AccountDetailView: View {
                     } header: {
                         Text("Notes")
                     }
+                }
+                
+                
+                Section {
+                    Button {
+                        isShowingAddInteractionSheet.toggle()
+                    } label: {
+                        Label("New Interaction", systemImage: "note.text.badge.plus")
+                            .font(.caption)
+                            .fontWeight(.heavy)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.accentColor)
+                    .sheet(isPresented: $isShowingAddInteractionSheet) {
+                        AddInteractionView(account: account)
+                    }
+                    if !account.interactions.isEmpty {
+                        ForEach(account.interactions.sorted(by: { $0.date > $1.date }), id: \.id) { interaction in
+                            
+                            Button {
+                                selectedInteraction = interaction
+                                showInteractionSheet = true
+                            } label: {
+                                HStack {
+                                    Text(interaction.date, format: .dateTime.month(.abbreviated).day().year())
+                                    Text(" -  \(interaction.title)")
+                                }
+                                .lineLimit(1)
+                                .truncationMode(.tail)
+                            }
+                        }
+                    }
+                } header: {
+                    Text("Interactions")
                 }
                 
                 Section {
@@ -131,11 +167,17 @@ struct AccountDetailView: View {
                 if let url = URL(string: "https://\(account.website)"), UIApplication.shared.canOpenURL(url) {
                     SafariView(url: url)
                 } else {
-                    // Handle the error or provide a default view
                     Text("Invalid URL")
                         .font(.headline)
                         .foregroundColor(.red)
                 }
+            }
+            .sheet(isPresented: Binding(
+                get: { showInteractionSheet && selectedInteraction != nil },
+                set: { newValue in showInteractionSheet = newValue }
+            )) {
+                InteractionDetailView(interaction: selectedInteraction!)
+                    .presentationDragIndicator(.visible)
             }
             .alert(isPresented: $isShowingInvalidURLAlert) {
                 Alert(
@@ -148,7 +190,6 @@ struct AccountDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Edit") {
                         selectedAccount = account
-                        // Show the AddAccountView for editing
                     }
                 }
             }
@@ -160,19 +201,3 @@ struct AccountDetailView: View {
     }
 }
 
-#Preview {
-    let modelData = ModelData()
-    let defaultAccount = Account(
-        id: UUID(),
-        name: "Default Account",
-        accountType: .distri,
-        country: .cambodia,
-        status: .activeClient,
-        website: "https://example.com",
-        contacts: [],
-        orders: [],
-        generalNotes: "No notes available"
-    )
-    return AccountDetailView(account: modelData.accounts.first ?? defaultAccount)
-        .environmentObject(modelData)
-}

@@ -50,12 +50,9 @@ struct ContactDetailView: View {
                     .buttonStyle(.bordered)
                     .tint(.accentColor)
                     .sheet(isPresented: $showNewNoteSheet) {
-                        
                         AddNoteView(contact: contact) { newNote in
                             modelData.addNoteToContact(newNote, to: contact)
                         }
-                        
-                        
                     }
                     if !contact.notes.isEmpty {
                         ForEach(contact.notes.sorted(by: { $0.date > $1.date }), id: \.self) { note in

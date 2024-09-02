@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		6C784F8A2C83517F00E64FF0 /* GhostedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784F892C83517F00E64FF0 /* GhostedApp.swift */; };
 		6C784F8E2C83518200E64FF0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6C784F8D2C83518200E64FF0 /* Assets.xcassets */; };
-		6C784FB02C8351DC00E64FF0 /* ModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784F972C8351DA00E64FF0 /* ModelView.swift */; };
+		6C784FB02C8351DC00E64FF0 /* ModelData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784F972C8351DA00E64FF0 /* ModelData.swift */; };
 		6C784FB12C8351DC00E64FF0 /* AddContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784F992C8351DA00E64FF0 /* AddContactView.swift */; };
 		6C784FB22C8351DC00E64FF0 /* ContactDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784F9A2C8351DA00E64FF0 /* ContactDetailView.swift */; };
 		6C784FB32C8351DC00E64FF0 /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784F9B2C8351DA00E64FF0 /* NoteDetailView.swift */; };
@@ -26,14 +26,15 @@
 		6C784FBF2C8351DC00E64FF0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784FAA2C8351DB00E64FF0 /* ContentView.swift */; };
 		6C784FC02C8351DC00E64FF0 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784FAC2C8351DC00E64FF0 /* SafariView.swift */; };
 		6C784FC12C8351DC00E64FF0 /* Countries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784FAD2C8351DC00E64FF0 /* Countries.swift */; };
-		6C784FC22C8351DC00E64FF0 /* SaveButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784FAE2C8351DC00E64FF0 /* SaveButton.swift */; };
+		6C9183712C85743300623A44 /* AddInteractionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9183702C85743300623A44 /* AddInteractionView.swift */; };
+		6C9183732C85796D00623A44 /* InteractionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9183722C85796D00623A44 /* InteractionDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		6C784F862C83517F00E64FF0 /* Ghosted.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ghosted.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C784F892C83517F00E64FF0 /* GhostedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GhostedApp.swift; sourceTree = "<group>"; };
 		6C784F8D2C83518200E64FF0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		6C784F972C8351DA00E64FF0 /* ModelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelView.swift; sourceTree = "<group>"; };
+		6C784F972C8351DA00E64FF0 /* ModelData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelData.swift; sourceTree = "<group>"; };
 		6C784F992C8351DA00E64FF0 /* AddContactView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddContactView.swift; sourceTree = "<group>"; };
 		6C784F9A2C8351DA00E64FF0 /* ContactDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetailView.swift; sourceTree = "<group>"; };
 		6C784F9B2C8351DA00E64FF0 /* NoteDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoteDetailView.swift; sourceTree = "<group>"; };
@@ -50,7 +51,8 @@
 		6C784FAA2C8351DB00E64FF0 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		6C784FAC2C8351DC00E64FF0 /* SafariView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
 		6C784FAD2C8351DC00E64FF0 /* Countries.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Countries.swift; sourceTree = "<group>"; };
-		6C784FAE2C8351DC00E64FF0 /* SaveButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveButton.swift; sourceTree = "<group>"; };
+		6C9183702C85743300623A44 /* AddInteractionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddInteractionView.swift; sourceTree = "<group>"; };
+		6C9183722C85796D00623A44 /* InteractionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,7 +88,7 @@
 				6C784F892C83517F00E64FF0 /* GhostedApp.swift */,
 				6C784FAA2C8351DB00E64FF0 /* ContentView.swift */,
 				6C784FAF2C8351DC00E64FF0 /* Views */,
-				6C784F972C8351DA00E64FF0 /* ModelView.swift */,
+				6C784F972C8351DA00E64FF0 /* ModelData.swift */,
 				6C784FAB2C8351DC00E64FF0 /* Helpers */,
 				6C784F8D2C83518200E64FF0 /* Assets.xcassets */,
 				6C784FA82C8351DB00E64FF0 /* Preview Content */,
@@ -121,6 +123,8 @@
 			isa = PBXGroup;
 			children = (
 				6C784FA32C8351DB00E64FF0 /* AccountDetailView.swift */,
+				6C9183722C85796D00623A44 /* InteractionDetailView.swift */,
+				6C9183702C85743300623A44 /* AddInteractionView.swift */,
 				6C784FA42C8351DB00E64FF0 /* AccountListView.swift */,
 				6C784FA52C8351DB00E64FF0 /* AccountForm.swift */,
 				6C784FA62C8351DB00E64FF0 /* AddAccountView.swift */,
@@ -142,7 +146,6 @@
 			children = (
 				6C784FAC2C8351DC00E64FF0 /* SafariView.swift */,
 				6C784FAD2C8351DC00E64FF0 /* Countries.swift */,
-				6C784FAE2C8351DC00E64FF0 /* SaveButton.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -237,19 +240,20 @@
 				6C784FBA2C8351DC00E64FF0 /* AccountListView.swift in Sources */,
 				6C784FBB2C8351DC00E64FF0 /* AccountForm.swift in Sources */,
 				6C784FBF2C8351DC00E64FF0 /* ContentView.swift in Sources */,
+				6C9183712C85743300623A44 /* AddInteractionView.swift in Sources */,
 				6C784FB72C8351DC00E64FF0 /* OrderRowView.swift in Sources */,
 				6C784FC12C8351DC00E64FF0 /* Countries.swift in Sources */,
 				6C784FB42C8351DC00E64FF0 /* AddNoteView.swift in Sources */,
 				6C784FB52C8351DC00E64FF0 /* ContactRowView.swift in Sources */,
 				6C784FB62C8351DC00E64FF0 /* OrderDetailView.swift in Sources */,
 				6C784FBC2C8351DC00E64FF0 /* AddAccountView.swift in Sources */,
-				6C784FC22C8351DC00E64FF0 /* SaveButton.swift in Sources */,
 				6C784FB22C8351DC00E64FF0 /* ContactDetailView.swift in Sources */,
+				6C9183732C85796D00623A44 /* InteractionDetailView.swift in Sources */,
 				6C784FB92C8351DC00E64FF0 /* AccountDetailView.swift in Sources */,
 				6C784FB32C8351DC00E64FF0 /* NoteDetailView.swift in Sources */,
 				6C784FC02C8351DC00E64FF0 /* SafariView.swift in Sources */,
 				6C784FB12C8351DC00E64FF0 /* AddContactView.swift in Sources */,
-				6C784FB02C8351DC00E64FF0 /* ModelView.swift in Sources */,
+				6C784FB02C8351DC00E64FF0 /* ModelData.swift in Sources */,
 				6C784F8A2C83517F00E64FF0 /* GhostedApp.swift in Sources */,
 				6C784FB82C8351DC00E64FF0 /* AddOrderView.swift in Sources */,
 			);

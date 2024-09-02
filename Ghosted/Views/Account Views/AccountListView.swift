@@ -10,6 +10,7 @@ import SwiftUI
 struct AccountListView: View {
     @EnvironmentObject var modelData: ModelData
     @State private var showAddAccountSheet = false
+    @State var showAlert: Bool = false
     @State private var selectedAccount: Account? = nil
     @State private var sectionExpandedStates: [Account.Status: Bool] = [
         .activeClient: true,
@@ -29,86 +30,107 @@ struct AccountListView: View {
     
     var body: some View {
         
-        if modelData.accounts.isEmpty {
-            VStack {
-                Spacer()
-                Image(systemName: "tray.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .font(.system(size: 24))
-                    .opacity(0.3)
-                    .frame(width: 100)
-                    .padding()
-                
-                var message0: AttributedString {
-                    let result = AttributedString("Wow, such empty.\n\n")
-                    return result
+        NavigationStack {
+            if modelData.accounts.isEmpty {
+                VStack {
+                    Spacer()
+                    Text("Wow, such empty.")
+                    
+                    Button {
+                        showAlert.toggle()
+                    } label: {
+                        Image("confusedGhosty")
+                            .resizable()
+                            .scaledToFit()
+                            .shadow(color: .primary.opacity(0.5) , radius: 15)
+                            .padding(.horizontal, 50)
+                    }
+
+                    
+                    var message1: AttributedString {
+                        var result = AttributedString("Frankly, you should be embarrassed.\nI mean, you haven't found even ")
+                        result.font = .caption
+                        result.foregroundColor = .secondary
+                        return result
+                    }
+                    
+                    var message2: AttributedString {
+                        var result = AttributedString("one")
+                        result.font = .caption.italic()
+                        result.foregroundColor = .secondary
+                        return result
+                    }
+                    
+                    var message3: AttributedString {
+                        var result = AttributedString(" potential client?\n\nAnyway, see that ")
+                        result.font = .caption
+                        result.foregroundColor = .secondary
+                        return result
+                    }
+                    
+                    
+                    var message4: AttributedString {
+                        var result = AttributedString("+")
+                        result.foregroundColor = .accentColor
+                        return result
+                    }
+                    var message5: AttributedString {
+                        var result = AttributedString(" sign in the top right corner?")
+                        result.font = .caption
+                        result.foregroundColor = .secondary
+                        return result
+                    }
+                    
+                    Text(message1 + message2 + message3 + message4 + message5)
+                        .multilineTextAlignment(.center)
+                        .padding(20)
+                    
+                    Spacer()
+                    Spacer()
                 }
-                
-                var message1: AttributedString {
-                    var result = AttributedString("Frankly, you should be embarrassed. I mean, even I feel bad for you, and I'm just a stupid app, so…\n\nAnyway, see that ")
-                    result.font = .caption
-                    result.foregroundColor = .secondary
-                    return result
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("You think you're funny?\n\nJust tap the + in the top right corner, will you?"))
                 }
-                
-                var message2: AttributedString {
-                    var result = AttributedString("+")
-                    result.foregroundColor = .accentColor
-                    return result
+            } else {
+                List {
+                    ForEach(Account.Status.allCases, id: \.self) { status in
+                        let accountsForStatus = sortedAccounts(status: status)
+                        AccountSectionView(
+                            status: status,
+                            accounts: accountsForStatus,
+                            accountCount: accountsForStatus.count,
+                            isExpanded: sectionExpandedStates[status] ?? false,
+                            toggleExpansion: {
+                                withAnimation {
+                                    sectionExpandedStates[status]?.toggle()
+                                }
+                            },
+                            deleteAction: { indexSet in
+                                deleteAccount(at: indexSet, for: status)
+                            },
+                            selectedAccount: $selectedAccount
+                        )
+                    }
                 }
-                var message3: AttributedString {
-                    var result = AttributedString(" sign in the top right corner?\n Why don't you hit it and see what happens, eh?")
-                    result.font = .caption
-                    result.foregroundColor = .secondary
-                    return result
-                }
-                
-                Text(message0 + message1 + message2 + message3)
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: 300)
             }
         }
-        
-        NavigationStack {
-            List {
-                ForEach(Account.Status.allCases, id: \.self) { status in
-                    let accountsForStatus = sortedAccounts(status: status)
-                    AccountSectionView(
-                        status: status,
-                        accounts: accountsForStatus,
-                        accountCount: accountsForStatus.count,
-                        isExpanded: sectionExpandedStates[status] ?? false,
-                        toggleExpansion: {
-                            withAnimation {
-                                sectionExpandedStates[status]?.toggle()
-                            }
-                        },
-                        deleteAction: { indexSet in
-                            deleteAccount(at: indexSet, for: status)
-                        },
-                        selectedAccount: $selectedAccount
-                    )
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    selectedAccount = nil
+                    showAddAccountSheet.toggle()
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .sheet(isPresented: $showAddAccountSheet) {
+                    AddAccountView(accountToEdit: selectedAccount)
+                        .environmentObject(modelData)
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        selectedAccount = nil
-                        showAddAccountSheet.toggle()
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                    .sheet(isPresented: $showAddAccountSheet) {
-                        AddAccountView(accountToEdit: selectedAccount)
-                            .environmentObject(modelData)
-                    }
-                }
-            }
-            .sheet(item: $selectedAccount) { accountToEdit in
-                AddAccountView(accountToEdit: accountToEdit)
-                    .environmentObject(modelData)
-            }
+        }
+        .sheet(item: $selectedAccount) { accountToEdit in
+            AddAccountView(accountToEdit: accountToEdit)
+                .environmentObject(modelData)
         }
     }
     

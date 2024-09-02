@@ -17,8 +17,8 @@ struct Account: Hashable, Codable, Identifiable {
     var website: String
     var contacts: [Contact]
     var orders: [Order]
+    var interactions: [Interaction]
     var generalNotes: String
-//    var interactions: [Note]
 
     enum AccountType: String, CaseIterable, Codable {
         case distri = "Distributor"
@@ -71,16 +71,26 @@ struct Order: Hashable, Codable, Identifiable {
     }
 }
 
+//MARK: Interaction
+struct Interaction: Hashable, Codable, Identifiable {
+    var id: UUID
+    var date: Date
+    var title: String
+    var content: String
+}
+
 //MARK: ModelData class
 class ModelData: ObservableObject {
     @Published var accounts: [Account] = []
     @Published var contacts: [Contact] = []
     @Published var orders: [Order] = []
+    @Published var interactions: [Interaction] = []
     
     // File paths for JSON files
     internal var accountsFilePath: URL
     internal var contactsFilePath: URL
     internal var ordersFilePath: URL
+    internal var interactionsFilePath: URL
     
     init() {
         let fileManager = FileManager.default
@@ -89,11 +99,13 @@ class ModelData: ObservableObject {
         accountsFilePath = documentsDirectory.appendingPathComponent("accounts.json")
         contactsFilePath = documentsDirectory.appendingPathComponent("contacts.json")
         ordersFilePath = documentsDirectory.appendingPathComponent("orders.json")
+        interactionsFilePath = documentsDirectory.appendingPathComponent("interactions.json")
         
         // Load initial data
         loadAccounts()
         loadContacts()
         loadOrders()
+        loadInteractions()
     }
     
     internal func saveJSON<T: Encodable>(_ value: T, to fileURL: URL) {
@@ -147,6 +159,15 @@ class ModelData: ObservableObject {
     func addOrder(_ order: Order, to account: Account) {
         if let index = accounts.firstIndex(where: { $0.id == account.id }) {
             accounts[index].orders.append(order)
+            saveJSON(accounts, to: accountsFilePath)
+        } else {
+            print("Account not found")
+        }
+    }
+    
+    func addInteraction(_ interaction: Interaction, to account: Account) {
+        if let index = accounts.firstIndex(where: { $0.id == account.id }) {
+            accounts[index].interactions.append(interaction)
             saveJSON(accounts, to: accountsFilePath)
         } else {
             print("Account not found")
@@ -207,6 +228,10 @@ class ModelData: ObservableObject {
     
     private func loadOrders() {
         orders = loadJSON(from: ordersFilePath) ?? []
+    }
+    
+    private func loadInteractions() {
+        interactions = loadJSON(from: interactionsFilePath) ?? []
     }
 }
 

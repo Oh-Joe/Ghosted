@@ -89,7 +89,8 @@ struct AddAccountView: View {
             status: status,
             website: website,
             contacts: accountToEdit?.contacts ?? [],
-            orders: accountToEdit?.orders ?? [],
+            orders: accountToEdit?.orders ?? [], 
+            interactions: accountToEdit?.interactions ?? [],
             generalNotes: generalNotes
         )
         
