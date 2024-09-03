@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AccountListView: View {
     @EnvironmentObject var modelData: ModelData
+    @State private var isOn = false
+    @State private var audioManager = AVAudioPlayerManager()
     @State private var showAddAccountSheet = false
     @State var showAlert: Bool = false
     @State private var selectedAccount: Account? = nil
@@ -34,9 +36,8 @@ struct AccountListView: View {
             if modelData.accounts.isEmpty {
                 VStack {
                     Spacer()
-                    Text("Wow, such empty.")
-                    
                     Button {
+                        playSound(soundName: "Sheeit")
                         showAlert.toggle()
                     } label: {
                         Image("confusedGhosty")
@@ -45,7 +46,7 @@ struct AccountListView: View {
                             .shadow(color: .primary.opacity(0.5) , radius: 15)
                             .padding(.horizontal, 50)
                     }
-
+                    
                     
                     var message1: AttributedString {
                         var result = AttributedString("Frankly, you should be embarrassed.\nI mean, you haven't found even ")
@@ -81,6 +82,7 @@ struct AccountListView: View {
                         return result
                     }
                     
+                    Text("Wow, such empty.")
                     Text(message1 + message2 + message3 + message4 + message5)
                         .multilineTextAlignment(.center)
                         .padding(20)
@@ -88,8 +90,13 @@ struct AccountListView: View {
                     Spacer()
                     Spacer()
                 }
-                .alert(isPresented: $showAlert) {
-                    Alert(title: Text("You think you're funny?\n\nJust tap the + in the top right corner, will you?"))
+                .alert("You think you're funny?",
+                       isPresented: $showAlert
+                ) {
+                    Button("OK") {
+                        playSound(soundName: "okay")
+                    }
+                } message: {Text("Just tap the + in the top right corner, will you?")
                 }
             } else {
                 List {
@@ -139,6 +146,18 @@ struct AccountListView: View {
         for index in offsets {
             let accountToDelete = sortedAccounts(status: status)[index]
             modelData.deleteAccount(accountToDelete)
+        }
+    }
+    
+    private func playSound(soundName: String) {
+        guard let url = Bundle.main.url(forResource: soundName, withExtension: "m4a") else {
+            print("Sound file not found")
+            return
+        }
+        
+        isOn.toggle() // Toggle before playing the sound
+        audioManager.playSound(with: url) {
+            self.isOn.toggle() // Toggle after the sound finishes
         }
     }
 }
