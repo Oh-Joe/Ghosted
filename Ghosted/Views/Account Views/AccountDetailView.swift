@@ -65,8 +65,6 @@ struct AccountDetailView: View {
                 if !account.generalNotes.isEmpty {
                     Section {
                         Text(account.generalNotes)
-                            .lineLimit(2)
-                            .truncationMode(.tail)
                     } header: {
                         Text("Notes")
                     }
@@ -98,6 +96,7 @@ struct AccountDetailView: View {
                                     Text(interaction.date, format: .dateTime.month(.abbreviated).day().year())
                                     Text(" -  \(interaction.title)")
                                 }
+                                .foregroundStyle(Color.primary)
                                 .lineLimit(1)
                                 .truncationMode(.tail)
                             }

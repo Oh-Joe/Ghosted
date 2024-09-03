@@ -47,29 +47,24 @@ struct AccountListView: View {
                             .padding(.horizontal, 50)
                     }
                     
-                    
                     var message1: AttributedString {
                         var result = AttributedString("Frankly, you should be embarrassed.\nI mean, you haven't found even ")
                         result.font = .caption
                         result.foregroundColor = .secondary
                         return result
                     }
-                    
                     var message2: AttributedString {
                         var result = AttributedString("one")
                         result.font = .caption.italic()
                         result.foregroundColor = .secondary
                         return result
                     }
-                    
                     var message3: AttributedString {
                         var result = AttributedString(" potential client?\n\nAnyway, see that ")
                         result.font = .caption
                         result.foregroundColor = .secondary
                         return result
                     }
-                    
-                    
                     var message4: AttributedString {
                         var result = AttributedString("+")
                         result.foregroundColor = .accentColor
@@ -96,7 +91,7 @@ struct AccountListView: View {
                     Button("OK") {
                         playSound(soundName: "okay")
                     }
-                } message: {Text("Just tap the + in the top right corner, will you?")
+                } message: {Text("Just tap the + in the top right corner, OK?")
                 }
             } else {
                 List {
@@ -182,9 +177,16 @@ struct AccountSectionView: View {
                         NavigationLink(destination: AccountDetailView(account: account)) {
                             AccountRow(account: account, selectedAccount: $selectedAccount)
                         }
+                        .swipeActions {
+                            Button(role: .destructive) {
+                                if let index = accounts.firstIndex(where: { $0.id == account.id }) {
+                                    deleteAction(IndexSet(integer: index))
+                                }
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                     }
-                    .onDelete(perform: deleteAction)
-                    
                 }
             }
         }
