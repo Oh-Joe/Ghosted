@@ -18,8 +18,6 @@ struct ContactDetailView: View {
     
     var body: some View {
         NavigationStack {
-//            ContactRowView(contact: contact)
-//                .padding(.horizontal)
             
             List {
                 
@@ -64,6 +62,7 @@ struct ContactDetailView: View {
                                     Text(note.date, format: .dateTime.month(.abbreviated).day().year())
                                     Text(" -  \(note.title)")
                                 }
+                                .foregroundStyle(Color.primary)
                                 .lineLimit(1)
                                 .truncationMode(.tail)
                             }

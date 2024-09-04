@@ -235,6 +235,11 @@ struct AccountRow: View {
     
     var body: some View {
         HStack {
+            
+            Text(account.country.countryCode)
+                .font(.caption)
+                .padding(3)
+                .background(RoundedRectangle(cornerRadius: 5).fill(.secondary).opacity(0.5))
             Text(account.name)
             Spacer()
         }
