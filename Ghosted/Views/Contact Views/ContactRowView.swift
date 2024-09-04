@@ -14,7 +14,7 @@ struct ContactRowView: View {
     
     var body: some View {
         HStack {
-            Image("Ghosty\(rando)")
+            Image(contact.photoName)
                 .resizable()
                 .scaledToFit()
                 .clipShape(Circle())

@@ -8,29 +8,34 @@
 import SwiftUI
 
 struct AccountsHomeView: View {
-    
+    @EnvironmentObject var modelData: ModelData
+    @State private var selectedAccount: Account?
     
     var account: Account
     
     var body: some View {
         
-        TabView {
-            NewAccountDetailView(account: account)
-                .tabItem {
-                    Label("Account Details", systemImage: "list.bullet.clipboard")
-                }
-            ContactListView(account: account)
-                .tabItem {
-                    Label("Contacts", systemImage: "person.2.fill")
-                }
-            InteractionListView(account: account)
-                .tabItem {
-                    Label("Interactions", systemImage: "bubble.left.and.bubble.right.fill")
-                }
-            OrderListView(account: account)
-                .tabItem {
-                    Label("Orders", systemImage: "dollarsign.circle.fill")
-                }
+        NavigationStack {
+            
+            TabView {
+                NewAccountDetailView(account: account)
+                    .tabItem {
+                        Label("Details", systemImage: "list.bullet.clipboard")
+                    }
+                ContactListView(account: account)
+                    .tabItem {
+                        Label("Contacts", systemImage: "person.2.fill")
+                    }
+                InteractionListView(account: account)
+                    .tabItem {
+                        Label("Interactions", systemImage: "bubble.left.and.bubble.right.fill")
+                    }
+                OrderListView(account: account)
+                    .tabItem {
+                        Label("Orders", systemImage: "dollarsign.circle.fill")
+                    }
+            }
+            .navigationTitle(account.name)
         }
         
     }

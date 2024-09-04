@@ -17,7 +17,7 @@ struct AccountForm: View {
     
     var body: some View {
         Section {
-            TextField("Company name", text: $name)
+            TextField("Company name (required)", text: $name)
             TextField("Website", text: $website)
                 .keyboardType(.URL)
                 .autocapitalization(.none)

@@ -18,8 +18,8 @@ struct ContactDetailView: View {
     
     var body: some View {
         NavigationStack {
-            ContactRowView(contact: contact)
-                .padding(.horizontal)
+//            ContactRowView(contact: contact)
+//                .padding(.horizontal)
             
             List {
                 
@@ -80,8 +80,13 @@ struct ContactDetailView: View {
                 }
                 
             }
-            .listStyle(SidebarListStyle())
-            .navigationTitle("\(contact.firstName) \(contact.lastName)")
+            .toolbarRole(.editor)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    ContactRowView(contact: contact)
+                        .padding(.horizontal, -8)
+                }
+            }
             
             .sheet(isPresented: Binding(
                 get: { showNoteSheet && selectedNote != nil },

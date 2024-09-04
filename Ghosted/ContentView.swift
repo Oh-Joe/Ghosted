@@ -61,7 +61,8 @@ struct ContentView: View {
             }
             .tabViewStyle(PageTabViewStyle())
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
-            .navigationTitle(pageTitle)
+//            .navigationTitle(pageTitle)
+            .navigationTitle("Home")
         }
     }
     

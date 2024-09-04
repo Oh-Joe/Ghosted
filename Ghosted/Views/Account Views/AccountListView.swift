@@ -116,6 +116,7 @@ struct AccountListView: View {
                 }
             }
         }
+        .navigationTitle("Accounts")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
