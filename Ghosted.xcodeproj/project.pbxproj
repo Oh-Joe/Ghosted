@@ -11,6 +11,11 @@
 		6C4EB1802C86B0BB00CA508E /* Sheeeeit.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 6C4EB17E2C86B0BB00CA508E /* Sheeeeit.m4a */; };
 		6C4EB1812C86B0BB00CA508E /* Sheeit.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 6C4EB17F2C86B0BB00CA508E /* Sheeit.m4a */; };
 		6C4EB1852C86B92400CA508E /* okay.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 6C4EB1842C86B92400CA508E /* okay.m4a */; };
+		6C4EB1962C880DB700CA508E /* AccountsHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4EB1952C880DB700CA508E /* AccountsHomeView.swift */; };
+		6C4EB1982C880F9000CA508E /* NewAccountDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4EB1972C880F9000CA508E /* NewAccountDetailView.swift */; };
+		6C4EB19A2C88128C00CA508E /* ContactListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4EB1992C88128C00CA508E /* ContactListView.swift */; };
+		6C4EB19C2C88191700CA508E /* InteractionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4EB19B2C88191700CA508E /* InteractionListView.swift */; };
+		6C4EB19E2C881AC800CA508E /* OrderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4EB19D2C881AC800CA508E /* OrderListView.swift */; };
 		6C784F8A2C83517F00E64FF0 /* GhostedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784F892C83517F00E64FF0 /* GhostedApp.swift */; };
 		6C784F8E2C83518200E64FF0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6C784F8D2C83518200E64FF0 /* Assets.xcassets */; };
 		6C784FB02C8351DC00E64FF0 /* ModelData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784F972C8351DA00E64FF0 /* ModelData.swift */; };
@@ -39,6 +44,11 @@
 		6C4EB17E2C86B0BB00CA508E /* Sheeeeit.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sheeeeit.m4a; sourceTree = "<group>"; };
 		6C4EB17F2C86B0BB00CA508E /* Sheeit.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sheeit.m4a; sourceTree = "<group>"; };
 		6C4EB1842C86B92400CA508E /* okay.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = okay.m4a; sourceTree = "<group>"; };
+		6C4EB1952C880DB700CA508E /* AccountsHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsHomeView.swift; sourceTree = "<group>"; };
+		6C4EB1972C880F9000CA508E /* NewAccountDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAccountDetailView.swift; sourceTree = "<group>"; };
+		6C4EB1992C88128C00CA508E /* ContactListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListView.swift; sourceTree = "<group>"; };
+		6C4EB19B2C88191700CA508E /* InteractionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionListView.swift; sourceTree = "<group>"; };
+		6C4EB19D2C881AC800CA508E /* OrderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderListView.swift; sourceTree = "<group>"; };
 		6C784F862C83517F00E64FF0 /* Ghosted.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ghosted.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C784F892C83517F00E64FF0 /* GhostedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GhostedApp.swift; sourceTree = "<group>"; };
 		6C784F8D2C83518200E64FF0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -88,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				6C9183722C85796D00623A44 /* InteractionDetailView.swift */,
+				6C4EB19B2C88191700CA508E /* InteractionListView.swift */,
 				6C9183702C85743300623A44 /* AddInteractionView.swift */,
 			);
 			path = "Interaction Views";
@@ -129,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				6C784F992C8351DA00E64FF0 /* AddContactView.swift */,
+				6C4EB1992C88128C00CA508E /* ContactListView.swift */,
 				6C784F9A2C8351DA00E64FF0 /* ContactDetailView.swift */,
 				6C784F9B2C8351DA00E64FF0 /* NoteDetailView.swift */,
 				6C784F9C2C8351DA00E64FF0 /* AddNoteView.swift */,
@@ -141,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				6C784F9F2C8351DB00E64FF0 /* OrderDetailView.swift */,
+				6C4EB19D2C881AC800CA508E /* OrderListView.swift */,
 				6C784FA02C8351DB00E64FF0 /* OrderRowView.swift */,
 				6C784FA12C8351DB00E64FF0 /* AddOrderView.swift */,
 			);
@@ -150,7 +163,9 @@
 		6C784FA22C8351DB00E64FF0 /* Account Views */ = {
 			isa = PBXGroup;
 			children = (
+				6C4EB1952C880DB700CA508E /* AccountsHomeView.swift */,
 				6C784FA32C8351DB00E64FF0 /* AccountDetailView.swift */,
+				6C4EB1972C880F9000CA508E /* NewAccountDetailView.swift */,
 				6C784FA42C8351DB00E64FF0 /* AccountListView.swift */,
 				6C784FA52C8351DB00E64FF0 /* AccountForm.swift */,
 				6C784FA62C8351DB00E64FF0 /* AddAccountView.swift */,
@@ -270,14 +285,19 @@
 			files = (
 				6C784FBA2C8351DC00E64FF0 /* AccountListView.swift in Sources */,
 				6C784FBB2C8351DC00E64FF0 /* AccountForm.swift in Sources */,
+				6C4EB1962C880DB700CA508E /* AccountsHomeView.swift in Sources */,
+				6C4EB19C2C88191700CA508E /* InteractionListView.swift in Sources */,
 				6C784FBF2C8351DC00E64FF0 /* ContentView.swift in Sources */,
+				6C4EB1982C880F9000CA508E /* NewAccountDetailView.swift in Sources */,
 				6C9183712C85743300623A44 /* AddInteractionView.swift in Sources */,
 				6C784FB72C8351DC00E64FF0 /* OrderRowView.swift in Sources */,
 				6C784FC12C8351DC00E64FF0 /* Countries.swift in Sources */,
 				6C784FB42C8351DC00E64FF0 /* AddNoteView.swift in Sources */,
+				6C4EB19E2C881AC800CA508E /* OrderListView.swift in Sources */,
 				6C4EB17C2C86B03300CA508E /* AudioPlayer.swift in Sources */,
 				6C784FB52C8351DC00E64FF0 /* ContactRowView.swift in Sources */,
 				6C784FB62C8351DC00E64FF0 /* OrderDetailView.swift in Sources */,
+				6C4EB19A2C88128C00CA508E /* ContactListView.swift in Sources */,
 				6C784FBC2C8351DC00E64FF0 /* AddAccountView.swift in Sources */,
 				6C784FB22C8351DC00E64FF0 /* ContactDetailView.swift in Sources */,
 				6C9183732C85796D00623A44 /* InteractionDetailView.swift in Sources */,

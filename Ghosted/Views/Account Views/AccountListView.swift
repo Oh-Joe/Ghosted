@@ -174,7 +174,7 @@ struct AccountSectionView: View {
             Section(header: sectionHeaderView) {
                 if isExpanded {
                     ForEach(accounts) { account in
-                        NavigationLink(destination: AccountDetailView(account: account)) {
+                        NavigationLink(destination: AccountsHomeView(account: account)) {
                             AccountRow(account: account, selectedAccount: $selectedAccount)
                         }
                         .swipeActions {

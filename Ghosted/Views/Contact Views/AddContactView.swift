@@ -50,13 +50,15 @@ struct AddContactView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
+                        let rando = Int.random(in: 1...15)
                         let newContact = Contact(
                             id: id,
                             firstName: firstName,
                             lastName: lastName,
                             jobTitle: jobTitle,
                             email: email,
-                            phoneNumber: phoneNumber,
+                            phoneNumber: phoneNumber, 
+                            photoName: "Ghosty\(rando)",
                             notes: []
                         )
                         modelData.addContact(newContact, to: account)

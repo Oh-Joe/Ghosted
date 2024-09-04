@@ -44,6 +44,7 @@ struct Contact: Hashable, Codable, Identifiable {
     var jobTitle: String
     var email: String
     var phoneNumber: String
+    var photoName: String
     var notes: [Note]
     
     struct Note: Hashable, Codable, Identifiable {
