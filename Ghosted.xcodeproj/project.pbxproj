@@ -131,7 +131,6 @@
 				6C784F8D2C83518200E64FF0 /* Assets.xcassets */,
 				6C4EB17D2C86B0BB00CA508E /* Resources */,
 				6C784FA82C8351DB00E64FF0 /* Preview Content */,
-				6C784FC32C83566800E64FF0 /* Preview Content */,
 			);
 			path = Ghosted;
 			sourceTree = "<group>";
@@ -201,13 +200,6 @@
 				6C784F9E2C8351DB00E64FF0 /* Order Views */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		6C784FC32C83566800E64FF0 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
