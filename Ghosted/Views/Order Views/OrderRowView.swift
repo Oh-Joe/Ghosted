@@ -13,8 +13,8 @@ struct OrderRowView: View {
     
     var body: some View {
         HStack {
-            Image(systemName: order.isFullyPaid ? "checkmark.circle.fill" : "checkmark.circle")
-                .foregroundStyle(order.isFullyPaid ? .green : order.dueDate < Date() ? .red : .gray)
+            Image(systemName: order.isFullyPaid ? "checkmark.circle.fill" : order.isOverdue ? "calendar.badge.exclamationmark" : "checkmark.circle")
+                .foregroundStyle(order.isFullyPaid ? .green : order.isOverdue ? .red : .secondary)
             
             Text(order.issuedDate, format: .dateTime.day().month(.abbreviated).year())
             

@@ -19,14 +19,14 @@ struct Account: Hashable, Codable, Identifiable {
     var orders: [Order]
     var interactions: [Interaction]
     var generalNotes: String
-
+    
     enum AccountType: String, CaseIterable, Codable {
         case distri = "Distributor"
         case reseller = "Reseller"
         case kol = "Key Opinion Leader"
         case brand = "Brand"
     }
-
+    
     enum Status: String, CaseIterable, Codable {
         case activeClient = "Active Client"
         case warmLead = "Warm Lead"
@@ -64,11 +64,21 @@ struct Order: Hashable, Codable, Identifiable {
     var currency: Currency
     var orderNumber: String
     var isFullyPaid: Bool
+    var isOverdue: Bool {
+            let startOfToday = Calendar.current.startOfDay(for: Date())
+            return dueDate < startOfToday && !isFullyPaid
+        }
     
     enum Currency: String, CaseIterable, Codable {
         case eur = "EUR"
         case gbp = "GBP"
         case usd = "USD"
+    }
+    
+    enum PaymentStatus: String, CaseIterable, Codable {
+        case overdue
+        case open
+        case paid
     }
 }
 
@@ -189,7 +199,7 @@ class ModelData: ObservableObject {
             print("Account not found")
         }
     }
-
+    
     func addNoteToContact(_ note: Contact.Note, to contact: Contact) {
         // Find the account containing the contact
         if let accountIndex = accounts.firstIndex(where: { $0.contacts.contains(where: { $0.id == contact.id }) }) {
@@ -206,7 +216,7 @@ class ModelData: ObservableObject {
             print("Account not found for the given contact")
         }
     }
-
+    
     
     func deleteNoteFromContact(_ note: Contact.Note, from contact: Contact) {
         if let accountIndex = accounts.firstIndex(where: { $0.contacts.contains(where: { $0.id == contact.id }) }) {

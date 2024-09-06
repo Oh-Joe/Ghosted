@@ -11,7 +11,6 @@ struct AddOrderView: View {
     @EnvironmentObject var modelData: ModelData
     @Environment(\.dismiss) var dismiss
     
-    @State var id = UUID()
     @State var issuedDate = Date()
     @State var dueDate: Date? = nil
     @State var orderAmount: Double? = nil
@@ -35,16 +34,10 @@ struct AddOrderView: View {
                 
                 Section {
                     DatePicker("Issued on:", selection: $issuedDate, displayedComponents: .date)
-                        .onChange(of: issuedDate) { _ in
-                            UIApplication.shared.dismissKeyboard()
-                        }
                     DatePicker("Due date:", selection: Binding(
                         get: { dueDate ?? Date() },
                         set: { dueDate = $0 }
                     ), displayedComponents: .date)
-                        .onChange(of: dueDate) { _ in
-                            UIApplication.shared.dismissKeyboard()
-                        }
                 }
                 
                 Section {
@@ -76,7 +69,7 @@ struct AddOrderView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        let newOrder = Order(id: id,
+                        let newOrder = Order(id: UUID(),
                                              issuedDate: issuedDate,
                                              dueDate: dueDate ?? Date(),
                                              orderAmount: orderAmount ?? 0,
@@ -95,11 +88,5 @@ struct AddOrderView: View {
             }
             .presentationDragIndicator(.visible)
         }
-    }
-}
-
-extension UIApplication {
-    func dismissKeyboard() {
-        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

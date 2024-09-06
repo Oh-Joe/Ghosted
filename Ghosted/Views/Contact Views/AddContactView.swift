@@ -73,8 +73,3 @@ struct AddContactView: View {
         }
     }
 }
-
-#Preview {
-    AddContactView(account: ModelData().accounts[0])
-        .environmentObject(ModelData())
-}

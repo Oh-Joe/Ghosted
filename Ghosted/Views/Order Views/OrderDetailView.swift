@@ -10,7 +10,7 @@ import SwiftUI
 struct OrderDetailView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var modelData: ModelData
-    
+
     var order: Order
     
     var body: some View {
@@ -20,8 +20,18 @@ struct OrderDetailView: View {
                     Text(order.orderAmount, format: .currency(code: order.currency.rawValue))
                         .font(.subheadline)
                         .fontWeight(.semibold)
+                    HStack {
+                        Image(systemName: order.isFullyPaid ? "checkmark.circle.fill" : order.isOverdue ? "calendar.badge.exclamationmark" : "checkmark.circle")
+                            .foregroundStyle(order.isFullyPaid ? .green : order.isOverdue ? .red : .secondary)
+                        Text(order.isFullyPaid ? "Paid" : order.isOverdue ? "Overdue" : "Open")
+                            .foregroundStyle(order.isFullyPaid ? .green : order.isOverdue ? .red : .primary)
+                    }
                 } header: {
-                    Text("Dollar dollar bills")
+                    HStack {
+                        Image(systemName: "dollarsign.circle.fill")
+                            .foregroundStyle(.opacity(0.3))
+                        Text("Dollar dollar bills")
+                    }
                 }
                 
                 Section {

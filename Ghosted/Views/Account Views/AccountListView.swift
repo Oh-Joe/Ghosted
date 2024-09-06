@@ -12,6 +12,10 @@ struct AccountListView: View {
     @State private var isOn = false
     @State private var audioManager = AVAudioPlayerManager()
     @State private var showAddAccountSheet = false
+    @State private var showEditAccountSheet = false  // New state variable for editing accounts
+    @State private var showAddOrderSheet: Bool = false
+    @State private var showAddContactSheet: Bool = false
+    @State private var showAddInteractionSheet: Bool = false
     @State var showAlert: Bool = false
     @State private var selectedAccount: Account? = nil
     @State private var sectionExpandedStates: [Account.Status: Bool] = [
@@ -109,7 +113,11 @@ struct AccountListView: View {
                             deleteAction: { indexSet in
                                 deleteAccount(at: indexSet, for: status)
                             },
-                            selectedAccount: $selectedAccount
+                            selectedAccount: $selectedAccount,
+                            showAddOrderSheet: $showAddOrderSheet,
+                            showAddContactSheet: $showAddContactSheet,
+                            showAddInteractionSheet: $showAddInteractionSheet,
+                            showEditAccountSheet: $showEditAccountSheet // Pass showEditAccountSheet binding
                         )
                     }
                 }
@@ -130,9 +138,38 @@ struct AccountListView: View {
                 }
             }
         }
-        .sheet(item: $selectedAccount) { accountToEdit in
-            AddAccountView(accountToEdit: accountToEdit)
-                .environmentObject(modelData)
+        // Sheet for editing an account
+        .sheet(isPresented: Binding(
+            get: { showEditAccountSheet && selectedAccount != nil },
+            set: { newValue in showEditAccountSheet = newValue }
+        )) {
+            AddAccountView(accountToEdit: selectedAccount)
+        }
+        
+        
+
+        // Add sheets for adding order, contact, and interaction
+        .sheet(isPresented: Binding(
+            get: { showAddContactSheet && selectedAccount != nil },
+            set: { newValue in showAddContactSheet = newValue }
+        )) {
+            AddContactView(account: selectedAccount!)
+                .presentationDragIndicator(.visible)
+        }
+        
+        .sheet(isPresented: Binding(
+            get: { showAddInteractionSheet && selectedAccount != nil },
+            set: { newValue in showAddInteractionSheet = newValue }
+        )) {
+            AddInteractionView(account: selectedAccount!)
+                .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: Binding(
+            get: { showAddOrderSheet && selectedAccount != nil },
+            set: { newValue in showAddOrderSheet = newValue }
+        )) {
+            AddOrderView(account: selectedAccount!)
+                .presentationDragIndicator(.visible)
         }
     }
     
@@ -166,6 +203,10 @@ struct AccountSectionView: View {
     var deleteAction: (IndexSet) -> Void
     
     @Binding var selectedAccount: Account?
+    @Binding var showAddOrderSheet: Bool
+    @Binding var showAddContactSheet: Bool
+    @Binding var showAddInteractionSheet: Bool
+    @Binding var showEditAccountSheet: Bool  // New binding for edit account sheet
     
     var body: some View {
         
@@ -175,7 +216,7 @@ struct AccountSectionView: View {
                 if isExpanded {
                     ForEach(accounts.sorted(by: { $0.country.countryCode < $1.country.countryCode })) { account in
                         NavigationLink(destination: AccountsHomeView(account: account)) {
-                            AccountRow(account: account, selectedAccount: $selectedAccount)
+                            AccountRow(account: account, selectedAccount: $selectedAccount, showAddOrderSheet: $showAddOrderSheet, showAddContactSheet: $showAddContactSheet, showAddInteractionSheet: $showAddInteractionSheet, showEditAccountSheet: $showEditAccountSheet)
                         }
                         .swipeActions {
                             Button(role: .destructive) {
@@ -230,10 +271,13 @@ struct AccountSectionView: View {
 struct AccountRow: View {
     var account: Account
     @Binding var selectedAccount: Account?
-    
+    @Binding var showAddOrderSheet: Bool
+    @Binding var showAddContactSheet: Bool
+    @Binding var showAddInteractionSheet: Bool
+    @Binding var showEditAccountSheet: Bool
+
     var body: some View {
         HStack {
-            
             Text(account.country.countryCode)
                 .font(.caption2)
                 .padding(3)
@@ -243,16 +287,38 @@ struct AccountRow: View {
             Spacer()
         }
         .contextMenu {
-            Button("Edit Account") {
+            Button {
                 selectedAccount = account
+                showEditAccountSheet = true
+            } label: {
+                Text("Edit Account")
+                Spacer()
+                Image(systemName: "square.and.pencil")
+            }
+            Button {
+                selectedAccount = account
+                showAddContactSheet = true
+            } label: {
+                Text("Add new Contact")
+                Spacer()
+                Image(systemName: "person.crop.circle.badge.plus")
+            }
+            Button {
+                selectedAccount = account
+                showAddInteractionSheet = true
+            } label: {
+                Text("Add new Interaction")
+                Spacer()
+                Image(systemName: "note.text.badge.plus")
+            }
+            Button {
+                selectedAccount = account
+                showAddOrderSheet = true
+            } label: {
+                Text("Add new Order")
+                Spacer()
+                Image(systemName: "dollarsign.circle")
             }
         }
-    }
-}
-
-struct AccountListView_Previews: PreviewProvider {
-    static var previews: some View {
-        AccountListView()
-            .environmentObject(ModelData())
     }
 }
