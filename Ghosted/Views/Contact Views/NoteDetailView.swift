@@ -38,7 +38,7 @@ struct NoteDetailView: View {
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     Text(note.title)
-                        .font(.title)
+                        .font(.title2)
                         .fontWeight(.bold)
                 }
             }

@@ -10,7 +10,8 @@ import SwiftUI
 struct OrderListView: View {
     
     @State private var isShowingAddOrderSheet: Bool = false
-    
+    @State private var showOrderSheet: Bool = false
+    @State private var selectedOrder: Order? = nil
     var account: Account
     
     var body: some View {
@@ -32,17 +33,27 @@ struct OrderListView: View {
                         AddOrderView(account: account)
                     }
                     if !account.orders.isEmpty {
-                        ForEach(account.orders) { order in
-                            NavigationLink(destination: OrderDetailView(order: order)) {
-                                OrderRowView(order: order)                }
+                        ForEach(account.orders.sorted(by: { $0.issuedDate > $1.issuedDate })) { order in
+                            Button {
+                                selectedOrder = order
+                                showOrderSheet = true
+                            } label: {
+                                OrderRowView(order: order)
+                            }
                         }
                     }
-
                 } header: {
                     Text("Orders")
                 }
             }
             .navigationTitle(account.name)
+            .sheet(isPresented: Binding(
+                get: { showOrderSheet && selectedOrder != nil },
+                set: { newValue in showOrderSheet = newValue }
+            )) {
+                OrderDetailView(order: selectedOrder!)
+                    .presentationDragIndicator(.visible)
+            }
         }
     }
 }

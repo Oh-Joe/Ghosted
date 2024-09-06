@@ -17,15 +17,35 @@ struct OrderDetailView: View {
         NavigationStack {
             List {
                 Section {
+                    Text(order.orderAmount, format: .currency(code: order.currency.rawValue))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                } header: {
+                    Text("Dollar dollar bills")
+                }
+                
+                Section {
                     Text("Order #\(order.orderNumber)")
-                    Text(order.orderAmount, format: .currency(code: order.currency.rawValue)) // create logic to display this amount in an HStack with the correct currency symbol and color using a switch
                     Text("Due date: \(order.dueDate, format: .dateTime.day().month())")
                         .foregroundStyle(!order.isFullyPaid && order.dueDate < Date() ? .red : .primary)
                 } header: {
                     Text("Order Details")
                 }
             }
-            .navigationTitle(order.orderNumber)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    Text(order.orderNumber)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                }
+            }
         }
     }
 }

@@ -18,9 +18,8 @@ struct AccountListView: View {
         .activeClient: true,
         .warmLead: true,
         .coldLead: true,
-        .closedLost: true,
-        .ghosting: true
-        
+        .ghosting: true,
+        .closedLost: true
     ]
     
     // Sort accounts by status, return array of Account
@@ -174,7 +173,7 @@ struct AccountSectionView: View {
             
             Section(header: sectionHeaderView) {
                 if isExpanded {
-                    ForEach(accounts) { account in
+                    ForEach(accounts.sorted(by: { $0.country.countryCode < $1.country.countryCode })) { account in
                         NavigationLink(destination: AccountsHomeView(account: account)) {
                             AccountRow(account: account, selectedAccount: $selectedAccount)
                         }
@@ -220,11 +219,10 @@ struct AccountSectionView: View {
             return "Warm Leads"
         case .coldLead:
             return "Cold Leads"
-        case .closedLost:
-            return "Not Interested"
         case .ghosting:
             return "Them Bitches Ghosting Me"
-            
+        case .closedLost:
+            return "Not Interested"
         }
     }
 }
@@ -237,9 +235,10 @@ struct AccountRow: View {
         HStack {
             
             Text(account.country.countryCode)
-                .font(.caption)
+                .font(.caption2)
                 .padding(3)
-                .background(RoundedRectangle(cornerRadius: 5).fill(.secondary).opacity(0.5))
+                .background(RoundedRectangle(cornerRadius: 5).fill(.secondary).opacity(0.3))
+                .foregroundStyle(Color.secondary)
             Text(account.name)
             Spacer()
         }

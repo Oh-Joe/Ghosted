@@ -31,8 +31,8 @@ struct Account: Hashable, Codable, Identifiable {
         case activeClient = "Active Client"
         case warmLead = "Warm Lead"
         case coldLead = "Cold Lead"
-        case closedLost = "Not Interested"
         case ghosting = "They Ghosting Me 🙄"
+        case closedLost = "Not Interested"
     }
 }
 
@@ -78,6 +78,21 @@ struct Interaction: Hashable, Codable, Identifiable {
     var date: Date
     var title: String
     var content: String
+}
+
+//MARK: Task
+struct Task: Hashable, Codable, Identifiable {
+    var id: UUID
+    var title: String
+    var dueDate: Date
+    var subTasks: [Subtask]
+    
+    struct Subtask: Codable, Identifiable, Hashable {
+        var id: UUID
+        var title: String
+        var isCompleted: Bool
+        var isNew: Bool
+    }
 }
 
 //MARK: ModelData class

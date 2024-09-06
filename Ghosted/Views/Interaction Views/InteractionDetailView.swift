@@ -38,7 +38,7 @@ struct InteractionDetailView: View {
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     Text(interaction.title)
-                        .font(.title)
+                        .font(.title2)
                         .fontWeight(.bold)
                 }
             }
