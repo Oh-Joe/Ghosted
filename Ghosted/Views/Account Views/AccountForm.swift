@@ -18,7 +18,10 @@ struct AccountForm: View {
     var body: some View {
         Section {
             TextField("Company name (required)", text: $name)
+                .textInputAutocapitalization(.words)
+                .autocorrectionDisabled(true)
             TextField("Website", text: $website)
+                .autocorrectionDisabled(true)
                 .keyboardType(.URL)
                 .autocapitalization(.none)
             Picker("Select account type:", selection: $accountType) {

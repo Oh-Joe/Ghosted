@@ -16,6 +16,11 @@
 		6C4EB19A2C88128C00CA508E /* ContactListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4EB1992C88128C00CA508E /* ContactListView.swift */; };
 		6C4EB19C2C88191700CA508E /* InteractionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4EB19B2C88191700CA508E /* InteractionListView.swift */; };
 		6C4EB19E2C881AC800CA508E /* OrderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4EB19D2C881AC800CA508E /* OrderListView.swift */; };
+		6C5FBBEE2C8D77B3000E21CB /* OrderSymbolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C5FBBED2C8D77B3000E21CB /* OrderSymbolView.swift */; };
+		6C5FBBF02C8DAEC8000E21CB /* TaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C5FBBEF2C8DAEC8000E21CB /* TaskDetailView.swift */; };
+		6C5FBBF32C8DB65E000E21CB /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C5FBBF22C8DB65E000E21CB /* AddTaskView.swift */; };
+		6C5FBBF52C8DBC8F000E21CB /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C5FBBF42C8DBC8F000E21CB /* TaskListView.swift */; };
+		6C5FBBF72C8DBE6E000E21CB /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C5FBBF62C8DBE6E000E21CB /* TaskRowView.swift */; };
 		6C784F8A2C83517F00E64FF0 /* GhostedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784F892C83517F00E64FF0 /* GhostedApp.swift */; };
 		6C784F8E2C83518200E64FF0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6C784F8D2C83518200E64FF0 /* Assets.xcassets */; };
 		6C784FB02C8351DC00E64FF0 /* ModelData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784F972C8351DA00E64FF0 /* ModelData.swift */; };
@@ -48,6 +53,11 @@
 		6C4EB1992C88128C00CA508E /* ContactListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListView.swift; sourceTree = "<group>"; };
 		6C4EB19B2C88191700CA508E /* InteractionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionListView.swift; sourceTree = "<group>"; };
 		6C4EB19D2C881AC800CA508E /* OrderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderListView.swift; sourceTree = "<group>"; };
+		6C5FBBED2C8D77B3000E21CB /* OrderSymbolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderSymbolView.swift; sourceTree = "<group>"; };
+		6C5FBBEF2C8DAEC8000E21CB /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
+		6C5FBBF22C8DB65E000E21CB /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
+		6C5FBBF42C8DBC8F000E21CB /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
+		6C5FBBF62C8DBE6E000E21CB /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
 		6C784F862C83517F00E64FF0 /* Ghosted.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ghosted.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C784F892C83517F00E64FF0 /* GhostedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GhostedApp.swift; sourceTree = "<group>"; };
 		6C784F8D2C83518200E64FF0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -102,6 +112,17 @@
 			path = "Interaction Views";
 			sourceTree = "<group>";
 		};
+		6C5FBBF12C8DAECF000E21CB /* Task Views */ = {
+			isa = PBXGroup;
+			children = (
+				6C5FBBEF2C8DAEC8000E21CB /* TaskDetailView.swift */,
+				6C5FBBF62C8DBE6E000E21CB /* TaskRowView.swift */,
+				6C5FBBF22C8DB65E000E21CB /* AddTaskView.swift */,
+				6C5FBBF42C8DBC8F000E21CB /* TaskListView.swift */,
+			);
+			path = "Task Views";
+			sourceTree = "<group>";
+		};
 		6C784F7D2C83517F00E64FF0 = {
 			isa = PBXGroup;
 			children = (
@@ -149,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				6C784F9F2C8351DB00E64FF0 /* OrderDetailView.swift */,
+				6C5FBBED2C8D77B3000E21CB /* OrderSymbolView.swift */,
 				6C4EB19D2C881AC800CA508E /* OrderListView.swift */,
 				6C784FA02C8351DB00E64FF0 /* OrderRowView.swift */,
 				6C784FA12C8351DB00E64FF0 /* AddOrderView.swift */,
@@ -182,6 +204,7 @@
 		6C784FAF2C8351DC00E64FF0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6C5FBBF12C8DAECF000E21CB /* Task Views */,
 				6C784FA22C8351DB00E64FF0 /* Account Views */,
 				6C4EB1862C86C28700CA508E /* Interaction Views */,
 				6C784F982C8351DA00E64FF0 /* Contact Views */,
@@ -272,11 +295,13 @@
 				6C784FB72C8351DC00E64FF0 /* OrderRowView.swift in Sources */,
 				6C784FC12C8351DC00E64FF0 /* Countries.swift in Sources */,
 				6C784FB42C8351DC00E64FF0 /* AddNoteView.swift in Sources */,
+				6C5FBBF72C8DBE6E000E21CB /* TaskRowView.swift in Sources */,
 				6C4EB19E2C881AC800CA508E /* OrderListView.swift in Sources */,
 				6C4EB17C2C86B03300CA508E /* AudioPlayer.swift in Sources */,
 				6C784FB52C8351DC00E64FF0 /* ContactRowView.swift in Sources */,
 				6C784FB62C8351DC00E64FF0 /* OrderDetailView.swift in Sources */,
 				6C4EB19A2C88128C00CA508E /* ContactListView.swift in Sources */,
+				6C5FBBF32C8DB65E000E21CB /* AddTaskView.swift in Sources */,
 				6C784FBC2C8351DC00E64FF0 /* AddAccountView.swift in Sources */,
 				6C784FB22C8351DC00E64FF0 /* ContactDetailView.swift in Sources */,
 				6C9183732C85796D00623A44 /* InteractionDetailView.swift in Sources */,
@@ -285,8 +310,11 @@
 				6C784FC02C8351DC00E64FF0 /* SafariView.swift in Sources */,
 				6C784FB12C8351DC00E64FF0 /* AddContactView.swift in Sources */,
 				6C784FB02C8351DC00E64FF0 /* ModelData.swift in Sources */,
+				6C5FBBEE2C8D77B3000E21CB /* OrderSymbolView.swift in Sources */,
 				6C784F8A2C83517F00E64FF0 /* GhostedApp.swift in Sources */,
+				6C5FBBF52C8DBC8F000E21CB /* TaskListView.swift in Sources */,
 				6C784FB82C8351DC00E64FF0 /* AddOrderView.swift in Sources */,
+				6C5FBBF02C8DAEC8000E21CB /* TaskDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

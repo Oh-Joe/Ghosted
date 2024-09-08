@@ -8,11 +8,53 @@
 import SwiftUI
 
 struct TaskDetailView: View {
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var modelData: ModelData
+    
+    var task: Task
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            List {
+                Section {
+                    HStack {
+                        Text("Due:")
+                        Spacer()
+                        Text(task.dueDate, format: .dateTime.month(.abbreviated).day().year())
+                            .fontWeight(.bold)
+                            .foregroundStyle(task.dueDate < Date.now ? .red : .primary)
+                    }
+                    HStack{
+                        Text("Done?")
+                        Spacer()
+                        Image(systemName: task.isDone ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(task.isDone ? .green : .primary)
+                    }
+                }
+                Section {
+                    Text(task.contents)
+                } header: {
+                    Text("Task description")
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    Text(task.title)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    TaskDetailView()
+    TaskDetailView(task: Task(id: UUID(), title: "Task title", contents: "Just print the damn thing!", isDone: true, dueDate: Date.now))
 }

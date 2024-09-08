@@ -8,15 +8,11 @@
 import SwiftUI
 
 struct AddAccountView: View {
-    
     @EnvironmentObject var modelData: ModelData
     @Environment(\.dismiss) var dismiss
-    
-    @State private var id: UUID?
     @State private var name: String = ""
     @State private var accountType: Account.AccountType = .distri
     @State private var country: Country = .afghanistan
-
     @State private var status: Account.Status = .activeClient
     @State private var website: String = ""
     @State private var generalNotes: String = ""
@@ -49,7 +45,7 @@ struct AddAccountView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(action: {
                         dismiss()
-
+                        
                     }, label: {
                         Text("Cancel")
                             .foregroundStyle(Color.red)
@@ -57,7 +53,7 @@ struct AddAccountView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        saveAccount()
+                        save()
                         dismiss()
                     } label: {
                         Text("Save")
@@ -68,7 +64,6 @@ struct AddAccountView: View {
         }
         .onAppear {
             if let account = accountToEdit {
-                id = account.id
                 name = account.name
                 accountType = account.accountType
                 country = account.country
@@ -80,35 +75,25 @@ struct AddAccountView: View {
         .presentationDragIndicator(.visible)
     }
     
-    private func saveAccount() {
-        let newAccount = Account(
-            id: id ?? UUID(),
-            name: name,
-            accountType: accountType,
-            country: country,
-            status: status,
-            website: website,
-            contacts: accountToEdit?.contacts ?? [],
-            orders: accountToEdit?.orders ?? [], 
-            interactions: accountToEdit?.interactions ?? [],
-            generalNotes: generalNotes
-        )
-        
-        if isEditing {
-            // Update the existing account in modelData
-            if let index = modelData.accounts.firstIndex(where: { $0.id == id }) {
-                modelData.accounts[index] = newAccount
+    private func save() {
+            let newAccount = Account(
+                id: accountToEdit?.id ?? UUID(), // Use existing ID if editing
+                name: name,
+                accountType: accountType,
+                country: country,
+                status: status,
+                website: website,
+                contacts: accountToEdit?.contacts ?? [],
+                orders: accountToEdit?.orders ?? [],
+                interactions: accountToEdit?.interactions ?? [],
+                tasks: accountToEdit?.tasks ?? [],
+                generalNotes: generalNotes
+            )
+            
+            if let _ = accountToEdit {
+                modelData.updateAccount(newAccount)
+            } else {
+                modelData.addAccount(newAccount)
             }
-        } else {
-            // Add a new account
-            modelData.addAccount(newAccount)
         }
-    }
-}
-
-struct AddAccountView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddAccountView(accountToEdit: nil)
-            .environmentObject(ModelData())
-    }
 }

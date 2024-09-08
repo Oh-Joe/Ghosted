@@ -16,6 +16,7 @@ struct AccountListView: View {
     @State private var showAddOrderSheet: Bool = false
     @State private var showAddContactSheet: Bool = false
     @State private var showAddInteractionSheet: Bool = false
+    @State private var showAddTaskSheet: Bool = false
     @State var showAlert: Bool = false
     @State private var selectedAccount: Account? = nil
     @State private var sectionExpandedStates: [Account.Status: Bool] = [
@@ -117,6 +118,7 @@ struct AccountListView: View {
                             showAddOrderSheet: $showAddOrderSheet,
                             showAddContactSheet: $showAddContactSheet,
                             showAddInteractionSheet: $showAddInteractionSheet,
+                            showAddTaskSheet: $showAddTaskSheet,
                             showEditAccountSheet: $showEditAccountSheet // Pass showEditAccountSheet binding
                         )
                     }
@@ -140,11 +142,23 @@ struct AccountListView: View {
         }
         // Sheet for editing an account
         .sheet(isPresented: Binding(
-            get: { showEditAccountSheet && selectedAccount != nil },
-            set: { newValue in showEditAccountSheet = newValue }
+            get: { showAddAccountSheet || (showEditAccountSheet && selectedAccount != nil) },
+            set: { newValue in
+                if !newValue {
+                    showAddAccountSheet = false
+                    showEditAccountSheet = false
+                }
+            }
         )) {
-            AddAccountView(accountToEdit: selectedAccount)
+            if showAddAccountSheet {
+                AddAccountView(accountToEdit: selectedAccount)
+                    .environmentObject(modelData)
+            } else if showEditAccountSheet, let accountToEdit = selectedAccount {
+                AddAccountView(accountToEdit: accountToEdit)
+                    .environmentObject(modelData)
+            }
         }
+
         
         
 
@@ -164,11 +178,20 @@ struct AccountListView: View {
             AddInteractionView(account: selectedAccount!)
                 .presentationDragIndicator(.visible)
         }
+        
         .sheet(isPresented: Binding(
             get: { showAddOrderSheet && selectedAccount != nil },
             set: { newValue in showAddOrderSheet = newValue }
         )) {
             AddOrderView(account: selectedAccount!)
+                .presentationDragIndicator(.visible)
+        }
+        
+        .sheet(isPresented: Binding(
+            get: { showAddTaskSheet && selectedAccount != nil },
+            set: { newValue in showAddTaskSheet = newValue }
+        )) {
+            AddTaskView(account: selectedAccount!)
                 .presentationDragIndicator(.visible)
         }
     }
@@ -206,6 +229,7 @@ struct AccountSectionView: View {
     @Binding var showAddOrderSheet: Bool
     @Binding var showAddContactSheet: Bool
     @Binding var showAddInteractionSheet: Bool
+    @Binding var showAddTaskSheet: Bool
     @Binding var showEditAccountSheet: Bool  // New binding for edit account sheet
     
     var body: some View {
@@ -216,7 +240,7 @@ struct AccountSectionView: View {
                 if isExpanded {
                     ForEach(accounts.sorted(by: { $0.country.countryCode < $1.country.countryCode })) { account in
                         NavigationLink(destination: AccountsHomeView(account: account)) {
-                            AccountRow(account: account, selectedAccount: $selectedAccount, showAddOrderSheet: $showAddOrderSheet, showAddContactSheet: $showAddContactSheet, showAddInteractionSheet: $showAddInteractionSheet, showEditAccountSheet: $showEditAccountSheet)
+                            AccountRow(account: account, selectedAccount: $selectedAccount, showAddOrderSheet: $showAddOrderSheet, showAddContactSheet: $showAddContactSheet, showAddInteractionSheet: $showAddInteractionSheet, showAddTaskSheet: $showAddTaskSheet, showEditAccountSheet: $showEditAccountSheet)
                         }
                         .swipeActions {
                             Button(role: .destructive) {
@@ -274,6 +298,7 @@ struct AccountRow: View {
     @Binding var showAddOrderSheet: Bool
     @Binding var showAddContactSheet: Bool
     @Binding var showAddInteractionSheet: Bool
+    @Binding var showAddTaskSheet: Bool
     @Binding var showEditAccountSheet: Bool
 
     var body: some View {
@@ -309,7 +334,7 @@ struct AccountRow: View {
             } label: {
                 Text("Add new Interaction")
                 Spacer()
-                Image(systemName: "note.text.badge.plus")
+                Image(systemName: "plus.bubble")
             }
             Button {
                 selectedAccount = account
@@ -318,6 +343,14 @@ struct AccountRow: View {
                 Text("Add new Order")
                 Spacer()
                 Image(systemName: "dollarsign.circle")
+            }
+            Button {
+                selectedAccount = account
+                showAddTaskSheet = true
+            } label: {
+                Text("Add new Task")
+                Spacer()
+                Image(systemName: "checklist")
             }
         }
     }

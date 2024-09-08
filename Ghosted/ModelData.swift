@@ -18,6 +18,7 @@ struct Account: Hashable, Codable, Identifiable {
     var contacts: [Contact]
     var orders: [Order]
     var interactions: [Interaction]
+    var tasks: [Task]
     var generalNotes: String
     
     enum AccountType: String, CaseIterable, Codable {
@@ -94,15 +95,13 @@ struct Interaction: Hashable, Codable, Identifiable {
 struct Task: Hashable, Codable, Identifiable {
     var id: UUID
     var title: String
-    var dueDate: Date
-    var subTasks: [Subtask]
-    
-    struct Subtask: Codable, Identifiable, Hashable {
-        var id: UUID
-        var title: String
-        var isCompleted: Bool
-        var isNew: Bool
+    var contents: String
+    var isDone: Bool
+    var isOverdue: Bool {
+        let startOfToday = Calendar.current.startOfDay(for: Date.now)
+        return dueDate < startOfToday && !isDone
     }
+    var dueDate: Date
 }
 
 //MARK: ModelData class
@@ -111,12 +110,14 @@ class ModelData: ObservableObject {
     @Published var contacts: [Contact] = []
     @Published var orders: [Order] = []
     @Published var interactions: [Interaction] = []
+    @Published var tasks: [Task] = []
     
     // File paths for JSON files
     internal var accountsFilePath: URL
     internal var contactsFilePath: URL
     internal var ordersFilePath: URL
     internal var interactionsFilePath: URL
+    internal var tasksFilePath: URL
     
     init() {
         let fileManager = FileManager.default
@@ -126,12 +127,14 @@ class ModelData: ObservableObject {
         contactsFilePath = documentsDirectory.appendingPathComponent("contacts.json")
         ordersFilePath = documentsDirectory.appendingPathComponent("orders.json")
         interactionsFilePath = documentsDirectory.appendingPathComponent("interactions.json")
+        tasksFilePath = documentsDirectory.appendingPathComponent("tasks.json")
         
         // Load initial data
         loadAccounts()
         loadContacts()
         loadOrders()
         loadInteractions()
+        loadTasks()
     }
     
     internal func saveJSON<T: Encodable>(_ value: T, to fileURL: URL) {
@@ -165,7 +168,7 @@ class ModelData: ObservableObject {
             saveJSON(accounts, to: accountsFilePath)
         }
     }
-    
+
     func deleteAccount(_ account: Account) {
         if let index = accounts.firstIndex(where: { $0.id == account.id }) {
             accounts.remove(at: index)
@@ -194,6 +197,15 @@ class ModelData: ObservableObject {
     func addInteraction(_ interaction: Interaction, to account: Account) {
         if let index = accounts.firstIndex(where: { $0.id == account.id }) {
             accounts[index].interactions.append(interaction)
+            saveJSON(accounts, to: accountsFilePath)
+        } else {
+            print("Account not found")
+        }
+    }
+    
+    func addTask(_ task: Task, to account: Account) {
+        if let index = accounts.firstIndex(where: { $0.id == account.id }) {
+            accounts[index].tasks.append(task)
             saveJSON(accounts, to: accountsFilePath)
         } else {
             print("Account not found")
@@ -259,5 +271,10 @@ class ModelData: ObservableObject {
     private func loadInteractions() {
         interactions = loadJSON(from: interactionsFilePath) ?? []
     }
+    
+    private func loadTasks() {
+        tasks = loadJSON(from: tasksFilePath) ?? []
+    }
+
 }
 

@@ -51,7 +51,7 @@ struct NewAccountDetailView: View {
                         }
                     }
                 } header: {
-                    Text("Account details")
+                    Text("") // no need to show anything, but I like the extra space
                 }
                 
                 if !account.generalNotes.isEmpty {

@@ -8,11 +8,20 @@
 import SwiftUI
 
 struct TaskRowView: View {
+    
+    var task: Task
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack {
+            Image(systemName: task.isOverdue ? "xmark.circle" : "checkmark.circle")
+                .foregroundStyle(task.isOverdue ? .red : task.isDone ? .green : .secondary)
+            Text(task.title)
+            Spacer()
+            Text(task.dueDate, format: .dateTime.day().month(.abbreviated).year())
+        }
     }
 }
 
 #Preview {
-    TaskRowView()
+    TaskRowView(task: Task(id: UUID(), title: "Follow up", contents: "Make sure to ask about the TPS reports", isDone: false, dueDate: Date.now))
 }

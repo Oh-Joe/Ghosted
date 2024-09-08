@@ -34,6 +34,10 @@ struct AccountsHomeView: View {
                     .tabItem {
                         Label("Orders", systemImage: "dollarsign.circle.fill")
                     }
+                TaskListView(account: account)
+                    .tabItem {
+                        Label("Tasks", systemImage: "checklist")
+                    }
             }
             .navigationTitle(account.name)
         }

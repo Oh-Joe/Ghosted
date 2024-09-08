@@ -20,7 +20,7 @@ struct InteractionListView: View {
                     Button {
                         isShowingAddInteractionSheet.toggle()
                     } label: {
-                        Label("New Interaction", systemImage: "note.text.badge.plus")
+                        Label("New Interaction", systemImage: "plus.bubble.fill")
                             .font(.caption)
                             .fontWeight(.heavy)
                             .frame(maxWidth: .infinity)
@@ -48,7 +48,7 @@ struct InteractionListView: View {
                         }
                     }
                 } header: {
-                    Text("Interactions")
+                    Text("") // no need to show anything, but I like the extra space
                 }
             }
             .navigationTitle(account.name)
