@@ -11,7 +11,7 @@ struct TaskDetailView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var modelData: ModelData
     
-    var task: Task
+    @Binding var task: Task
     
     var body: some View {
         NavigationStack {
@@ -27,8 +27,14 @@ struct TaskDetailView: View {
                     HStack{
                         Text("Done?")
                         Spacer()
-                        Image(systemName: task.isDone ? "checkmark.circle.fill" : "circle")
-                            .foregroundStyle(task.isDone ? .green : .primary)
+                        Button {
+                            task.isDone.toggle()
+                        } label: {
+                            Image(systemName: task.isDone ? "checkmark.circle.fill" : "circle")
+                                .foregroundStyle(task.isDone ? .green : .primary)
+                        }
+                        
+                        
                     }
                 }
                 Section {
@@ -56,5 +62,5 @@ struct TaskDetailView: View {
 }
 
 #Preview {
-    TaskDetailView(task: Task(id: UUID(), title: "Task title", contents: "Just print the damn thing!", isDone: true, dueDate: Date.now))
+    TaskDetailView(task: .constant(Task(id: UUID(), title: "Task title", contents: "Just print the damn thing!", isDone: true, dueDate: Date.now)))
 }

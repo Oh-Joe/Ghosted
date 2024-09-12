@@ -19,8 +19,7 @@ struct ContactListView: View {
                         isShowingAddContactSheet.toggle()
                     } label: {
                         Label("New Contact", systemImage: "person.crop.circle.badge.plus")
-                            .font(.caption)
-                            .fontWeight(.heavy)
+                            .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)

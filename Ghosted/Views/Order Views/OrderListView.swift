@@ -21,10 +21,9 @@ struct OrderListView: View {
                     Button {
                         isShowingAddOrderSheet.toggle()
                     } label: {
-                        Label("New Order", systemImage: "banknote")
+                        Label("New Order", systemImage: "dollarsign.square")
                             .foregroundStyle(Color.green)
-                            .font(.caption)
-                            .fontWeight(.heavy)
+                            .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)

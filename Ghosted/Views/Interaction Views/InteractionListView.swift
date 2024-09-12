@@ -21,8 +21,7 @@ struct InteractionListView: View {
                         isShowingAddInteractionSheet.toggle()
                     } label: {
                         Label("New Interaction", systemImage: "plus.bubble.fill")
-                            .font(.caption)
-                            .fontWeight(.heavy)
+                            .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)

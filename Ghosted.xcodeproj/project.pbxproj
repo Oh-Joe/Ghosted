@@ -204,11 +204,11 @@
 		6C784FAF2C8351DC00E64FF0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				6C5FBBF12C8DAECF000E21CB /* Task Views */,
 				6C784FA22C8351DB00E64FF0 /* Account Views */,
-				6C4EB1862C86C28700CA508E /* Interaction Views */,
 				6C784F982C8351DA00E64FF0 /* Contact Views */,
+				6C4EB1862C86C28700CA508E /* Interaction Views */,
 				6C784F9E2C8351DB00E64FF0 /* Order Views */,
+				6C5FBBF12C8DAECF000E21CB /* Task Views */,
 			);
 			path = Views;
 			sourceTree = "<group>";

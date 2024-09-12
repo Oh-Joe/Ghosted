@@ -50,7 +50,7 @@ struct AddTaskView: View {
                             .foregroundStyle(.red)
                     }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button {
                         let newTask = Task(id: UUID(),
                                            title: title,
