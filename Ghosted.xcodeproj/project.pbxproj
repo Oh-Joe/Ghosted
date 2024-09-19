@@ -94,6 +94,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		27502E542C9BFD6D006133F7 /* Sales Views */ = {
+			isa = PBXGroup;
+			children = (
+				27502E522C9BF98D006133F7 /* SalesChartView.swift */,
+			);
+			path = "Sales Views";
+			sourceTree = "<group>";
+		};
 		6C4EB17D2C86B0BB00CA508E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -211,7 +219,7 @@
 				6C4EB1862C86C28700CA508E /* Interaction Views */,
 				6C784F9E2C8351DB00E64FF0 /* Order Views */,
 				6C5FBBF12C8DAECF000E21CB /* Task Views */,
-				27502E522C9BF98D006133F7 /* SalesChartView.swift */,
+				27502E542C9BFD6D006133F7 /* Sales Views */,
 			);
 			path = Views;
 			sourceTree = "<group>";
