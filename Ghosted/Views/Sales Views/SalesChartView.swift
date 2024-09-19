@@ -8,6 +8,7 @@ struct SalesChartView: View {
     @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
     @State private var selectedAccounts: Set<UUID> = []
     @State private var selectedBar: UUID?
+    @State private var chartUpdateTrigger = UUID()
     
     enum ChartPeriod: String, CaseIterable {
         case month = "Month"
@@ -34,15 +35,29 @@ struct SalesChartView: View {
                 }
                 .frame(height: 50) // Adjust this height to match your pickers
                 
+                
+                
                 ScrollView(.horizontal, showsIndicators: false) {
                     chartView
                         .frame(width: max(UIScreen.main.bounds.width, CGFloat(filteredSalesData.count) * 60))
+                        .id(chartUpdateTrigger) // Force chart to update when this changes
                 }
+                
+                Spacer()
                 
                 accountFilterView
             }
-            .navigationTitle("Sales Chart")
+            .navigationTitle(chartTitle)
             .navigationBarTitleDisplayMode(.inline)
+            .onChange(of: selectedPeriod) { _ in
+                chartUpdateTrigger = UUID()
+            }
+            .onChange(of: selectedMonth) { _ in
+                chartUpdateTrigger = UUID()
+            }
+            .onChange(of: selectedYear) { _ in
+                chartUpdateTrigger = UUID()
+            }
         }
     }
     
@@ -60,12 +75,15 @@ struct SalesChartView: View {
         DatePicker("Select Month", selection: $selectedMonth, displayedComponents: [.date])
             .datePickerStyle(CompactDatePickerStyle())
             .padding()
+            .onChange(of: selectedMonth) { _, _ in
+                chartUpdateTrigger = UUID()
+            }
     }
-    
+
     private var yearPicker: some View {
         HStack {
             Text("Select Year")
-                .padding(.leading) // This will use the default padding, matching the DatePicker
+                .padding(.leading)
             Spacer()
             Picker("Select Year", selection: $selectedYear) {
                 ForEach((2020...Calendar.current.component(.year, from: Date())), id: \.self) { year in
@@ -73,41 +91,60 @@ struct SalesChartView: View {
                 }
             }
             .pickerStyle(MenuPickerStyle())
-            .padding(.trailing) // Add trailing padding to match the DatePicker
+            .padding(.trailing)
+            .onChange(of: selectedYear) { _, _ in
+                chartUpdateTrigger = UUID()
+            }
         }
-        .padding(.vertical) // Add vertical padding to match the DatePicker's overall padding
+        .padding(.vertical)
     }
     
     private var chartView: some View {
-        Chart(filteredSalesData) { data in
-            BarMark(
-                x: .value("Account", data.accountName),
-                y: .value("Sales", data.totalSales)
-            )
-            .foregroundStyle(data.accountId == selectedBar ? .accent : .secondary)
-            .annotation(position: .top) {
-                if data.accountId == selectedBar {
-                    Text(data.totalSales, format: .currency(code: "USD"))
-                        .font(.caption)
-                        .foregroundStyle(.accent)
-                }
-            }
-        }
-        .chartXAxis {
-            AxisMarks(values: .automatic) { _ in
-                AxisValueLabel(orientation: .automatic)
-            }
-        }
-        .frame(height: 300)
-        .padding()
-        .gesture(
-            DragGesture(minimumDistance: 0)
-                .onEnded { value in
-                    if let tappedBar = getBarAtLocation(point: value.location) {
-                        selectedBar = (selectedBar == tappedBar) ? nil : tappedBar
+        VStack {
+            
+            Chart(filteredSalesData) { data in
+                BarMark(
+                    x: .value("Account", data.accountName),
+                    y: .value("Sales", data.totalSales)
+                )
+                .foregroundStyle(data.accountId == selectedBar ? .accent : .secondary)
+                .annotation(position: .top) {
+                    if data.accountId == selectedBar {
+                        Text(data.totalSales, format: .currency(code: "USD"))
+                            .font(.caption)
+                            .foregroundStyle(.accent)
                     }
                 }
-        )
+            }
+            .chartXAxis {
+                AxisMarks(values: .automatic) { _ in
+                    AxisValueLabel(orientation: .automatic)
+                }
+            }
+            .frame(height: 300)
+            .padding()
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onEnded { value in
+                        if let tappedBar = getBarAtLocation(point: value.location) {
+                            selectedBar = (selectedBar == tappedBar) ? nil : tappedBar
+                        }
+                    }
+            )
+        }
+    }
+
+    private var chartTitle: String {
+        switch selectedPeriod {
+        case .month:
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMMM yyyy"
+            return formatter.string(from: selectedMonth)
+        case .year:
+            return String(selectedYear)
+        case .allTime:
+            return "All Time"
+        }
     }
     private func getBarAtLocation(point: CGPoint) -> UUID? {
         let chartWidth = UIScreen.main.bounds.width - 32 // Assuming 16pt padding on each side
