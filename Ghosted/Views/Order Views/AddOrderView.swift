@@ -21,7 +21,7 @@ struct AddOrderView: View {
     var isFormValid: Bool {
         guard let orderAmount = orderAmount,
               let dueDate = dueDate else { return false }
-        return !orderAmount.isNaN && !orderNumber.isEmpty && !dueDate.description.isEmpty
+        return orderAmount > 0 && !orderNumber.isEmpty && !dueDate.description.isEmpty
     }
     
     var account: Account
@@ -41,13 +41,10 @@ struct AddOrderView: View {
                 }
                 
                 Section {
-                    TextField("Order amount:", value: Binding(
-                        get: { orderAmount ?? 0 },
-                        set: { orderAmount = $0 }
-                    ), format: .currency(code: currency.rawValue))
+                    TextField("Order amount:", value: $orderAmount.animation(), format: .currency(code: currency.rawValue))
                         .keyboardType(.decimalPad)
                     Picker("Currency:", selection: $currency) {
-                        Text("What will they pay in?")
+                        Text("Currency for this order:")
                         Divider()
                         ForEach(Order.Currency.allCases, id: \.self) { currency in
                             Text(currency.rawValue).tag(currency)
