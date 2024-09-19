@@ -1,15 +1,9 @@
-//
-//  AccountDetailView.swift
-//  eYes
-//
-//  Created by Antoine Moreau on 8/29/24.
-//
-
 import SwiftUI
 
 struct AccountDetailView: View {
     @EnvironmentObject var modelData: ModelData
     @State private var isShowingAddInteractionSheet: Bool = false
+    @State private var showEditAccountSheet = false
     @State private var showInteractionSheet: Bool = false
     @State private var selectedInteraction: Interaction? = nil
     @State private var isShowingAddContactSheet: Bool = false
@@ -132,7 +126,7 @@ struct AccountDetailView: View {
                 }
                 
                 Section {
-
+                    
                     Button {
                         isShowingAddOrderSheet.toggle()
                     } label: {
@@ -154,11 +148,11 @@ struct AccountDetailView: View {
                                 OrderRowView(order: order)                }
                         }
                     }
-
+                    
                 } header: {
                     Text("Orders")
                 }
-
+                
                 
             }
             .navigationTitle(account.name)
@@ -189,14 +183,16 @@ struct AccountDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Edit") {
                         selectedAccount = account
+                        showEditAccountSheet = true
                     }
                 }
             }
-            .sheet(item: $selectedAccount) { accountToEdit in
-                AddAccountView(accountToEdit: accountToEdit)
-                    .environmentObject(modelData)
+            .sheet(isPresented: $showEditAccountSheet) { 
+                if let accountToEdit = selectedAccount {
+                    AddAccountView(isPresented: $showEditAccountSheet, accountToEdit: accountToEdit)
+                        .environmentObject(modelData)
+                }
             }
         }
     }
 }
-

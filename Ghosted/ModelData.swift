@@ -256,6 +256,19 @@ class ModelData: ObservableObject {
         }
     }
     
+    func updateTask(_ updatedTask: Task, in account: Account) {
+        if let accountIndex = accounts.firstIndex(where: { $0.id == account.id }) {
+            if let taskIndex = accounts[accountIndex].tasks.firstIndex(where: { $0.id == updatedTask.id }) {
+                accounts[accountIndex].tasks[taskIndex] = updatedTask
+                saveJSON(accounts, to: accountsFilePath)  // Save changes to file
+            } else {
+                print("Task not found in the account")
+            }
+        } else {
+            print("Account not found for the given task")
+        }
+    }
+
     private func loadAccounts() {
         accounts = loadJSON(from: accountsFilePath) ?? []
     }

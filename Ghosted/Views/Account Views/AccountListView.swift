@@ -1,24 +1,19 @@
-//
-//  AccountListView.swift
-//  eYes
-//
-//  Created by Antoine Moreau on 8/29/24.
-//
-
 import SwiftUI
 
+//MARK: AccountListView
 struct AccountListView: View {
     @EnvironmentObject var modelData: ModelData
     @State private var isOn = false
     @State private var audioManager = AVAudioPlayerManager()
     @State private var showAddAccountSheet = false
-    @State private var showEditAccountSheet = false  // New state variable for editing accounts
+    @State private var showEditAccountSheet = false
+    @State private var selectedAccount: Account? = nil
     @State private var showAddOrderSheet: Bool = false
     @State private var showAddContactSheet: Bool = false
     @State private var showAddInteractionSheet: Bool = false
     @State private var showAddTaskSheet: Bool = false
     @State var showAlert: Bool = false
-    @State private var selectedAccount: Account? = nil
+    
     @State private var sectionExpandedStates: [Account.Status: Bool] = [
         .activeClient: true,
         .warmLead: true,
@@ -130,38 +125,26 @@ struct AccountListView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     selectedAccount = nil
-                    showAddAccountSheet.toggle()
+                    showAddAccountSheet = true
                 } label: {
                     Image(systemName: "plus")
                 }
-                .sheet(isPresented: $showAddAccountSheet) {
-                    AddAccountView(accountToEdit: selectedAccount)
-                        .environmentObject(modelData)
-                }
             }
         }
-        // Sheet for editing an account
-        .sheet(isPresented: Binding(
-            get: { showAddAccountSheet || (showEditAccountSheet && selectedAccount != nil) },
-            set: { newValue in
-                if !newValue {
-                    showAddAccountSheet = false
-                    showEditAccountSheet = false
-                }
-            }
-        )) {
-            if showAddAccountSheet {
-                AddAccountView(accountToEdit: selectedAccount)
-                    .environmentObject(modelData)
-            } else if showEditAccountSheet, let accountToEdit = selectedAccount {
-                AddAccountView(accountToEdit: accountToEdit)
+        .sheet(isPresented: $showAddAccountSheet) {
+            AddAccountView(isPresented: $showAddAccountSheet, accountToEdit: nil)
+                .environmentObject(modelData)
+        }
+        .sheet(isPresented: $showEditAccountSheet) {
+            if let accountToEdit = selectedAccount {
+                AddAccountView(isPresented: $showEditAccountSheet, accountToEdit: accountToEdit)
                     .environmentObject(modelData)
             }
         }
-
         
         
-
+        
+        
         // Add sheets for adding order, contact, and interaction
         .sheet(isPresented: Binding(
             get: { showAddContactSheet && selectedAccount != nil },
@@ -217,6 +200,7 @@ struct AccountListView: View {
     }
 }
 
+//MARK: AccountSection
 struct AccountSectionView: View {
     var status: Account.Status
     var accounts: [Account]
@@ -292,6 +276,7 @@ struct AccountSectionView: View {
     }
 }
 
+//MARK: AccountRow
 struct AccountRow: View {
     var account: Account
     @Binding var selectedAccount: Account?
@@ -300,7 +285,7 @@ struct AccountRow: View {
     @Binding var showAddInteractionSheet: Bool
     @Binding var showAddTaskSheet: Bool
     @Binding var showEditAccountSheet: Bool
-
+    
     var body: some View {
         HStack {
             Text(account.country.countryCode)

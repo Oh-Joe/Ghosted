@@ -1,15 +1,9 @@
-//
-//  AddAccountView.swift
-//  eYes
-//
-//  Created by Antoine Moreau on 8/29/24.
-//
-
 import SwiftUI
 
 struct AddAccountView: View {
     @EnvironmentObject var modelData: ModelData
     @Environment(\.dismiss) var dismiss
+    @Binding var isPresented: Bool
     @State private var name: String = ""
     @State private var accountType: Account.AccountType = .distri
     @State private var country: Country = .afghanistan
@@ -42,26 +36,27 @@ struct AddAccountView: View {
             
             .navigationTitle(isEditing ? "Edit Account" : "Add Account")
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(action: {
-                        dismiss()
-                        
-                    }, label: {
-                        Text("Cancel")
-                            .foregroundStyle(Color.red)
-                    })
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        save()
-                        dismiss()
-                    } label: {
-                        Text("Save")
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button(action: {
+                                    isPresented = false  // Update this line
+                                    dismiss()
+                                }, label: {
+                                    Text("Cancel")
+                                        .foregroundStyle(Color.red)
+                                })
+                            }
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button {
+                                    save()
+                                    isPresented = false  // Add this line
+                                    dismiss()
+                                } label: {
+                                    Text("Save")
+                                }
+                                .disabled(!isFormValid)
+                            }
+                        }
                     }
-                    .disabled(!isFormValid)
-                }
-            }
-        }
         .onAppear {
             if let account = accountToEdit {
                 name = account.name

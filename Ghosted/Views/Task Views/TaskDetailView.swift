@@ -13,6 +13,8 @@ struct TaskDetailView: View {
     
     @Binding var task: Task
     
+    var account: Account
+    
     var body: some View {
         NavigationStack {
             List {
@@ -22,19 +24,16 @@ struct TaskDetailView: View {
                         Spacer()
                         Text(task.dueDate, format: .dateTime.month(.abbreviated).day().year())
                             .fontWeight(.bold)
-                            .foregroundStyle(task.dueDate < Date.now ? .red : .primary)
+                            .foregroundStyle(task.isOverdue ? .red : .primary)
                     }
-                    HStack{
-                        Text("Done?")
-                        Spacer()
-                        Button {
-                            task.isDone.toggle()
-                        } label: {
-                            Image(systemName: task.isDone ? "checkmark.circle.fill" : "circle")
-                                .foregroundStyle(task.isDone ? .green : .primary)
-                        }
-                        
-                        
+                    HStack {
+                        Toggle("Done?", isOn: Binding(
+                            get: { task.isDone },
+                            set: { newValue in
+                                task.isDone = newValue
+                                modelData.updateTask(task, in: account)
+                            }
+                        ))
                     }
                 }
                 Section {
@@ -59,8 +58,4 @@ struct TaskDetailView: View {
             }
         }
     }
-}
-
-#Preview {
-    TaskDetailView(task: .constant(Task(id: UUID(), title: "Task title", contents: "Just print the damn thing!", isDone: true, dueDate: Date.now)))
 }

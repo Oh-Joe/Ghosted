@@ -5,6 +5,8 @@ struct TaskListView: View {
     @State private var isShowingAddTaskSheet: Bool = false
     @State private var showTaskSheet: Bool = false
     @State private var selectedTask: Task? = nil
+    @State private var showCompletedTasks: Bool = false // State to toggle visibility of the completed section
+    
     var account: Account
     
     // Function to get days between two dates
@@ -95,13 +97,43 @@ struct TaskListView: View {
                         Text("30+ Days Out")
                     }
                 }
+                
+                // Completed tasks with chevron and toggle
+                let completedTasks = account.tasks.filter { $0.isDone }
+                if !completedTasks.isEmpty {
+                    Section {
+                        // Chevron and header
+                        Button {
+                            withAnimation {
+                                showCompletedTasks.toggle()
+                            }
+                        } label: {
+                            HStack {
+                                Text("Completed")
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .rotationEffect(.degrees(showCompletedTasks ? 90 : 0)) // Rotate chevron
+                                    .animation(.easeInOut, value: showCompletedTasks)
+                            }
+                        }
+                        .buttonStyle(PlainButtonStyle()) // Remove default button style
+
+                        // Toggle visibility of completed tasks
+                        if showCompletedTasks {
+                            ForEach(completedTasks.sorted(by: { $0.dueDate > $1.dueDate })) { task in
+                                taskButton(for: task)
+                            }
+                        }
+                    }
+                }
+
             }
             .sheet(isPresented: Binding(
                 get: { showTaskSheet && selectedTask != nil },
                 set: { newValue in showTaskSheet = newValue }
             )) {
                 if let selectedTaskBinding = Binding($selectedTask) {
-                    TaskDetailView(task: selectedTaskBinding)  // Safely unwrap the optional binding
+                    TaskDetailView(task: selectedTaskBinding, account: account)  // Safely unwrap the optional binding
                         .presentationDragIndicator(.visible)
                 }
             }
@@ -118,8 +150,4 @@ struct TaskListView: View {
         }
         .foregroundStyle(.primary)
     }
-}
-
-#Preview {
-    TaskListView(account: Account(id: UUID(), name: "ACME Co.", accountType: .distri, country: .france, status: .activeClient, website: "www.acme.com", contacts: [], orders: [], interactions: [], tasks: [], generalNotes: ""))
 }
