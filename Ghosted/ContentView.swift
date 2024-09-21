@@ -26,14 +26,15 @@ struct ContentView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         Spacer()
                         VStack {
-                            Text("Manage your clients and leads")
+                            Text("Accounts")
                                 .font(.title2)
                                 .fontWeight(.bold)
-                            Text("Create accounts and their contacts, orders, tasks, keep track of interactions, and more.")
+                            Text("Create and manage accounts, their contacts, orders, and control your tasks and interactions with them.")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 8)
                         }
+                        Spacer()
                         Spacer()
                     }
                     .foregroundStyle(Color.primary)
@@ -58,6 +59,7 @@ struct ContentView: View {
                                 .padding(.top, 8)
                         }
                         Spacer()
+                        Spacer()
                     }
                     .foregroundStyle(Color.primary)
                     .padding()
@@ -75,11 +77,12 @@ struct ContentView: View {
                             Text("Sales Dashboard")
                                 .font(.title2)
                                 .fontWeight(.bold)
-                            Text("Advanced sales analytics and shit.")
+                            Text("Advanced analytics and shit.")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 8)
                         }
+                        Spacer()
                         Spacer()
                     }
                     .foregroundStyle(Color.primary)
@@ -90,7 +93,7 @@ struct ContentView: View {
             }
             .tabViewStyle(PageTabViewStyle())
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
-            .navigationTitle(pageTitle)
+            .navigationTitle("Home")
         }
     }
     

@@ -21,17 +21,12 @@ struct SalesChartView: View {
         NavigationStack {
             VStack {
                 periodPicker
-                
                 dateSelector
-                
-                ScrollView(.horizontal, showsIndicators: false) {
-                    chartView
-                        .frame(width: max(UIScreen.main.bounds.width, CGFloat(filteredSalesData.count) * 60))
-                }
-                .frame(height: 350)
-                
+                chartView
+                    .frame(height: 350)
                 accountFilterView
             }
+            
             .navigationTitle("Sales Charts")
             .sheet(isPresented: $isShowingMonthPicker) {
                 MonthYearPicker(selectedDate: $selectedDate)
@@ -90,7 +85,7 @@ struct SalesChartView: View {
             if filteredSalesData.isEmpty {
                 VStack {
                     Spacer()
-                    Image("noAccounts")
+                    Image("noData")
                         .resizable()
                         .scaledToFit()
                     Text("No data available for the selected period and account(s).")
@@ -99,7 +94,7 @@ struct SalesChartView: View {
                         .multilineTextAlignment(.center)
                     Spacer()
                 }
-                .frame(height: 300) // Set a frame to keep layout consistent
+                .frame(height: 350) // Set a frame to keep layout consistent
             } else {
                 Chart(filteredSalesData) { data in
                     BarMark(
@@ -120,7 +115,7 @@ struct SalesChartView: View {
                         AxisValueLabel(orientation: .automatic)
                     }
                 }
-                .frame(height: 300)
+                .frame(height: 350)
                 .padding()
                 .gesture(
                     DragGesture(minimumDistance: 0)
@@ -209,5 +204,5 @@ struct SalesData: Identifiable {
 }
 
 extension PresentationDetent {
-    static let customHeight = Self.height(250) // Adjust this value as needed
+    static let customHeight = Self.height(250)
 }
