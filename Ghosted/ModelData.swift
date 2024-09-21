@@ -1,10 +1,3 @@
-//
-//  ModelView.swift
-//  eYes
-//
-//  Created by Antoine Moreau on 8/29/24.
-//
-
 import Foundation
 
 //MARK: Account
@@ -70,10 +63,12 @@ struct Order: Hashable, Codable, Identifiable {
             return dueDate < startOfToday && !isFullyPaid
         }
     
-    enum Currency: String, CaseIterable, Codable {
+    enum Currency: String, CaseIterable, Codable, Identifiable {
         case eur = "EUR"
         case gbp = "GBP"
         case usd = "USD"
+        
+        var id: String { self.rawValue }
     }
     
     enum PaymentStatus: String, CaseIterable, Codable {

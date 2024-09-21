@@ -5,11 +5,12 @@ struct ContentView: View {
     @State private var selectedTab: Tab = .accounts
 
     var randoAccounts: Int = Int.random(in: 1...5)
-    var randoSales: Int = Int.random(in: 1...6)
+    var randoSalesChart: Int = Int.random(in: 1...3)
+    var randoSalesDashboard: Int = Int.random(in: 4...6)
 
     enum Tab {
         case accounts
-        case salesChart
+        case sales
         case contacts
     }
 
@@ -23,33 +24,60 @@ struct ContentView: View {
                             .scaledToFit()
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         Spacer()
-                        Text("View your clients and leads.")
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: .infinity)
+                        VStack {
+                            Text("Manage your clients and leads.")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                            Text("Create accounts and their contacts, orders, tasks, keep track of interactions, and more.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .padding(.top, 8)
+                        }
                         Spacer()
                     }
                     .foregroundStyle(Color.primary)
                     .padding()
                 }
                 .tag(Tab.accounts)
-
-                NavigationLink(destination: SalesChartView()) {
-                    VStack {
-                        Image("SectionSales\(randoSales)")
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                        Spacer()
-                        Text("View sales charts and analytics.")
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: .infinity)
-                        Spacer()
+                VStack {
+                    HStack {
+                        NavigationLink(destination: SalesChartView()) {
+                            VStack {
+                                Image("SectionSales\(randoSalesChart)")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                Text("Bar Chart")
+                                
+                                
+                            }
+                        }
+                        
+                        NavigationLink(destination: SalesDashboardView()) {
+                            VStack {
+                                Image("SectionSales\(randoSalesDashboard)")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                Text("Dashboard")
+                                
+                            }
+                        }
                     }
-                    .foregroundStyle(Color.primary)
-                    .padding()
+                    Spacer()
+                    VStack {
+                        Text("Sales charts and shit.")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        Text("Get a bird's eye view of your sales by account over months, years, or all time.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.top, 8)
+                    }
+                    Spacer()
                 }
-                .tag(Tab.salesChart)
-
+                .padding()
+                .tag(Tab.sales)
             }
             .tabViewStyle(PageTabViewStyle())
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
@@ -62,7 +90,7 @@ struct ContentView: View {
         switch selectedTab {
         case .accounts:
             return "Accounts"
-        case .salesChart:
+        case .sales:
             return "Sales"
         case .contacts:
             return "Contacts"
