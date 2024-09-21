@@ -33,7 +33,6 @@ struct SalesChartView: View {
                 accountFilterView
             }
             .navigationTitle("Sales Charts")
-            .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $isShowingMonthPicker) {
                 MonthYearPicker(selectedDate: $selectedDate)
                     .presentationDetents([.customHeight])
@@ -87,38 +86,55 @@ struct SalesChartView: View {
     }
     
     private var chartView: some View {
-        Chart(filteredSalesData) { data in
-            BarMark(
-                x: .value("Account", data.accountName),
-                y: .value("Sales", data.totalSales)
-            )
-            .foregroundStyle(data.accountId == selectedBar ? Color.accentColor : Color.secondary)
-            .annotation(position: .top) {
-                if data.accountId == selectedBar {
-                    Text(data.totalSales, format: .currency(code: "USD"))
-                        .font(.caption)
-                        .foregroundColor(.accentColor)
+        Group {
+            if filteredSalesData.isEmpty {
+                VStack {
+                    Spacer()
+                    Image("noAccounts")
+                        .resizable()
+                        .scaledToFit()
+                    Text("No data available for the selected period and account(s).")
+                        .font(.headline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                    Spacer()
                 }
-            }
-        }
-        .chartXAxis {
-            AxisMarks(values: .automatic) { _ in
-                AxisValueLabel(orientation: .automatic)
-            }
-        }
-        .frame(height: 300)
-        .padding()
-        .gesture(
-            DragGesture(minimumDistance: 0)
-                .onEnded { value in
-                    if let tappedBar = getBarAtLocation(point: value.location) {
-                        selectedBar = (selectedBar == tappedBar) ? nil : tappedBar
+                .frame(height: 300) // Set a frame to keep layout consistent
+            } else {
+                Chart(filteredSalesData) { data in
+                    BarMark(
+                        x: .value("Account", data.accountName),
+                        y: .value("Sales", data.totalSales)
+                    )
+                    .foregroundStyle(data.accountId == selectedBar ? Color.accentColor : Color.secondary)
+                    .annotation(position: .top) {
+                        if data.accountId == selectedBar {
+                            Text(data.totalSales, format: .currency(code: "USD"))
+                                .font(.caption)
+                                .foregroundColor(.accentColor)
+                        }
                     }
                 }
-        )
-        .id(chartUpdateTrigger)
+                .chartXAxis {
+                    AxisMarks(values: .automatic) { _ in
+                        AxisValueLabel(orientation: .automatic)
+                    }
+                }
+                .frame(height: 300)
+                .padding()
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { value in
+                            if let tappedBar = getBarAtLocation(point: value.location) {
+                                selectedBar = (selectedBar == tappedBar) ? nil : tappedBar
+                            }
+                        }
+                )
+                .id(chartUpdateTrigger)
+            }
+        }
     }
-    
+
     private var accountFilterView: some View {
         List {
             ForEach(modelData.accounts) { account in
