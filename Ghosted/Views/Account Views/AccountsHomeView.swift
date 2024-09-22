@@ -18,7 +18,7 @@ struct AccountsHomeView: View {
         NavigationStack {
             
             TabView {
-                NewAccountDetailView(account: account)
+                AccountDetailView(account: account)
                     .tabItem {
                         Label("Details", systemImage: "list.bullet.clipboard")
                     }

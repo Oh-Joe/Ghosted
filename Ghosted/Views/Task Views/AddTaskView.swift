@@ -58,6 +58,7 @@ struct AddTaskView: View {
                                            isDone: isDone,
                                            dueDate: dueDate ?? Date.now)
                         modelData.addTask(newTask, to: account)
+                        modelData.objectWillChange.send()  // Notify observers of the change
                         dismiss()
                     } label : {
                         Text("Save")
@@ -65,11 +66,8 @@ struct AddTaskView: View {
                     .disabled(!isFormValid)
                 }
             }
+            .presentationDragIndicator(.visible)
         }
     }
-}
-
-#Preview {
-    AddTaskView(account: Account(id: UUID(), name: "ACME Co.", accountType: .distri, country: .france, status: .activeClient, website: "www.acme.com", contacts: [], orders: [], interactions: [], tasks: [], generalNotes: ""))
 }
 

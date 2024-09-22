@@ -11,7 +11,9 @@ struct OrderDetailView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var modelData: ModelData
 
-    var order: Order
+    @Binding var order: Order
+    
+    var account: Account
     
     var body: some View {
         NavigationStack {
@@ -21,10 +23,13 @@ struct OrderDetailView: View {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                     HStack {
-                        Image(systemName: order.isFullyPaid ? "checkmark.circle.fill" : order.isOverdue ? "calendar.badge.exclamationmark" : "checkmark.circle")
-                            .foregroundStyle(order.isFullyPaid ? .green : order.isOverdue ? .red : .secondary)
-                        Text(order.isFullyPaid ? "Paid" : order.isOverdue ? "Overdue" : "Open")
-                            .foregroundStyle(order.isFullyPaid ? .green : order.isOverdue ? .red : .primary)
+                        Toggle("Paid?", isOn: Binding(
+                            get: {order.isFullyPaid },
+                            set: { newValue in
+                                order.isFullyPaid = newValue
+                                modelData.updateOrder(order, in: account)
+                            }
+                        ))
                     }
                 } header: {
                     HStack {

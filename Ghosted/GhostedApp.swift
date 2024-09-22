@@ -10,6 +10,11 @@ import SwiftUI
 @main
 struct GhostedApp: App {
     @StateObject private var modelData = ModelData()
+    
+    init() {
+            NotificationManager.shared.requestPermission()
+        }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

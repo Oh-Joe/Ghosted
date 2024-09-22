@@ -68,19 +68,19 @@ struct AddOrderView: View {
                     Button {
                         let newOrder = Order(id: UUID(),
                                              issuedDate: issuedDate,
-                                             dueDate: dueDate ?? Date(),
+                                             dueDate: dueDate ?? Date.now,
                                              orderAmount: orderAmount ?? 0,
                                              currency: currency,
                                              orderNumber: orderNumber,
                                              isFullyPaid: isFullyPaid
                         )
                         modelData.addOrder(newOrder, to: account)
+                        modelData.objectWillChange.send()
                         dismiss()
                     } label: {
                         Text("Save")
                     }
                     .disabled(!isFormValid)
-
                 }
             }
             .presentationDragIndicator(.visible)

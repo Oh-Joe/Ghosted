@@ -34,9 +34,7 @@ struct ContactListView: View {
                             }
                         }
                     }
-                } header: {
-                    Text("") // no need to show anything, but I like the extra space
-                }
+                } 
             }
             .navigationTitle(account.name)
         }

@@ -184,6 +184,8 @@ class ModelData: ObservableObject {
         if let index = accounts.firstIndex(where: { $0.id == account.id }) {
             accounts[index].orders.append(order)
             saveJSON(accounts, to: accountsFilePath)
+            NotificationManager.shared.scheduleNotification(for: order)
+            objectWillChange.send()
         } else {
             print("Account not found")
         }
@@ -202,6 +204,8 @@ class ModelData: ObservableObject {
         if let index = accounts.firstIndex(where: { $0.id == account.id }) {
             accounts[index].tasks.append(task)
             saveJSON(accounts, to: accountsFilePath)
+            NotificationManager.shared.scheduleNotification(for: task)
+            objectWillChange.send()
         } else {
             print("Account not found")
         }
@@ -252,17 +256,32 @@ class ModelData: ObservableObject {
     }
     
     func updateTask(_ updatedTask: Task, in account: Account) {
-        if let accountIndex = accounts.firstIndex(where: { $0.id == account.id }) {
-            if let taskIndex = accounts[accountIndex].tasks.firstIndex(where: { $0.id == updatedTask.id }) {
-                accounts[accountIndex].tasks[taskIndex] = updatedTask
-                saveJSON(accounts, to: accountsFilePath)  // Save changes to file
+            if let accountIndex = accounts.firstIndex(where: { $0.id == account.id }) {
+                if let taskIndex = accounts[accountIndex].tasks.firstIndex(where: { $0.id == updatedTask.id }) {
+                    accounts[accountIndex].tasks[taskIndex] = updatedTask
+                    saveJSON(accounts, to: accountsFilePath)
+                    NotificationManager.shared.scheduleNotification(for: updatedTask)
+                } else {
+                    print("Task not found in the account")
+                }
             } else {
-                print("Task not found in the account")
+                print("Account not found for the given task")
             }
-        } else {
-            print("Account not found for the given task")
         }
-    }
+    
+    func updateOrder(_ updatedOrder: Order, in account: Account) {
+            if let accountIndex = accounts.firstIndex(where: { $0.id == account.id }) {
+                if let orderIndex = accounts[accountIndex].orders.firstIndex(where: { $0.id == updatedOrder.id }) {
+                    accounts[accountIndex].orders[orderIndex] = updatedOrder
+                    saveJSON(accounts, to: accountsFilePath)
+                    NotificationManager.shared.scheduleNotification(for: updatedOrder)
+                } else {
+                    print("Order not found in the account")
+                }
+            } else {
+                print("Account not found for the given order")
+            }
+        }
 
     private func loadAccounts() {
         accounts = loadJSON(from: accountsFilePath) ?? []

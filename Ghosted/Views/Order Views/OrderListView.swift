@@ -41,17 +41,17 @@ struct OrderListView: View {
                             }
                         }
                     }
-                } header: {
-                    Text("") // no need to show anything, but I like the extra space
-                }
+                } 
             }
             .navigationTitle(account.name)
             .sheet(isPresented: Binding(
                 get: { showOrderSheet && selectedOrder != nil },
                 set: { newValue in showOrderSheet = newValue }
             )) {
-                OrderDetailView(order: selectedOrder!)
-                    .presentationDragIndicator(.visible)
+                if let selectedOrderBinding = Binding($selectedOrder) {
+                    OrderDetailView(order: selectedOrderBinding, account: account)  // Safely unwrap the optional binding
+                        .presentationDragIndicator(.visible)
+                }
             }
         }
     }

@@ -33,16 +33,16 @@ struct SalesChartView: View {
                     .presentationDetents([.customHeight])
                     .presentationDragIndicator(.visible)
             }
-            .onChange(of: selectedDate) { _, _ in
+            .onChangeCompatible(of: selectedDate) { _ in
                 chartUpdateTrigger = UUID()
             }
-            .onChange(of: selectedYear) { _, _ in
+            .onChangeCompatible(of: selectedYear) { _ in
                 chartUpdateTrigger = UUID()
             }
-            .onChange(of: selectedPeriod) { _, _ in
+            .onChangeCompatible(of: selectedPeriod) { _ in
                 chartUpdateTrigger = UUID()
             }
-            .onChange(of: selectedAccounts) { _, _ in
+            .onChangeCompatible(of: selectedAccounts) { _ in
                 chartUpdateTrigger = UUID()
             }
         }
@@ -129,7 +129,7 @@ struct SalesChartView: View {
             }
         }
     }
-
+    
     private var accountFilterView: some View {
         List {
             ForEach(modelData.accounts) { account in
@@ -205,4 +205,16 @@ struct SalesData: Identifiable {
 
 extension PresentationDetent {
     static let customHeight = Self.height(250)
+}
+
+extension View {
+    func onChangeCompatible<Value: Equatable>(of value: Value, perform action: @escaping (Value) -> Void) -> some View {
+        if #available(iOS 17.0, *) {
+            return onChange(of: value) { oldValue, newValue in
+                action(newValue)
+            }
+        } else {
+            return onChange(of: value, perform: action)
+        }
+    }
 }
