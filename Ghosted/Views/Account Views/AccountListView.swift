@@ -120,6 +120,11 @@ struct AccountListView: View {
                 }
             }
         }
+        .onChange(of: showEditAccountSheet) { _, newValue in
+            if !newValue {
+                selectedAccount = nil
+            }
+        }
         .navigationTitle("Accounts")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -135,7 +140,9 @@ struct AccountListView: View {
             AddAccountView(isPresented: $showAddAccountSheet, accountToEdit: nil)
                 .environmentObject(modelData)
         }
-        .sheet(isPresented: $showEditAccountSheet) {
+        .sheet(isPresented: $showEditAccountSheet, onDismiss: {
+            selectedAccount = nil  // Reset selectedAccount when the sheet is dismissed
+        }) {
             if let accountToEdit = selectedAccount {
                 AddAccountView(isPresented: $showEditAccountSheet, accountToEdit: accountToEdit)
                     .environmentObject(modelData)
@@ -299,7 +306,9 @@ struct AccountRow: View {
         .contextMenu {
             Button {
                 selectedAccount = account
-                showEditAccountSheet = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    showEditAccountSheet = true
+                }
             } label: {
                 Text("Edit Account")
                 Spacer()
