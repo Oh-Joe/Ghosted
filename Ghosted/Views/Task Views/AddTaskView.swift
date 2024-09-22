@@ -1,10 +1,3 @@
-//
-//  AddTaskView.swift
-//  Ghosted
-//
-//  Created by Antoine Moreau on 9/8/24.
-//
-
 import SwiftUI
 
 struct AddTaskView: View {
@@ -17,8 +10,9 @@ struct AddTaskView: View {
     @State var dueDate: Date? = nil
     
     var isFormValid: Bool {
-        !contents.isEmpty && !title.isEmpty && !((dueDate?.description.isEmpty) == nil)
+        !contents.isEmpty && !title.isEmpty
     }
+    
     var account: Account
     
     var body: some View {
@@ -28,7 +22,7 @@ struct AddTaskView: View {
                 
                 Section {
                     DatePicker("To complete by:", selection: Binding(
-                        get: { dueDate ?? Date.now },
+                        get: { dueDate ?? Date() },
                         set: { dueDate = $0 }
                     ), displayedComponents: .date)
                     Toggle("Done already?", isOn: $isDone)

@@ -1,10 +1,3 @@
-//
-//  AddOrderView.swift
-//  eYes
-//
-//  Created by Antoine Moreau on 8/30/24.
-//
-
 import SwiftUI
 
 struct AddOrderView: View {

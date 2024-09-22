@@ -47,13 +47,14 @@ struct TaskListView: View {
                 }
                 
                 // Tasks due in the next 7 days
+                let startOfToday = Calendar.current.startOfDay(for: Date())
                 let upcomingTasks = account.tasks.filter {
-                    if let days = daysBetween(Date.now, and: $0.dueDate), !$0.isDone {
-                        return days > 0 && days <= 7
+                    if let days = daysBetween(startOfToday, and: $0.dueDate), !$0.isDone {
+                        return days >= 0 && days <= 7
                     }
                     return false
                 }
-                
+
                 if !upcomingTasks.isEmpty {
                     Section {
                         ForEach(upcomingTasks.sorted(by: { $0.dueDate > $1.dueDate })) { task in
