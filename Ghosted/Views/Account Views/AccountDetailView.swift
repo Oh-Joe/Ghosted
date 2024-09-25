@@ -50,7 +50,9 @@ struct AccountDetailView: View {
                             Text(account.website)
                         }
                     }
-                } 
+                } header: {
+                    Text("") // just for the space
+                }
                 
                 if !account.generalNotes.isEmpty {
                     Section {

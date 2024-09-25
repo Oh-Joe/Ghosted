@@ -227,7 +227,7 @@ struct AccountSectionView: View {
         
         if !accounts.isEmpty {
             
-            Section(header: sectionHeaderView) {
+            Section {
                 if isExpanded {
                     ForEach(accounts.sorted(by: { $0.country.countryCode < $1.country.countryCode })) { account in
                         NavigationLink(destination: AccountsHomeView(account: account)) {
@@ -244,6 +244,8 @@ struct AccountSectionView: View {
                         }
                     }
                 }
+            } header: {
+                sectionHeaderView
             }
         }
     }

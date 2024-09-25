@@ -34,7 +34,9 @@ struct ContactListView: View {
                             }
                         }
                     }
-                } 
+                } header: {
+                    Text("") // just for the space
+                }
             }
             .navigationTitle(account.name)
         }

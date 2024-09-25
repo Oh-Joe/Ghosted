@@ -1,17 +1,23 @@
 import SwiftUI
 
 struct TaskListView: View {
-    
     @State private var isShowingAddTaskSheet: Bool = false
     @State private var showTaskSheet: Bool = false
     @State private var selectedTask: Task? = nil
-    @State private var showCompletedTasks: Bool = false // State to toggle visibility of the completed section
-    
     var account: Account
     
-    // Function to get days between two dates
-    private func daysBetween(_ date1: Date, and date2: Date) -> Int? {
-        return Calendar.current.dateComponents([.day], from: date1, to: date2).day
+    @State private var sectionExpandedStates: [TaskSection: Bool] = [
+        .pastDue: true,
+        .today: true,
+        .upcoming: true,
+        .completed: false
+    ]
+    
+    enum TaskSection: String, CaseIterable {
+        case pastDue = "Past Due"
+        case today = "Today"
+        case upcoming = "Upcoming"
+        case completed = "Completed"
     }
     
     var body: some View {
@@ -30,125 +36,95 @@ struct TaskListView: View {
                     .sheet(isPresented: $isShowingAddTaskSheet) {
                         AddTaskView(account: account)
                     }
+                } header: {
+                    Text("") // just for the space
                 }
                 
-                // Past due tasks
-                let pastDueTasks = account.tasks.filter {
-                    $0.isOverdue
-                }
-                if !pastDueTasks.isEmpty {
-                    Section {
-                        ForEach(pastDueTasks.sorted(by: { $0.dueDate > $1.dueDate })) { task in
-                            taskButton(for: task)
-                        }
-                    } header: {
-                        Text("Past Due")
+                ForEach(TaskSection.allCases, id: \.self) { section in
+                    let tasksForSection = tasksForSection(section)
+                    if !tasksForSection.isEmpty {
+                        TaskSectionView(
+                            section: section,
+                            tasks: tasksForSection,
+                            isExpanded: sectionExpandedStates[section] ?? false,
+                            toggleExpansion: {
+                                withAnimation {
+                                    sectionExpandedStates[section]?.toggle()
+                                }
+                            },
+                            selectedTask: $selectedTask,
+                            showTaskSheet: $showTaskSheet
+                        )
                     }
                 }
-                
-                // Tasks due in the next 7 days
-                let startOfToday = Calendar.current.startOfDay(for: Date())
-                let upcomingTasks = account.tasks.filter {
-                    if let days = daysBetween(startOfToday, and: $0.dueDate), !$0.isDone {
-                        return days >= 0 && days <= 7
-                    }
-                    return false
-                }
-
-                if !upcomingTasks.isEmpty {
-                    Section {
-                        ForEach(upcomingTasks.sorted(by: { $0.dueDate > $1.dueDate })) { task in
-                            taskButton(for: task)
-                        }
-                    } header: {
-                        Text("Due in the Next 7 Days")
-                    }
-                }
-                
-                // Tasks due in the next 7-30 days
-                let laterTasks = account.tasks.filter {
-                    if let days = daysBetween(Date.now, and: $0.dueDate), !$0.isDone {
-                        return days > 7 && days <= 30
-                    }
-                    return false
-                }
-                if !laterTasks.isEmpty {
-                    Section {
-                        ForEach(laterTasks.sorted(by: { $0.dueDate > $1.dueDate })) { task in
-                            taskButton(for: task)
-                        }
-                    } header: {
-                        Text("7-30 Days Out")
-                    }
-                }
-                
-                // Tasks due after 30 days
-                let farTasks = account.tasks.filter {
-                    if let days = daysBetween(Date.now, and: $0.dueDate), !$0.isDone {
-                        return days > 30
-                    }
-                    return false
-                }
-                if !farTasks.isEmpty {
-                    Section {
-                        ForEach(farTasks.sorted(by: { $0.dueDate > $1.dueDate })) { task in
-                            taskButton(for: task)
-                        }
-                    } header: {
-                        Text("30+ Days Out")
-                    }
-                }
-                
-                // Completed tasks with chevron and toggle
-                let completedTasks = account.tasks.filter { $0.isDone }
-                if !completedTasks.isEmpty {
-                    Section {
-                        // Chevron and header
-                        Button {
-                            withAnimation {
-                                showCompletedTasks.toggle()
-                            }
-                        } label: {
-                            HStack {
-                                Text("Completed")
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .rotationEffect(.degrees(showCompletedTasks ? 90 : 0)) // Rotate chevron
-                                    .animation(.easeInOut, value: showCompletedTasks)
-                            }
-                        }
-                        .buttonStyle(PlainButtonStyle()) // Remove default button style
-
-                        // Toggle visibility of completed tasks
-                        if showCompletedTasks {
-                            ForEach(completedTasks.sorted(by: { $0.dueDate > $1.dueDate })) { task in
-                                taskButton(for: task)
-                            }
-                        }
-                    }
-                }
-
             }
+            .navigationTitle(account.name)
             .sheet(isPresented: Binding(
                 get: { showTaskSheet && selectedTask != nil },
                 set: { newValue in showTaskSheet = newValue }
             )) {
                 if let selectedTaskBinding = Binding($selectedTask) {
-                    TaskDetailView(task: selectedTaskBinding, account: account)  // Safely unwrap the optional binding
+                    TaskDetailView(task: selectedTaskBinding, account: account)
                         .presentationDragIndicator(.visible)
                 }
             }
         }
     }
     
-    // Reusable task button
-    private func taskButton(for task: Task) -> some View {
-        Button {
-            selectedTask = task
-            showTaskSheet = true
-        } label: {
-            TaskRowView(task: task)
+    private func tasksForSection(_ section: TaskSection) -> [Task] {
+        let today = Calendar.current.startOfDay(for: Date())
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+        
+        switch section {
+        case .pastDue:
+            return account.tasks.filter { $0.isOverdue && !$0.isDone }.sorted(by: { $0.dueDate < $1.dueDate })
+        case .today:
+            return account.tasks.filter { Calendar.current.isDate($0.dueDate, inSameDayAs: today) && !$0.isDone }
+                .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
+        case .upcoming:
+            return account.tasks.filter { $0.dueDate >= tomorrow && !$0.isDone }.sorted(by: { $0.dueDate < $1.dueDate })
+        case .completed:
+            return account.tasks.filter { $0.isDone }.sorted(by: { $0.dueDate > $1.dueDate })
         }
-        .foregroundStyle(.primary)
+    }
+}
+
+struct TaskSectionView: View {
+    var section: TaskListView.TaskSection
+    var tasks: [Task]
+    var isExpanded: Bool
+    var toggleExpansion: () -> Void
+    @Binding var selectedTask: Task?
+    @Binding var showTaskSheet: Bool
+    
+    var body: some View {
+        Section {
+            if isExpanded {
+                ForEach(tasks) { task in
+                    Button {
+                        selectedTask = task
+                        showTaskSheet = true
+                    } label: {
+                        TaskRowView(task: task)
+                    }
+                    .foregroundStyle(.primary)
+                }
+            }
+        } header: {
+            Button(action: toggleExpansion) {
+                HStack {
+                    Text(section.rawValue)
+                    Text("\(tasks.count)")
+                        .font(.caption)
+                        .frame(width: 15, height: 15)
+                        .background(Circle().fill(Color.accentColor).opacity(0.3))
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                        .animation(.easeInOut, value: isExpanded)
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+        }
     }
 }

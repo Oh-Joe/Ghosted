@@ -13,7 +13,7 @@ struct TaskRowView: View {
     
     var body: some View {
         HStack {
-            Image(systemName: task.isOverdue ? "exclamationmark.triangle" : "checkmark.circle")
+            Image(systemName: task.isOverdue ? "exclamationmark.triangle" : task.isDone ? "checkmark.circle.fill" : "checkmark.circle")
                 .foregroundStyle(task.isOverdue ? .red : task.isDone ? .green : .secondary)
             Text(task.title)
             Spacer()
