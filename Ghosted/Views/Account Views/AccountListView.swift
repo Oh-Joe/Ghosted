@@ -1,6 +1,8 @@
 import SwiftUI
 
 //MARK: AccountListView
+import SwiftUI
+
 struct AccountListView: View {
     @EnvironmentObject var modelData: ModelData
     @State private var isOn = false
@@ -22,102 +24,21 @@ struct AccountListView: View {
         .closedLost: true
     ]
     
-    // Sort accounts by status, return array of Account
-    private func sortedAccounts(status: Account.Status) -> [Account] {
-        return modelData.accounts
-            .filter { $0.status == status }
-            .sorted { $0.name < $1.name }
-    }
-    
     var body: some View {
-        
-        NavigationStack {
+        Group {
             if modelData.accounts.isEmpty {
-                VStack {
-                    Spacer()
-                    Button {
-                        playSound(soundName: "Sheeit")
-                        showAlert.toggle()
-                    } label: {
-                        Image("confusedGhosty")
-                            .resizable()
-                            .scaledToFit()
-                            .shadow(color: .primary.opacity(0.5) , radius: 15)
-                            .padding(.horizontal, 50)
-                    }
-                    
-                    var message1: AttributedString {
-                        var result = AttributedString("Frankly, you should be embarrassed.\nI mean, you haven't found even ")
-                        result.font = .caption
-                        result.foregroundColor = .secondary
-                        return result
-                    }
-                    var message2: AttributedString {
-                        var result = AttributedString("one")
-                        result.font = .caption.italic()
-                        result.foregroundColor = .secondary
-                        return result
-                    }
-                    var message3: AttributedString {
-                        var result = AttributedString(" potential client?\n\nAnyway, see that ")
-                        result.font = .caption
-                        result.foregroundColor = .secondary
-                        return result
-                    }
-                    var message4: AttributedString {
-                        var result = AttributedString("+")
-                        result.foregroundColor = .accentColor
-                        return result
-                    }
-                    var message5: AttributedString {
-                        var result = AttributedString(" sign in the top right corner?")
-                        result.font = .caption
-                        result.foregroundColor = .secondary
-                        return result
-                    }
-                    
-                    Text("Wow, such empty.")
-                    Text(message1 + message2 + message3 + message4 + message5)
-                        .multilineTextAlignment(.center)
-                        .padding(20)
-                    
-                    Spacer()
-                    Spacer()
-                }
-                .alert("You think you're funny?",
-                       isPresented: $showAlert
-                ) {
-                    Button("OK") {
-                        playSound(soundName: "okay")
-                    }
-                } message: {Text("Just tap the + in the top right corner, OK?")
-                }
+                EmptyStateView(showAlert: $showAlert, playSound: playSound)
             } else {
-                List {
-                    ForEach(Account.Status.allCases, id: \.self) { status in
-                        let accountsForStatus = sortedAccounts(status: status)
-                        AccountSectionView(
-                            status: status,
-                            accounts: accountsForStatus,
-                            accountCount: accountsForStatus.count,
-                            isExpanded: sectionExpandedStates[status] ?? false,
-                            toggleExpansion: {
-                                withAnimation {
-                                    sectionExpandedStates[status]?.toggle()
-                                }
-                            },
-                            deleteAction: { indexSet in
-                                deleteAccount(at: indexSet, for: status)
-                            },
-                            selectedAccount: $selectedAccount,
-                            showAddOrderSheet: $showAddOrderSheet,
-                            showAddContactSheet: $showAddContactSheet,
-                            showAddInteractionSheet: $showAddInteractionSheet,
-                            showAddTaskSheet: $showAddTaskSheet,
-                            showEditAccountSheet: $showEditAccountSheet // Pass showEditAccountSheet binding
-                        )
-                    }
-                }
+                AccountListContent(
+                    sectionExpandedStates: $sectionExpandedStates,
+                    selectedAccount: $selectedAccount,
+                    showAddOrderSheet: $showAddOrderSheet,
+                    showAddContactSheet: $showAddContactSheet,
+                    showAddInteractionSheet: $showAddInteractionSheet,
+                    showAddTaskSheet: $showAddTaskSheet,
+                    showEditAccountSheet: $showEditAccountSheet,
+                    deleteAccount: deleteAccount
+                )
             }
         }
         .onChange(of: showEditAccountSheet) { _, newValue in
@@ -141,18 +62,13 @@ struct AccountListView: View {
                 .environmentObject(modelData)
         }
         .sheet(isPresented: $showEditAccountSheet, onDismiss: {
-            selectedAccount = nil  // Reset selectedAccount when the sheet is dismissed
+            selectedAccount = nil
         }) {
             if let accountToEdit = selectedAccount {
                 AddAccountView(isPresented: $showEditAccountSheet, accountToEdit: accountToEdit)
                     .environmentObject(modelData)
             }
         }
-        
-        
-        
-        
-        // Add sheets for adding order, contact, and interaction
         .sheet(isPresented: Binding(
             get: { showAddContactSheet && selectedAccount != nil },
             set: { newValue in showAddContactSheet = newValue }
@@ -160,7 +76,6 @@ struct AccountListView: View {
             AddContactView(account: selectedAccount!)
                 .presentationDragIndicator(.visible)
         }
-        
         .sheet(isPresented: Binding(
             get: { showAddInteractionSheet && selectedAccount != nil },
             set: { newValue in showAddInteractionSheet = newValue }
@@ -168,7 +83,6 @@ struct AccountListView: View {
             AddInteractionView(account: selectedAccount!)
                 .presentationDragIndicator(.visible)
         }
-        
         .sheet(isPresented: Binding(
             get: { showAddOrderSheet && selectedAccount != nil },
             set: { newValue in showAddOrderSheet = newValue }
@@ -176,7 +90,6 @@ struct AccountListView: View {
             AddOrderView(account: selectedAccount!)
                 .presentationDragIndicator(.visible)
         }
-        
         .sheet(isPresented: Binding(
             get: { showAddTaskSheet && selectedAccount != nil },
             set: { newValue in showAddTaskSheet = newValue }
@@ -186,7 +99,6 @@ struct AccountListView: View {
         }
     }
     
-    // Delete function
     private func deleteAccount(at offsets: IndexSet, for status: Account.Status) {
         for index in offsets {
             let accountToDelete = sortedAccounts(status: status)[index]
@@ -200,12 +112,122 @@ struct AccountListView: View {
             return
         }
         
-        isOn.toggle() // Toggle before playing the sound
+        isOn.toggle()
         audioManager.playSound(with: url) {
-            self.isOn.toggle() // Toggle after the sound finishes
+            self.isOn.toggle()
         }
     }
+    
+    private func sortedAccounts(status: Account.Status) -> [Account] {
+        return modelData.accounts
+            .filter { $0.status == status }
+            .sorted { $0.name < $1.name }
+    }
 }
+
+struct EmptyStateView: View {
+    @Binding var showAlert: Bool
+    var playSound: (String) -> Void
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            Button {
+                playSound("Sheeit")
+                showAlert.toggle()
+            } label: {
+                Image("confusedGhosty")
+                    .resizable()
+                    .scaledToFit()
+                    .shadow(color: .primary.opacity(0.5) , radius: 15)
+                    .padding(.horizontal, 50)
+            }
+            
+            Text("Wow, such empty.")
+            Text(emptyStateMessage)
+                .multilineTextAlignment(.center)
+                .padding(20)
+            
+            Spacer()
+            Spacer()
+        }
+        .alert("You think you're funny?", isPresented: $showAlert) {
+            Button("OK") {
+                playSound("okay")
+            }
+        } message: {
+            Text("Just tap the + in the top right corner, OK?")
+        }
+    }
+    
+    private var emptyStateMessage: AttributedString {
+        var message = AttributedString("Frankly, you should be embarrassed.\nI mean, you haven't found even ")
+        message.font = .caption
+        message.foregroundColor = .secondary
+        
+        var oneWord = AttributedString("one")
+        oneWord.font = .caption.italic()
+        oneWord.foregroundColor = .secondary
+        
+        message.append(oneWord)
+        message.append(AttributedString(" potential client?\n\nAnyway, see that "))
+        
+        var plusSign = AttributedString("+")
+        plusSign.foregroundColor = .accentColor
+        
+        message.append(plusSign)
+        message.append(AttributedString(" sign in the top right corner?"))
+        
+        return message
+    }
+}
+
+struct AccountListContent: View {
+    @EnvironmentObject var modelData: ModelData
+    @Binding var sectionExpandedStates: [Account.Status: Bool]
+    @Binding var selectedAccount: Account?
+    @Binding var showAddOrderSheet: Bool
+    @Binding var showAddContactSheet: Bool
+    @Binding var showAddInteractionSheet: Bool
+    @Binding var showAddTaskSheet: Bool
+    @Binding var showEditAccountSheet: Bool
+    var deleteAccount: (IndexSet, Account.Status) -> Void
+    
+    var body: some View {
+        List {
+            ForEach(Account.Status.allCases, id: \.self) { status in
+                let accountsForStatus = sortedAccounts(status: status)
+                AccountSectionView(
+                    status: status,
+                    accounts: accountsForStatus,
+                    accountCount: accountsForStatus.count,
+                    isExpanded: sectionExpandedStates[status] ?? false,
+                    toggleExpansion: {
+                        withAnimation {
+                            sectionExpandedStates[status]?.toggle()
+                        }
+                    },
+                    deleteAction: { indexSet in
+                        deleteAccount(indexSet, status)
+                    },
+                    selectedAccount: $selectedAccount,
+                    showAddOrderSheet: $showAddOrderSheet,
+                    showAddContactSheet: $showAddContactSheet,
+                    showAddInteractionSheet: $showAddInteractionSheet,
+                    showAddTaskSheet: $showAddTaskSheet,
+                    showEditAccountSheet: $showEditAccountSheet
+                )
+            }
+        }
+    }
+    
+    private func sortedAccounts(status: Account.Status) -> [Account] {
+        return modelData.accounts
+            .filter { $0.status == status }
+            .sorted { $0.name < $1.name }
+    }
+}
+
 
 //MARK: AccountSection
 struct AccountSectionView: View {

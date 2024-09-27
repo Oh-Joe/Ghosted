@@ -27,6 +27,11 @@ struct ContactListView: View {
                     .sheet(isPresented: $isShowingAddContactSheet) {
                         AddContactView(account: account)
                     }
+                } header: {
+                    Text("") // just for the space
+                }
+                
+                Section {
                     if !account.contacts.isEmpty {
                         ForEach(account.contacts, id: \.id) { contact in
                             NavigationLink(destination: ContactDetailView(contact: contact)) {
@@ -34,8 +39,6 @@ struct ContactListView: View {
                             }
                         }
                     }
-                } header: {
-                    Text("") // just for the space
                 }
             }
             .navigationTitle(account.name)
