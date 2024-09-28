@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-struct AccountForm: View {
+struct CompanyForm: View {
     @Binding var name: String
-    @Binding var accountType: Account.AccountType
+    @Binding var accountType: Company.AccountType
     @Binding var country: Country
-    @Binding var status: Account.Status
+    @Binding var status: Company.Status
     @Binding var website: String
     @Binding var generalNotes: String
     
@@ -24,10 +24,10 @@ struct AccountForm: View {
                 .autocorrectionDisabled(true)
                 .keyboardType(.URL)
                 .autocapitalization(.none)
-            Picker("Select account type:", selection: $accountType) {
+            Picker("Select company type:", selection: $accountType) {
                 Text("What do they do?")
                 Divider()
-                ForEach(Account.AccountType.allCases, id: \.self) { accountType in
+                ForEach(Company.AccountType.allCases, id: \.self) { accountType in
                     Text(accountType.rawValue).tag(accountType)
                 }
             }
@@ -38,15 +38,15 @@ struct AccountForm: View {
                     Text(country.rawValue.capitalized).tag(country)
                 }
             }
-            Picker("Account status:", selection: $status) {
+            Picker("Company status:", selection: $status) {
                 Text("They buying yet?")
                 Divider()
-                ForEach(Account.Status.allCases, id: \.self) { status in
+                ForEach(Company.Status.allCases, id: \.self) { status in
                     Text(status.rawValue).tag(status)
                 }
             }
         } header: {
-            Text("Account Details")
+            Text("Company Details")
         }
         
         Section {

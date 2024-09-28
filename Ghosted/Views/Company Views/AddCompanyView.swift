@@ -1,17 +1,17 @@
 import SwiftUI
 
 struct AddAccountView: View {
-    @EnvironmentObject var modelData: ModelData
+    @EnvironmentObject var dataModel: DataModel
     @Environment(\.dismiss) var dismiss
     @Binding var isPresented: Bool
     @State private var name: String = ""
-    @State private var accountType: Account.AccountType = .distri
+    @State private var accountType: Company.AccountType = .distri
     @State private var country: Country = .afghanistan
-    @State private var status: Account.Status = .activeClient
+    @State private var status: Company.Status = .activeClient
     @State private var website: String = ""
     @State private var generalNotes: String = ""
     
-    var accountToEdit: Account?
+    var accountToEdit: Company?
     
     var isEditing: Bool {
         accountToEdit != nil
@@ -34,7 +34,7 @@ struct AddAccountView: View {
                 )
             }
             
-            .navigationTitle(isEditing ? "Edit Account" : "Add Account")
+            .navigationTitle(isEditing ? "Edit Company" : "Add Company")
             .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
                                 Button(action: {
@@ -58,20 +58,20 @@ struct AddAccountView: View {
                         }
                     }
         .onAppear {
-            if let account = accountToEdit {
-                name = account.name
-                accountType = account.accountType
-                country = account.country
-                status = account.status
-                website = account.website
-                generalNotes = account.generalNotes
+            if let company = accountToEdit {
+                name = company.name
+                accountType = company.accountType
+                country = company.country
+                status = company.status
+                website = company.website
+                generalNotes = company.generalNotes
             }
         }
         .presentationDragIndicator(.visible)
     }
     
     private func save() {
-            let newAccount = Account(
+            let newAccount = Company(
                 id: accountToEdit?.id ?? UUID(), // Use existing ID if editing
                 name: name,
                 accountType: accountType,
@@ -86,9 +86,9 @@ struct AddAccountView: View {
             )
             
             if let _ = accountToEdit {
-                modelData.updateAccount(newAccount)
+                dataModel.updateAccount(newAccount)
             } else {
-                modelData.addAccount(newAccount)
+                dataModel.addAccount(newAccount)
             }
         }
 }

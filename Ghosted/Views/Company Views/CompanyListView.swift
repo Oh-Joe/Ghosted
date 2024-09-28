@@ -4,19 +4,19 @@ import SwiftUI
 import SwiftUI
 
 struct AccountListView: View {
-    @EnvironmentObject var modelData: ModelData
+    @EnvironmentObject var dataModel: DataModel
     @State private var isOn = false
     @State private var audioManager = AVAudioPlayerManager()
     @State private var showAddAccountSheet = false
     @State private var showEditAccountSheet = false
-    @State private var selectedAccount: Account? = nil
+    @State private var selectedCompany: Company? = nil
     @State private var showAddOrderSheet: Bool = false
     @State private var showAddContactSheet: Bool = false
     @State private var showAddInteractionSheet: Bool = false
     @State private var showAddTaskSheet: Bool = false
     @State var showAlert: Bool = false
     
-    @State private var sectionExpandedStates: [Account.Status: Bool] = [
+    @State private var sectionExpandedStates: [Company.Status: Bool] = [
         .activeClient: true,
         .warmLead: true,
         .coldLead: true,
@@ -26,12 +26,12 @@ struct AccountListView: View {
     
     var body: some View {
         Group {
-            if modelData.accounts.isEmpty {
+            if dataModel.companies.isEmpty {
                 EmptyStateView(showAlert: $showAlert, playSound: playSound)
             } else {
                 AccountListContent(
                     sectionExpandedStates: $sectionExpandedStates,
-                    selectedAccount: $selectedAccount,
+                    selectedCompany: $selectedCompany,
                     showAddOrderSheet: $showAddOrderSheet,
                     showAddContactSheet: $showAddContactSheet,
                     showAddInteractionSheet: $showAddInteractionSheet,
@@ -43,14 +43,14 @@ struct AccountListView: View {
         }
         .onChange(of: showEditAccountSheet) { _, newValue in
             if !newValue {
-                selectedAccount = nil
+                selectedCompany = nil
             }
         }
         .navigationTitle("Accounts")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    selectedAccount = nil
+                    selectedCompany = nil
                     showAddAccountSheet = true
                 } label: {
                     Image(systemName: "plus")
@@ -59,50 +59,50 @@ struct AccountListView: View {
         }
         .sheet(isPresented: $showAddAccountSheet) {
             AddAccountView(isPresented: $showAddAccountSheet, accountToEdit: nil)
-                .environmentObject(modelData)
+                .environmentObject(dataModel)
         }
         .sheet(isPresented: $showEditAccountSheet, onDismiss: {
-            selectedAccount = nil
+            selectedCompany = nil
         }) {
-            if let accountToEdit = selectedAccount {
+            if let accountToEdit = selectedCompany {
                 AddAccountView(isPresented: $showEditAccountSheet, accountToEdit: accountToEdit)
-                    .environmentObject(modelData)
+                    .environmentObject(dataModel)
             }
         }
         .sheet(isPresented: Binding(
-            get: { showAddContactSheet && selectedAccount != nil },
+            get: { showAddContactSheet && selectedCompany != nil },
             set: { newValue in showAddContactSheet = newValue }
         )) {
-            AddContactView(account: selectedAccount!)
+            AddContactView(company: selectedCompany!)
                 .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: Binding(
-            get: { showAddInteractionSheet && selectedAccount != nil },
+            get: { showAddInteractionSheet && selectedCompany != nil },
             set: { newValue in showAddInteractionSheet = newValue }
         )) {
-            AddInteractionView(account: selectedAccount!)
+            AddInteractionView(company: selectedCompany!)
                 .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: Binding(
-            get: { showAddOrderSheet && selectedAccount != nil },
+            get: { showAddOrderSheet && selectedCompany != nil },
             set: { newValue in showAddOrderSheet = newValue }
         )) {
-            AddOrderView(account: selectedAccount!)
+            AddOrderView(company: selectedCompany!)
                 .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: Binding(
-            get: { showAddTaskSheet && selectedAccount != nil },
+            get: { showAddTaskSheet && selectedCompany != nil },
             set: { newValue in showAddTaskSheet = newValue }
         )) {
-            AddTaskView(account: selectedAccount!)
+            AddTaskView(company: selectedCompany!)
                 .presentationDragIndicator(.visible)
         }
     }
     
-    private func deleteAccount(at offsets: IndexSet, for status: Account.Status) {
+    private func deleteAccount(at offsets: IndexSet, for status: Company.Status) {
         for index in offsets {
             let accountToDelete = sortedAccounts(status: status)[index]
-            modelData.deleteAccount(accountToDelete)
+            dataModel.deleteAccount(accountToDelete)
         }
     }
     
@@ -118,8 +118,8 @@ struct AccountListView: View {
         }
     }
     
-    private func sortedAccounts(status: Account.Status) -> [Account] {
-        return modelData.accounts
+    private func sortedAccounts(status: Company.Status) -> [Company] {
+        return dataModel.companies
             .filter { $0.status == status }
             .sorted { $0.name < $1.name }
     }
@@ -183,23 +183,23 @@ struct EmptyStateView: View {
 }
 
 struct AccountListContent: View {
-    @EnvironmentObject var modelData: ModelData
-    @Binding var sectionExpandedStates: [Account.Status: Bool]
-    @Binding var selectedAccount: Account?
+    @EnvironmentObject var dataModel: DataModel
+    @Binding var sectionExpandedStates: [Company.Status: Bool]
+    @Binding var selectedCompany: Company?
     @Binding var showAddOrderSheet: Bool
     @Binding var showAddContactSheet: Bool
     @Binding var showAddInteractionSheet: Bool
     @Binding var showAddTaskSheet: Bool
     @Binding var showEditAccountSheet: Bool
-    var deleteAccount: (IndexSet, Account.Status) -> Void
+    var deleteAccount: (IndexSet, Company.Status) -> Void
     
     var body: some View {
         List {
-            ForEach(Account.Status.allCases, id: \.self) { status in
+            ForEach(Company.Status.allCases, id: \.self) { status in
                 let accountsForStatus = sortedAccounts(status: status)
                 AccountSectionView(
                     status: status,
-                    accounts: accountsForStatus,
+                    companies: accountsForStatus,
                     accountCount: accountsForStatus.count,
                     isExpanded: sectionExpandedStates[status] ?? false,
                     toggleExpansion: {
@@ -210,7 +210,7 @@ struct AccountListContent: View {
                     deleteAction: { indexSet in
                         deleteAccount(indexSet, status)
                     },
-                    selectedAccount: $selectedAccount,
+                    selectedCompany: $selectedCompany,
                     showAddOrderSheet: $showAddOrderSheet,
                     showAddContactSheet: $showAddContactSheet,
                     showAddInteractionSheet: $showAddInteractionSheet,
@@ -221,8 +221,8 @@ struct AccountListContent: View {
         }
     }
     
-    private func sortedAccounts(status: Account.Status) -> [Account] {
-        return modelData.accounts
+    private func sortedAccounts(status: Company.Status) -> [Company] {
+        return dataModel.companies
             .filter { $0.status == status }
             .sorted { $0.name < $1.name }
     }
@@ -231,33 +231,33 @@ struct AccountListContent: View {
 
 //MARK: AccountSection
 struct AccountSectionView: View {
-    var status: Account.Status
-    var accounts: [Account]
+    var status: Company.Status
+    var companies: [Company]
     var accountCount: Int
     var isExpanded: Bool
     var toggleExpansion: () -> Void
     var deleteAction: (IndexSet) -> Void
     
-    @Binding var selectedAccount: Account?
+    @Binding var selectedCompany: Company?
     @Binding var showAddOrderSheet: Bool
     @Binding var showAddContactSheet: Bool
     @Binding var showAddInteractionSheet: Bool
     @Binding var showAddTaskSheet: Bool
-    @Binding var showEditAccountSheet: Bool  // New binding for edit account sheet
+    @Binding var showEditAccountSheet: Bool  // New binding for edit company sheet
     
     var body: some View {
         
-        if !accounts.isEmpty {
+        if !companies.isEmpty {
             
             Section {
                 if isExpanded {
-                    ForEach(accounts.sorted(by: { $0.country.countryCode < $1.country.countryCode })) { account in
-                        NavigationLink(destination: AccountsHomeView(account: account)) {
-                            AccountRow(account: account, selectedAccount: $selectedAccount, showAddOrderSheet: $showAddOrderSheet, showAddContactSheet: $showAddContactSheet, showAddInteractionSheet: $showAddInteractionSheet, showAddTaskSheet: $showAddTaskSheet, showEditAccountSheet: $showEditAccountSheet)
+                    ForEach(companies.sorted(by: { $0.country.countryCode < $1.country.countryCode })) { company in
+                        NavigationLink(destination: AccountsHomeView(company: company)) {
+                            AccountRow(company: company, selectedCompany: $selectedCompany, showAddOrderSheet: $showAddOrderSheet, showAddContactSheet: $showAddContactSheet, showAddInteractionSheet: $showAddInteractionSheet, showAddTaskSheet: $showAddTaskSheet, showEditAccountSheet: $showEditAccountSheet)
                         }
                         .swipeActions {
                             Button(role: .destructive) {
-                                if let index = accounts.firstIndex(where: { $0.id == account.id }) {
+                                if let index = companies.firstIndex(where: { $0.id == company.id }) {
                                     deleteAction(IndexSet(integer: index))
                                 }
                             } label: {
@@ -309,8 +309,8 @@ struct AccountSectionView: View {
 
 //MARK: AccountRow
 struct AccountRow: View {
-    var account: Account
-    @Binding var selectedAccount: Account?
+    var company: Company
+    @Binding var selectedCompany: Company?
     @Binding var showAddOrderSheet: Bool
     @Binding var showAddContactSheet: Bool
     @Binding var showAddInteractionSheet: Bool
@@ -319,27 +319,27 @@ struct AccountRow: View {
     
     var body: some View {
         HStack {
-            Text(account.country.countryCode)
+            Text(company.country.countryCode)
                 .font(.caption2)
                 .padding(3)
                 .background(RoundedRectangle(cornerRadius: 5).fill(.secondary).opacity(0.3))
                 .foregroundStyle(Color.secondary)
-            Text(account.name)
+            Text(company.name)
             Spacer()
         }
         .contextMenu {
             Button {
-                selectedAccount = account
+                selectedCompany = company
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     showEditAccountSheet = true
                 }
             } label: {
-                Text("Edit Account")
+                Text("Edit Company")
                 Spacer()
                 Image(systemName: "square.and.pencil")
             }
             Button {
-                selectedAccount = account
+                selectedCompany = company
                 showAddContactSheet = true
             } label: {
                 Text("Add new Contact")
@@ -347,7 +347,7 @@ struct AccountRow: View {
                 Image(systemName: "person.crop.circle.badge.plus")
             }
             Button {
-                selectedAccount = account
+                selectedCompany = company
                 showAddInteractionSheet = true
             } label: {
                 Text("Add new Interaction")
@@ -355,7 +355,7 @@ struct AccountRow: View {
                 Image(systemName: "plus.bubble")
             }
             Button {
-                selectedAccount = account
+                selectedCompany = company
                 showAddOrderSheet = true
             } label: {
                 Text("Add new Order")
@@ -363,7 +363,7 @@ struct AccountRow: View {
                 Image(systemName: "dollarsign.circle")
             }
             Button {
-                selectedAccount = account
+                selectedCompany = company
                 showAddTaskSheet = true
             } label: {
                 Text("Add new Task")
