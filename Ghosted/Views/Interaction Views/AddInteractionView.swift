@@ -1,30 +1,19 @@
-//
-//  AddInteractionView.swift
-//  Ghosted
-//
-//  Created by Antoine Moreau on 9/2/24.
-//
-
 import SwiftUI
 
 struct AddInteractionView: View {
-    @EnvironmentObject var modelData: ModelData
+    @EnvironmentObject var dataModel: DataModel
     @Environment(\.dismiss) var dismiss
-    
-    @State var id = UUID()
     @State var date: Date = Date()
-    @State var title: String = ""
-    @State var content: String = ""
+    @State private var title: String = ""
+    @State private var content: String = ""
+    var company: Company
     
     var isFormValid: Bool {
         !date.description.isEmpty && !title.isEmpty && !content.isEmpty
     }
     
-    var account: Account
-    
     var body: some View {
-        NavigationStack {
-            
+        NavigationView {
             Form {
                 DatePicker("Date",
                            selection: $date,
@@ -35,26 +24,21 @@ struct AddInteractionView: View {
                     .frame(height: 250)
             }
             .navigationTitle("New Interaction")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Cancel")
-                            .foregroundStyle(Color.red)
-                    }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        let newInteraction = Interaction(id: id,
-                                                         date: date,
-                                                         title: title,
-                                                         content: content
+                    Button("Save") {
+                        let newInteraction = Interaction(
+                            id: UUID(),
+                            date: date,
+                            title: title,
+                            content: content
                         )
-                        modelData.addInteraction(newInteraction, to: account)
+                        dataModel.addInteraction(newInteraction, to: company)
                         dismiss()
-                    } label: {
-                        Text("Save")
                     }
                     .disabled(!isFormValid)
                 }
@@ -63,4 +47,3 @@ struct AddInteractionView: View {
         }
     }
 }
-

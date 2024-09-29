@@ -1,8 +1,25 @@
-//
-//  Task.swift
-//  Ghosted
-//
-//  Created by Antoine on 2024/9/28.
-//
-
 import Foundation
+
+struct Task: Hashable, Codable, Identifiable {
+    var id: UUID
+    var title: String
+    var contents: String
+    var isDone: Bool
+    var isOverdue: Bool {
+        let startOfToday = Calendar.current.startOfDay(for: Date.now)
+        return dueDate < startOfToday && !isDone
+    }
+    var dueDate: Date
+}
+
+extension Task {
+    static var emptyTask: Task {
+        Task(
+            id: UUID(),
+            title: "",
+            contents: "",
+            isDone: false,
+            dueDate: Date()
+        )
+    }
+}

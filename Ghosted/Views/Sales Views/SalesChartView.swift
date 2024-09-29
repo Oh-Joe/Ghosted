@@ -2,11 +2,11 @@ import SwiftUI
 import Charts
 
 struct SalesChartView: View {
-    @EnvironmentObject var modelData: ModelData
+    @EnvironmentObject var dataModel: DataModel
     @State private var selectedPeriod: ChartPeriod = .month
     @State private var selectedDate: Date = Date()
     @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
-    @State private var selectedAccounts: Set<UUID> = []
+    @State private var selectedCompanies: Set<UUID> = []
     @State private var selectedBar: UUID?
     @State private var chartUpdateTrigger = UUID()
     @State private var isShowingMonthPicker = false
@@ -42,7 +42,7 @@ struct SalesChartView: View {
             .onChangeCompatible(of: selectedPeriod) { _ in
                 chartUpdateTrigger = UUID()
             }
-            .onChangeCompatible(of: selectedAccounts) { _ in
+            .onChangeCompatible(of: selectedCompanies) { _ in
                 chartUpdateTrigger = UUID()
             }
         }
@@ -88,7 +88,7 @@ struct SalesChartView: View {
                     Image("noData")
                         .resizable()
                         .scaledToFit()
-                    Text("No data available for the selected period and account(s).")
+                    Text("No data available for the selected period and company(s).")
                         .font(.headline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
@@ -98,7 +98,7 @@ struct SalesChartView: View {
             } else {
                 Chart(filteredSalesData) { data in
                     BarMark(
-                        x: .value("Account", data.accountName),
+                        x: .value("Company", data.accountName),
                         y: .value("Sales", data.totalSales)
                     )
                     .foregroundStyle(data.accountId == selectedBar ? Color.accentColor : Color.secondary)
@@ -132,32 +132,33 @@ struct SalesChartView: View {
     
     private var accountFilterView: some View {
         List {
-            ForEach(modelData.accounts) { account in
+            ForEach(dataModel.companies) { company in
                 Toggle(isOn: Binding(
-                    get: { selectedAccounts.contains(account.id) },
+                    get: { selectedCompanies.contains(company.id) },
                     set: { isSelected in
                         if isSelected {
-                            selectedAccounts.insert(account.id)
+                            selectedCompanies.insert(company.id)
                         } else {
-                            selectedAccounts.remove(account.id)
+                            selectedCompanies.remove(company.id)
                         }
                     }
                 )) {
-                    Text(account.name)
+                    Text(company.name)
                 }
             }
         }
     }
     
     private var filteredSalesData: [SalesData] {
-        let filteredAccounts = selectedAccounts.isEmpty ? modelData.accounts : modelData.accounts.filter { selectedAccounts.contains($0.id) }
+        let filteredCompanies = selectedCompanies.isEmpty ? dataModel.companies : dataModel.companies.filter { selectedCompanies.contains($0.id) }
         
-        return filteredAccounts.compactMap { account in
-            let totalSales = account.orders
+        return filteredCompanies.compactMap { company in
+            let companyOrders = dataModel.ordersForCompany(company)
+            let totalSales = companyOrders
                 .filter { isOrderInSelectedPeriod($0) }
                 .reduce(0) { $0 + $1.orderAmount }
             
-            return totalSales > 0 ? SalesData(accountId: account.id, accountName: account.name, totalSales: totalSales) : nil
+            return totalSales > 0 ? SalesData(accountId: company.id, accountName: company.name, totalSales: totalSales) : nil
         }
     }
     

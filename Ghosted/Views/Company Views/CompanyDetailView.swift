@@ -21,7 +21,7 @@ struct CompanyDetailView: View {
                 HStack {
                     Image(systemName: "list.clipboard")
                         .foregroundStyle(Color.secondary)
-                    Text(company.accountType.rawValue)
+                    Text(company.companyType.rawValue)
                 }
                 
                 Button {

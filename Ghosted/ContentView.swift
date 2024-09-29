@@ -1,15 +1,15 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var modelData: ModelData
-    @State private var selectedTab: Tab = .accounts
+    @EnvironmentObject var dataModel: DataModel
+    @State private var selectedTab: Tab = .companies
 
     var randoAccounts: Int = Int.random(in: 1...5)
     var randoSalesChart: Int = Int.random(in: 1...6)
     var randoSalesDashboard: Int = Int.random(in: 1...4)
 
     enum Tab {
-        case accounts
+        case companies
         case salesCharts
         case salesDashboard
         case contacts
@@ -18,7 +18,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             TabView(selection: $selectedTab) {
-                NavigationLink(destination: AccountListView()) {
+                NavigationLink(destination: CompanyListView()) {
                     VStack {
                         Image("SectionImageClientAccounts\(randoAccounts)")
                             .resizable()
@@ -29,7 +29,7 @@ struct ContentView: View {
                             Text("Accounts")
                                 .font(.title2)
                                 .fontWeight(.bold)
-                            Text("Create and manage accounts, their contacts, orders, and control your tasks and interactions with them.")
+                            Text("Create and manage accounts, their contacts, orders, and control your tasks and interactions with them. Always be closing.")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 8)
@@ -40,33 +40,33 @@ struct ContentView: View {
                     .foregroundStyle(Color.primary)
                     .padding()
                 }
-                .tag(Tab.accounts)
+                .tag(Tab.companies)
                 
-                NavigationLink(destination: SalesChartView()) {
-                    VStack {
-                        Image("SectionSales\(randoSalesChart)")
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                        Spacer()
-                        VStack {
-                            Text("Sales Charts")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                            Text("View account sales by month, year, or all time.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .padding(.top, 8)
-                        }
-                        Spacer()
-                        Spacer()
-                    }
-                    .foregroundStyle(Color.primary)
-                    .padding()
-                }
-                .tag(Tab.salesCharts)
+//                NavigationLink(destination: SalesChartView()) {
+//                    VStack {
+//                        Image("SectionSales\(randoSalesChart)")
+//                            .resizable()
+//                            .scaledToFit()
+//                            .clipShape(RoundedRectangle(cornerRadius: 12))
+//                        Spacer()
+//                        VStack {
+//                            Text("Sales Charts")
+//                                .font(.title2)
+//                                .fontWeight(.bold)
+//                            Text("View company sales by month, year, or all time.")
+//                                .font(.caption)
+//                                .foregroundStyle(.secondary)
+//                                .padding(.top, 8)
+//                        }
+//                        Spacer()
+//                        Spacer()
+//                    }
+//                    .foregroundStyle(Color.primary)
+//                    .padding()
+//                }
+//                .tag(Tab.salesCharts)
                 
-                NavigationLink(destination: SalesDashboardView()) {
+                NavigationLink(destination: ChartsView()) {
                     VStack {
                         Image("SectionSalesDashboard\(randoSalesDashboard)")
                             .resizable()
@@ -74,10 +74,10 @@ struct ContentView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         Spacer()
                         VStack {
-                            Text("Sales Dashboard")
+                            Text("Sales Chart")
                                 .font(.title2)
                                 .fontWeight(.bold)
-                            Text("Advanced analytics and shit.")
+                            Text("Colors and bars and shit.")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 8)
@@ -100,7 +100,7 @@ struct ContentView: View {
     // MARK: functions & helpers
     private var pageTitle: String {
         switch selectedTab {
-        case .accounts:
+        case .companies:
             return "Accounts"
         case .salesCharts:
             return "Sales Charts"

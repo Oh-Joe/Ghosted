@@ -1,35 +1,29 @@
-//
-//  OrderDetailView.swift
-//  eYes
-//
-//  Created by Antoine Moreau on 8/30/24.
-//
-
 import SwiftUI
 
 struct OrderDetailView: View {
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var modelData: ModelData
+    @EnvironmentObject var dataModel: DataModel
 
     @Binding var order: Order
+    @State private var localOrder: Order
     
-    var account: Account
+    var company: Company
+    
+    init(order: Binding<Order>, company: Company) {
+        self._order = order
+        self._localOrder = State(initialValue: order.wrappedValue)
+        self.company = company
+    }
     
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    Text(order.orderAmount, format: .currency(code: order.currency.rawValue))
+                    Text(localOrder.orderAmount, format: .currency(code: localOrder.currency.rawValue))
                         .font(.subheadline)
                         .fontWeight(.semibold)
                     HStack {
-                        Toggle("Paid?", isOn: Binding(
-                            get: {order.isFullyPaid },
-                            set: { newValue in
-                                order.isFullyPaid = newValue
-                                modelData.updateOrder(order, in: account)
-                            }
-                        ))
+                        Toggle("Paid?", isOn: $localOrder.isFullyPaid)
                     }
                 } header: {
                     HStack {
@@ -40,9 +34,9 @@ struct OrderDetailView: View {
                 }
                 
                 Section {
-                    Text("Order #\(order.orderNumber)")
-                    Text("Due date: \(order.dueDate, format: .dateTime.day().month())")
-                        .foregroundStyle(!order.isFullyPaid && order.dueDate < Date() ? .red : .primary)
+                    Text("Order #\(localOrder.orderNumber)")
+                    Text("Due date: \(localOrder.dueDate, format: .dateTime.day().month())")
+                        .foregroundStyle(!localOrder.isFullyPaid && localOrder.dueDate < Date() ? .red : .primary)
                 } header: {
                     Text("Order Details")
                 }
@@ -56,11 +50,15 @@ struct OrderDetailView: View {
                     }
                 }
                 ToolbarItem(placement: .topBarLeading) {
-                    Text(order.orderNumber)
+                    Text(localOrder.orderNumber)
                         .font(.title2)
                         .fontWeight(.bold)
                 }
             }
+        }
+        .onDisappear {
+            order = localOrder
+            dataModel.updateOrder(localOrder)
         }
     }
 }

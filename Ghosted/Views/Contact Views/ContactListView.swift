@@ -1,15 +1,9 @@
-//
-//  ContactListView.swift
-//  Ghosted
-//
-//  Created by Antoine Moreau on 9/4/24.
-//
-
 import SwiftUI
 
 struct ContactListView: View {
+    @EnvironmentObject var dataModel: DataModel
     @State private var isShowingAddContactSheet: Bool = false
-    var account: Account
+    var company: Company
     
     var body: some View {
         NavigationStack {
@@ -25,23 +19,32 @@ struct ContactListView: View {
                     .buttonStyle(.bordered)
                     .tint(.accentColor)
                     .sheet(isPresented: $isShowingAddContactSheet) {
-                        AddContactView(account: account)
+                        AddContactView(isPresented: $isShowingAddContactSheet, company: company)
                     }
                 } header: {
                     Text("") // just for the space
                 }
                 
                 Section {
-                    if !account.contacts.isEmpty {
-                        ForEach(account.contacts, id: \.id) { contact in
+                    let contacts = dataModel.contactsForCompany(company)
+                    if !contacts.isEmpty {
+                        ForEach(contacts, id: \.id) { contact in
                             NavigationLink(destination: ContactDetailView(contact: contact)) {
                                 ContactRowView(contact: contact)
                             }
                         }
-                    }
+                        .onDelete(perform: deleteContacts)
+                    } 
                 }
             }
-            .navigationTitle(account.name)
+            .navigationTitle(company.name)
+        }
+    }
+    
+    private func deleteContacts(at offsets: IndexSet) {
+        let contactsToDelete = offsets.map { dataModel.contactsForCompany(company)[$0] }
+        for contact in contactsToDelete {
+            dataModel.deleteContact(contact)
         }
     }
 }

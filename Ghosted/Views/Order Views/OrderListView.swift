@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct OrderListView: View {
+    @EnvironmentObject var dataModel: DataModel
     @State private var isShowingAddOrderSheet: Bool = false
     @State private var showOrderSheet: Bool = false
     @State private var selectedOrder: Order? = nil
-    var account: Account
+    var company: Company
     
     @State private var sectionExpandedStates: [OrderSection: Bool] = [
         .overdue: true,
@@ -19,71 +20,80 @@ struct OrderListView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    Button {
-                        isShowingAddOrderSheet.toggle()
-                    } label: {
-                        Label("New Order", systemImage: "dollarsign.square")
-                            .foregroundStyle(Color.green)
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(.green)
-                    .sheet(isPresented: $isShowingAddOrderSheet) {
-                        AddOrderView(account: account)
-                    }
-                } header: {
-                    Text("") // just for the space
+        List {
+            Section {
+                Button {
+                    isShowingAddOrderSheet.toggle()
+                } label: {
+                    Label("New Order", systemImage: "dollarsign.square")
+                        .foregroundStyle(Color.green)
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
                 }
-                
-                ForEach(OrderSection.allCases, id: \.self) { section in
-                    let ordersForSection = ordersForSection(section)
-                    if !ordersForSection.isEmpty {
-                        OrderSectionView(
-                            section: section,
-                            orders: ordersForSection,
-                            isExpanded: sectionExpandedStates[section] ?? false,
-                            toggleExpansion: {
-                                withAnimation {
-                                    sectionExpandedStates[section]?.toggle()
-                                }
-                            },
-                            selectedOrder: $selectedOrder,
-                            showOrderSheet: $showOrderSheet,
-                            totalValue: totalValueForSection(ordersForSection)
-                        )
-                    }
+                .buttonStyle(.bordered)
+                .tint(.green)
+            } header: {
+                Text("") // just for the space
+            }
+            
+            ForEach(OrderSection.allCases, id: \.self) { section in
+                let ordersForSection = ordersForSection(section)
+                if !ordersForSection.isEmpty {
+                    OrderSectionView(
+                        section: section,
+                        orders: ordersForSection,
+                        isExpanded: sectionExpandedStates[section] ?? false,
+                        toggleExpansion: {
+                            withAnimation {
+                                sectionExpandedStates[section]?.toggle()
+                            }
+                        },
+                        selectedOrder: $selectedOrder,
+                        showOrderSheet: $showOrderSheet,
+                        totalValue: totalValueForSection(ordersForSection),
+                        onDelete: { indexSet in
+                            deleteOrders(at: indexSet, in: ordersForSection)
+                        }
+                    )
                 }
             }
-            .navigationTitle(account.name)
-            .sheet(isPresented: Binding(
-                get: { showOrderSheet && selectedOrder != nil },
-                set: { newValue in showOrderSheet = newValue }
-            )) {
-                if let selectedOrderBinding = Binding($selectedOrder) {
-                    OrderDetailView(order: selectedOrderBinding, account: account)
-                        .presentationDragIndicator(.visible)
-                }
+        }
+        .navigationTitle("Orders")
+        .sheet(isPresented: $isShowingAddOrderSheet) {
+            AddOrderView(company: company)
+        }
+        .sheet(isPresented: Binding(
+            get: { showOrderSheet && selectedOrder != nil },
+            set: { newValue in showOrderSheet = newValue }
+        )) {
+            if let order = selectedOrder {
+                OrderDetailView(order: .constant(order), company: company)
+                    .presentationDragIndicator(.visible)
             }
         }
     }
     
     private func ordersForSection(_ section: OrderSection) -> [Order] {
+        let orders = dataModel.ordersForCompany(company)
         switch section {
         case .overdue:
-            return account.orders.filter { $0.isOverdue }.sorted(by: { $0.dueDate < $1.dueDate })
+            return orders.filter { $0.isOverdue }.sorted(by: { $0.dueDate < $1.dueDate })
         case .open:
-            return account.orders.filter { !$0.isFullyPaid && !$0.isOverdue }.sorted(by: { $0.dueDate < $1.dueDate })
+            return orders.filter { !$0.isFullyPaid && !$0.isOverdue }.sorted(by: { $0.dueDate < $1.dueDate })
         case .settled:
-            return account.orders.filter { $0.isFullyPaid }.sorted(by: { $0.dueDate > $1.dueDate })
+            return orders.filter { $0.isFullyPaid }.sorted(by: { $0.dueDate > $1.dueDate })
         }
     }
     
     private func totalValueForSection(_ orders: [Order]) -> Double {
         orders.reduce(0) { $0 + $1.orderAmount }
+    }
+    
+    private func deleteOrders(at offsets: IndexSet, in orders: [Order]) {
+        let ordersToDelete = offsets.map { orders[$0] }
+        for order in ordersToDelete {
+            dataModel.deleteOrder(order)
+        }
     }
 }
 
@@ -95,6 +105,7 @@ struct OrderSectionView: View {
     @Binding var selectedOrder: Order?
     @Binding var showOrderSheet: Bool
     var totalValue: Double
+    var onDelete: (IndexSet) -> Void
     
     var body: some View {
         Section {
@@ -107,6 +118,7 @@ struct OrderSectionView: View {
                         OrderRowView(order: order)
                     }
                 }
+                .onDelete(perform: onDelete)
             }
         } header: {
             Button(action: toggleExpansion) {

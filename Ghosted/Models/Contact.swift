@@ -1,8 +1,11 @@
-//
-//  Contact.swift
-//  Ghosted
-//
-//  Created by Antoine on 2024/9/28.
-//
-
 import Foundation
+
+struct Contact: Hashable, Codable, Identifiable {
+    var id: UUID
+    var firstName: String
+    var lastName: String
+    var jobTitle: String
+    var email: String
+    var phoneNumber: String
+    var photoName: String
+}

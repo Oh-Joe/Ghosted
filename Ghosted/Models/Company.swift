@@ -3,7 +3,7 @@ import Foundation
 struct Company: Hashable, Codable, Identifiable {
     var id: UUID
     var name: String
-    var accountType: AccountType
+    var companyType: CompanyType
     var country: Country
     var status: Status
     var website: String
@@ -13,7 +13,7 @@ struct Company: Hashable, Codable, Identifiable {
     var taskIDs: [UUID]
     var generalNotes: String
     
-    enum AccountType: String, CaseIterable, Codable {
+    enum CompanyType: String, CaseIterable, Codable {
         case distri = "Distributor"
         case reseller = "Reseller"
         case kol = "Key Opinion Leader"

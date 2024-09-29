@@ -2,7 +2,7 @@ import SwiftUI
 import Charts
 
 struct SalesDashboardView: View {
-    @EnvironmentObject var modelData: ModelData
+    @EnvironmentObject var dataModel: DataModel
     @State private var selectedDateRange: DateRange = .lastMonth
     @State private var selectedCurrency: Order.Currency?
     @State private var showOnlyUnpaidOrders: Bool = false
@@ -77,7 +77,7 @@ struct SalesDashboardView: View {
     }
     
     private var currencyPicker: some View {
-        let currencies = Array(Set(modelData.accounts.flatMap { $0.orders }.map { $0.currency }))
+        let currencies = Array(Set(dataModel.orders.values.map { $0.currency }))
         return Picker("Currency", selection: $selectedCurrency) {
             Text("All").tag(nil as Order.Currency?)
             ForEach(currencies, id: \.self) { currency in
@@ -229,9 +229,7 @@ struct SalesDashboardView: View {
     // MARK: - Helper computed properties
     
     private var filteredOrders: [Order] {
-        let orders = modelData.accounts.flatMap { $0.orders }
-        print("Number of orders: \(orders.count)")
-        return modelData.accounts.flatMap { $0.orders }.filter { order in
+        dataModel.orders.values.filter { order in
             let dateFilter: Bool
             switch selectedDateRange {
             case .lastWeek:
@@ -262,7 +260,7 @@ struct SalesDashboardView: View {
     }
     
     private var percentagePaidOrders: Double {
-        filteredOrders.isEmpty ? 0 : Double(paidOrdersCount) / Double(filteredOrders.count)
+        filteredOrders.isEmpty ? 0 : (Double(paidOrdersCount) / Double(filteredOrders.count)) * 100
     }
     
     private var paidOrdersCount: Int {
@@ -280,12 +278,10 @@ struct SalesDashboardView: View {
     }
     
     private var currencyDistribution: [(currency: Order.Currency, value: Double)] {
-        let distribution = Dictionary(grouping: filteredOrders) { $0.currency }
+        Dictionary(grouping: filteredOrders) { $0.currency }
             .mapValues { orders in orders.reduce(0) { $0 + $1.orderAmount } }
             .map { (currency: $0, value: $1) }
             .sorted { $0.value > $1.value }
-        print("Currency distribution: \(distribution)")
-        return distribution
     }
     
     private var unpaidOrders: [Order] {

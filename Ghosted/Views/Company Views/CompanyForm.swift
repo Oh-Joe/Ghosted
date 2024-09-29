@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CompanyForm: View {
     @Binding var name: String
-    @Binding var accountType: Company.AccountType
+    @Binding var companyType: Company.CompanyType
     @Binding var country: Country
     @Binding var status: Company.Status
     @Binding var website: String
@@ -24,11 +24,11 @@ struct CompanyForm: View {
                 .autocorrectionDisabled(true)
                 .keyboardType(.URL)
                 .autocapitalization(.none)
-            Picker("Select company type:", selection: $accountType) {
+            Picker("Select company type:", selection: $companyType) {
                 Text("What do they do?")
                 Divider()
-                ForEach(Company.AccountType.allCases, id: \.self) { accountType in
-                    Text(accountType.rawValue).tag(accountType)
+                ForEach(Company.CompanyType.allCases, id: \.self) { companyType in
+                    Text(companyType.rawValue).tag(companyType)
                 }
             }
             Picker("Country:", selection: $country) {

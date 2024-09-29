@@ -1,24 +1,29 @@
-//
-//  ContactRowView.swift
-//  eYes
-//
-//  Created by Antoine Moreau on 8/29/24.
-//
-
 import SwiftUI
 
 struct ContactRowView: View {
-    @EnvironmentObject var modelData: ModelData
-    var contact: Contact
-    var rando: Int = Int.random(in: 1...15)
+    @EnvironmentObject var dataModel: DataModel
+    @State private var showContactMug: Bool = false
+    let contact: Contact
     
     var body: some View {
         HStack {
-            Image(contact.photoName)
-                .resizable()
-                .scaledToFit()
-                .clipShape(Circle())
-                .frame(width: 50)
+            Button {
+                showContactMug = true
+            } label: {
+                if let contactImage = dataModel.getImage(for: contact) {
+                    Image(uiImage: contactImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 40, height: 40)
+                        .clipShape(Circle())
+                } else {
+                    Image(systemName: "person.circle")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 40, height: 40)
+                        .foregroundColor(.gray)
+                }
+            }
             
             VStack(alignment: .leading) {
                 Text("\(contact.firstName) ") + Text(contact.lastName).fontWeight(.bold)
@@ -28,11 +33,10 @@ struct ContactRowView: View {
             }
             Spacer()
         }
-        .padding(.horizontal, 8)
+        .sheet(isPresented: $showContactMug) {
+            ContactMugView(contact: contact)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+        }
     }
-}
-
-#Preview {
-    ContactRowView(contact: ModelData().contacts[0])
-        .environmentObject(ModelData())
 }

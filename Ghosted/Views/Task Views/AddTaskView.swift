@@ -1,67 +1,42 @@
 import SwiftUI
 
 struct AddTaskView: View {
-    @EnvironmentObject var modelData: ModelData
+    @EnvironmentObject var dataModel: DataModel
     @Environment(\.dismiss) var dismiss
-    
-    @State var title: String = ""
-    @State var contents: String = ""
-    @State var isDone: Bool = false
-    @State var dueDate: Date? = nil
-    
-    var isFormValid: Bool {
-        !contents.isEmpty && !title.isEmpty
-    }
-    
-    var account: Account
+    @State private var title: String = ""
+    @State private var contents: String = ""
+    @State private var dueDate: Date = Date()
+    var company: Company
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                TextField("Task title", text: $title)
-                
-                Section {
-                    DatePicker("To complete by:", selection: Binding(
-                        get: { dueDate ?? Date() },
-                        set: { dueDate = $0 }
-                    ), displayedComponents: .date)
-                    Toggle("Done already?", isOn: $isDone)
-                }
-                Section {
-                    TextEditor(text: $contents)
-                        .frame(height: 250)
-                } header: {
-                    Text("Enter a task description below:")
-                }
+                TextField("Title", text: $title)
+                DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
+                TextEditor(text: $contents)
+                    .frame(height: 100)
             }
             .navigationTitle("New Task")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Cancel")
-                            .foregroundStyle(.red)
-                    }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        let newTask = Task(id: UUID(),
-                                           title: title,
-                                           contents: contents,
-                                           isDone: isDone,
-                                           dueDate: dueDate ?? Date.now)
-                        modelData.addTask(newTask, to: account)
-                        modelData.objectWillChange.send()  // Notify observers of the change
+                    Button("Save") {
+                        let newTask = Task(
+                            id: UUID(),
+                            title: title,
+                            contents: contents,
+                            isDone: false,
+                            dueDate: dueDate)
+                        dataModel.addTask(newTask, to: company)
                         dismiss()
-                    } label : {
-                        Text("Save")
                     }
-                    .disabled(!isFormValid)
+                    .disabled(title.isEmpty)
                 }
             }
             .presentationDragIndicator(.visible)
         }
     }
 }
-

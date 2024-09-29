@@ -3,12 +3,14 @@ import SwiftUI
 //MARK: AccountListView
 import SwiftUI
 
-struct AccountListView: View {
+import SwiftUI
+
+struct CompanyListView: View {
     @EnvironmentObject var dataModel: DataModel
     @State private var isOn = false
     @State private var audioManager = AVAudioPlayerManager()
-    @State private var showAddAccountSheet = false
-    @State private var showEditAccountSheet = false
+    @State private var showAddCompanySheet = false
+    @State private var showEditCompanySheet = false
     @State private var selectedCompany: Company? = nil
     @State private var showAddOrderSheet: Bool = false
     @State private var showAddContactSheet: Bool = false
@@ -36,12 +38,12 @@ struct AccountListView: View {
                     showAddContactSheet: $showAddContactSheet,
                     showAddInteractionSheet: $showAddInteractionSheet,
                     showAddTaskSheet: $showAddTaskSheet,
-                    showEditAccountSheet: $showEditAccountSheet,
+                    showEditAccountSheet: $showEditCompanySheet,
                     deleteAccount: deleteAccount
                 )
             }
         }
-        .onChange(of: showEditAccountSheet) { _, newValue in
+        .onChange(of: showEditCompanySheet) { oldValue, newValue in
             if !newValue {
                 selectedCompany = nil
             }
@@ -51,58 +53,60 @@ struct AccountListView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     selectedCompany = nil
-                    showAddAccountSheet = true
+                    showAddCompanySheet = true
                 } label: {
                     Image(systemName: "plus")
                 }
             }
         }
-        .sheet(isPresented: $showAddAccountSheet) {
-            AddAccountView(isPresented: $showAddAccountSheet, accountToEdit: nil)
-                .environmentObject(dataModel)
+        .sheet(isPresented: $showAddCompanySheet) {
+            AddCompanyView(isPresented: $showAddCompanySheet, companyToEdit: nil)
         }
-        .sheet(isPresented: $showEditAccountSheet, onDismiss: {
+        .sheet(isPresented: $showEditCompanySheet, onDismiss: {
             selectedCompany = nil
         }) {
-            if let accountToEdit = selectedCompany {
-                AddAccountView(isPresented: $showEditAccountSheet, accountToEdit: accountToEdit)
-                    .environmentObject(dataModel)
+            if let companyToEdit = selectedCompany {
+                AddCompanyView(isPresented: $showEditCompanySheet, companyToEdit: companyToEdit)
             }
         }
         .sheet(isPresented: Binding(
             get: { showAddContactSheet && selectedCompany != nil },
             set: { newValue in showAddContactSheet = newValue }
         )) {
-            AddContactView(company: selectedCompany!)
-                .presentationDragIndicator(.visible)
+            if let company = selectedCompany {
+                AddContactView(isPresented: $showAddContactSheet, company: company)
+            }
         }
         .sheet(isPresented: Binding(
             get: { showAddInteractionSheet && selectedCompany != nil },
             set: { newValue in showAddInteractionSheet = newValue }
         )) {
-            AddInteractionView(company: selectedCompany!)
-                .presentationDragIndicator(.visible)
+            if let company = selectedCompany {
+                AddInteractionView(company: company)
+            }
         }
         .sheet(isPresented: Binding(
             get: { showAddOrderSheet && selectedCompany != nil },
             set: { newValue in showAddOrderSheet = newValue }
         )) {
-            AddOrderView(company: selectedCompany!)
-                .presentationDragIndicator(.visible)
+            if let company = selectedCompany {
+                AddOrderView(company: company)
+            }
         }
         .sheet(isPresented: Binding(
             get: { showAddTaskSheet && selectedCompany != nil },
             set: { newValue in showAddTaskSheet = newValue }
         )) {
-            AddTaskView(company: selectedCompany!)
-                .presentationDragIndicator(.visible)
+            if let company = selectedCompany {
+                AddTaskView(company: company)
+            }
         }
     }
     
     private func deleteAccount(at offsets: IndexSet, for status: Company.Status) {
-        for index in offsets {
-            let accountToDelete = sortedAccounts(status: status)[index]
-            dataModel.deleteAccount(accountToDelete)
+        let companiesToDelete = offsets.map { sortedCompanies(status: status)[$0] }
+        for company in companiesToDelete {
+            dataModel.deleteCompany(company)
         }
     }
     
@@ -118,67 +122,10 @@ struct AccountListView: View {
         }
     }
     
-    private func sortedAccounts(status: Company.Status) -> [Company] {
+    private func sortedCompanies(status: Company.Status) -> [Company] {
         return dataModel.companies
             .filter { $0.status == status }
             .sorted { $0.name < $1.name }
-    }
-}
-
-struct EmptyStateView: View {
-    @Binding var showAlert: Bool
-    var playSound: (String) -> Void
-    
-    var body: some View {
-        VStack {
-            Spacer()
-            Button {
-                playSound("Sheeit")
-                showAlert.toggle()
-            } label: {
-                Image("confusedGhosty")
-                    .resizable()
-                    .scaledToFit()
-                    .shadow(color: .primary.opacity(0.5) , radius: 15)
-                    .padding(.horizontal, 50)
-            }
-            
-            Text("Wow, such empty.")
-            Text(emptyStateMessage)
-                .multilineTextAlignment(.center)
-                .padding(20)
-            
-            Spacer()
-            Spacer()
-        }
-        .alert("You think you're funny?", isPresented: $showAlert) {
-            Button("OK") {
-                playSound("okay")
-            }
-        } message: {
-            Text("Just tap the + in the top right corner, OK?")
-        }
-    }
-    
-    private var emptyStateMessage: AttributedString {
-        var message = AttributedString("Frankly, you should be embarrassed.\nI mean, you haven't found even ")
-        message.font = .caption
-        message.foregroundColor = .secondary
-        
-        var oneWord = AttributedString("one")
-        oneWord.font = .caption.italic()
-        oneWord.foregroundColor = .secondary
-        
-        message.append(oneWord)
-        message.append(AttributedString(" potential client?\n\nAnyway, see that "))
-        
-        var plusSign = AttributedString("+")
-        plusSign.foregroundColor = .accentColor
-        
-        message.append(plusSign)
-        message.append(AttributedString(" sign in the top right corner?"))
-        
-        return message
     }
 }
 
@@ -196,11 +143,11 @@ struct AccountListContent: View {
     var body: some View {
         List {
             ForEach(Company.Status.allCases, id: \.self) { status in
-                let accountsForStatus = sortedAccounts(status: status)
-                AccountSectionView(
+                let companiesForStatus = sortedCompanies(status: status)
+                CompanySectionView(
                     status: status,
-                    companies: accountsForStatus,
-                    accountCount: accountsForStatus.count,
+                    companies: companiesForStatus,
+                    companyCount: companiesForStatus.count,
                     isExpanded: sectionExpandedStates[status] ?? false,
                     toggleExpansion: {
                         withAnimation {
@@ -221,19 +168,18 @@ struct AccountListContent: View {
         }
     }
     
-    private func sortedAccounts(status: Company.Status) -> [Company] {
+    private func sortedCompanies(status: Company.Status) -> [Company] {
         return dataModel.companies
             .filter { $0.status == status }
             .sorted { $0.name < $1.name }
     }
 }
 
-
-//MARK: AccountSection
-struct AccountSectionView: View {
+struct CompanySectionView: View {
+    @EnvironmentObject var dataModel: DataModel
     var status: Company.Status
     var companies: [Company]
-    var accountCount: Int
+    var companyCount: Int
     var isExpanded: Bool
     var toggleExpansion: () -> Void
     var deleteAction: (IndexSet) -> Void
@@ -243,17 +189,15 @@ struct AccountSectionView: View {
     @Binding var showAddContactSheet: Bool
     @Binding var showAddInteractionSheet: Bool
     @Binding var showAddTaskSheet: Bool
-    @Binding var showEditAccountSheet: Bool  // New binding for edit company sheet
+    @Binding var showEditAccountSheet: Bool
     
     var body: some View {
-        
         if !companies.isEmpty {
-            
             Section {
                 if isExpanded {
                     ForEach(companies.sorted(by: { $0.country.countryCode < $1.country.countryCode })) { company in
-                        NavigationLink(destination: AccountsHomeView(company: company)) {
-                            AccountRow(company: company, selectedCompany: $selectedCompany, showAddOrderSheet: $showAddOrderSheet, showAddContactSheet: $showAddContactSheet, showAddInteractionSheet: $showAddInteractionSheet, showAddTaskSheet: $showAddTaskSheet, showEditAccountSheet: $showEditAccountSheet)
+                        NavigationLink(destination: CompaniesHomeView(company: company)) {
+                            CompanyRow(company: company, selectedCompany: $selectedCompany, showAddOrderSheet: $showAddOrderSheet, showAddContactSheet: $showAddContactSheet, showAddInteractionSheet: $showAddInteractionSheet, showAddTaskSheet: $showAddTaskSheet, showEditAccountSheet: $showEditAccountSheet)
                         }
                         .swipeActions {
                             Button(role: .destructive) {
@@ -276,13 +220,13 @@ struct AccountSectionView: View {
         HStack {
             HStack {
                 Text("\(statusDisplayName)")
-                Text("\(accountCount)")
+                Text("\(companyCount)")
                     .font(.caption)
                     .frame(width: 15, height: 15)
-                    .background(Circle().fill(accountCount == 0 ? Color.secondary : Color.accentColor).opacity(0.3))
+                    .background(Circle().fill(companyCount == 0 ? Color.secondary : Color.accentColor).opacity(0.3))
             }
             Spacer()
-            if accountCount > 0 {
+            if companyCount > 0 {
                 Button(action: toggleExpansion) {
                     Image(systemName: "chevron.right")
                         .rotationEffect(.degrees(isExpanded ? 90 : 0))
@@ -307,8 +251,9 @@ struct AccountSectionView: View {
     }
 }
 
-//MARK: AccountRow
-struct AccountRow: View {
+//MARK: CompanyRow
+struct CompanyRow: View {
+    @EnvironmentObject var dataModel: DataModel
     var company: Company
     @Binding var selectedCompany: Company?
     @Binding var showAddOrderSheet: Bool
@@ -371,5 +316,62 @@ struct AccountRow: View {
                 Image(systemName: "checklist")
             }
         }
+    }
+}
+
+struct EmptyStateView: View {
+    @Binding var showAlert: Bool
+    var playSound: (String) -> Void
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            Button {
+                playSound("Sheeit")
+                showAlert.toggle()
+            } label: {
+                Image("confusedGhosty")
+                    .resizable()
+                    .scaledToFit()
+                    .shadow(color: .primary.opacity(0.5) , radius: 15)
+                    .padding(.horizontal, 50)
+            }
+            
+            Text("Wow, such empty.")
+            Text(emptyStateMessage)
+                .multilineTextAlignment(.center)
+                .padding(20)
+            
+            Spacer()
+            Spacer()
+        }
+        .alert("You think you're funny?", isPresented: $showAlert) {
+            Button("OK") {
+                playSound("okay")
+            }
+        } message: {
+            Text("Just tap the + in the top right corner, OK?")
+        }
+    }
+    
+    private var emptyStateMessage: AttributedString {
+        var message = AttributedString("Frankly, you should be embarrassed.\nI mean, you haven't found even ")
+        message.font = .caption
+        message.foregroundColor = .secondary
+        
+        var oneWord = AttributedString("one")
+        oneWord.font = .caption.italic()
+        oneWord.foregroundColor = .secondary
+        
+        message.append(oneWord)
+        message.append(AttributedString(" potential client?\n\nAnyway, see that "))
+        
+        var plusSign = AttributedString("+")
+        plusSign.foregroundColor = .accentColor
+        
+        message.append(plusSign)
+        message.append(AttributedString(" sign in the top right corner?"))
+        
+        return message
     }
 }

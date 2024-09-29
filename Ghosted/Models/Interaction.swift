@@ -1,8 +1,8 @@
-//
-//  Interaction.swift
-//  Ghosted
-//
-//  Created by Antoine on 2024/9/28.
-//
-
 import Foundation
+
+struct Interaction: Hashable, Codable, Identifiable {
+    var id: UUID
+    var date: Date
+    var title: String
+    var content: String
+}

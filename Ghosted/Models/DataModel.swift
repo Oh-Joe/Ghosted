@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 class DataModel: ObservableObject {
     @Published var companies: [Company] = []
@@ -14,6 +15,7 @@ class DataModel: ObservableObject {
     private var ordersFilePath: URL
     private var interactionsFilePath: URL
     private var tasksFilePath: URL
+    private var notesFilePath: URL
     
     init() {
         let fileManager = FileManager.default
@@ -24,6 +26,7 @@ class DataModel: ObservableObject {
         ordersFilePath = documentsDirectory.appendingPathComponent("orders.json")
         interactionsFilePath = documentsDirectory.appendingPathComponent("interactions.json")
         tasksFilePath = documentsDirectory.appendingPathComponent("tasks.json")
+        notesFilePath = documentsDirectory.appendingPathComponent("notes.json")
         
         // Load initial data
         loadAll()
@@ -57,6 +60,7 @@ class DataModel: ObservableObject {
         orders = Dictionary(uniqueKeysWithValues: (loadJSON(from: ordersFilePath) as [Order]? ?? []).map { ($0.id, $0) })
         interactions = Dictionary(uniqueKeysWithValues: (loadJSON(from: interactionsFilePath) as [Interaction]? ?? []).map { ($0.id, $0) })
         tasks = Dictionary(uniqueKeysWithValues: (loadJSON(from: tasksFilePath) as [Task]? ?? []).map { ($0.id, $0) })
+        notes = Dictionary(uniqueKeysWithValues: (loadJSON(from: notesFilePath) as [Note]? ?? []).map { ($0.id, $0) })
     }
     
     private func saveAll() {
@@ -65,6 +69,7 @@ class DataModel: ObservableObject {
         saveJSON(Array(orders.values), to: ordersFilePath)
         saveJSON(Array(interactions.values), to: interactionsFilePath)
         saveJSON(Array(tasks.values), to: tasksFilePath)
+        saveJSON(Array(notes.values), to: notesFilePath)
     }
     
     // MARK: - Company Methods
@@ -80,7 +85,7 @@ class DataModel: ObservableObject {
             saveAll()
         }
     }
-
+    
     func deleteCompany(_ company: Company) {
         companies.removeAll { $0.id == company.id }
         saveAll()
@@ -88,17 +93,45 @@ class DataModel: ObservableObject {
     
     // MARK: - Contact Methods
     
-    func addContact(_ contact: Contact, to company: Company) {
-        contacts[contact.id] = contact
+    func addContact(_ contact: Contact, with image: UIImage?, to company: Company) {
+        var newContact = contact
+        if let image = image {
+            newContact.photoName = saveImage(image, forContact: contact.id) ?? ""
+        } else if newContact.photoName.isEmpty {
+            let rando: Int = Int.random(in: 1...15)
+            newContact.photoName = "Ghosty\(rando)"
+        }
+        contacts[newContact.id] = newContact
         if let index = companies.firstIndex(where: { $0.id == company.id }) {
-            companies[index].contactIDs.append(contact.id)
+            companies[index].contactIDs.append(newContact.id)
             saveAll()
         }
     }
-    
-    func updateContact(_ contact: Contact) {
-        contacts[contact.id] = contact
+
+    func updateContact(_ contact: Contact, with image: UIImage?) {
+        var updatedContact = contact
+        if let image = image {
+            updatedContact.photoName = saveImage(image, forContact: contact.id) ?? contact.photoName
+        }
+        contacts[updatedContact.id] = updatedContact
         saveAll()
+    }
+    
+    func saveImage(_ image: UIImage, forContact contactID: UUID) -> String? {
+        let imageName = "\(contactID.uuidString).jpg"
+        let fileManager = FileManager.default
+        guard let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        let fileURL = documentsDirectory.appendingPathComponent(imageName)
+        
+        guard let data = image.jpegData(compressionQuality: 0.8) else { return nil }
+        
+        do {
+            try data.write(to: fileURL)
+            return imageName
+        } catch {
+            print("Error saving image: \(error)")
+            return nil
+        }
     }
     
     func deleteContact(_ contact: Contact) {
@@ -106,7 +139,50 @@ class DataModel: ObservableObject {
         for i in 0..<companies.count {
             companies[i].contactIDs.removeAll { $0 == contact.id }
         }
+        
+        // Delete the associated image
+        let fileManager = FileManager.default
+        if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+            let fileURL = documentsDirectory.appendingPathComponent(contact.photoName)
+            try? fileManager.removeItem(at: fileURL)
+        }
+        
         saveAll()
+    }
+    
+    func getImage(for contact: Contact) -> UIImage? {
+        let fileManager = FileManager.default
+        guard let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        let fileURL = documentsDirectory.appendingPathComponent(contact.photoName)
+        
+        if fileManager.fileExists(atPath: fileURL.path) {
+            return UIImage(contentsOfFile: fileURL.path)
+        } else if let defaultImage = UIImage(named: contact.photoName) {
+            return defaultImage // Fallback to asset catalog for default images
+        } else {
+            return nil
+        }
+    }
+    
+    // MARK: - Note Methods
+    
+    func addNote(_ note: Note) {
+        notes[note.id] = note
+        saveAll()
+    }
+    
+    func updateNote(_ note: Note) {
+        notes[note.id] = note
+        saveAll()
+    }
+    
+    func deleteNote(_ note: Note) {
+        notes.removeValue(forKey: note.id)
+        saveAll()
+    }
+    
+    func notesForContact(_ contact: Contact) -> [Note] {
+        return notes.values.filter { $0.contactID == contact.id }.sorted(by: { $0.date > $1.date })
     }
     
     // MARK: - Order Methods
@@ -200,3 +276,4 @@ class DataModel: ObservableObject {
         return company.taskIDs.compactMap { tasks[$0] }
     }
 }
+
