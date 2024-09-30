@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct TaskListView: View {
+    @EnvironmentObject var dataModel: DataModel
     @State private var isShowingAddTaskSheet: Bool = false
     @State private var showTaskSheet: Bool = false
     @State private var selectedTask: Task? = nil
-    var account: Account
+    var company: Company
     
     @State private var sectionExpandedStates: [TaskSection: Bool] = [
         .pastDue: true,
@@ -21,75 +22,73 @@ struct TaskListView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    Button {
-                        isShowingAddTaskSheet.toggle()
-                    } label: {
-                        Label("New Task", systemImage: "checklist")
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(.accentColor)
-                    .sheet(isPresented: $isShowingAddTaskSheet) {
-                        AddTaskView(account: account)
-                    }
-                } header: {
-                    Text("") // just for the space
+        List {
+            Section {
+                Button {
+                    isShowingAddTaskSheet.toggle()
+                } label: {
+                    Label("New Task", systemImage: "checklist")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
                 }
-                
-                ForEach(TaskSection.allCases, id: \.self) { section in
-                    let tasksForSection = tasksForSection(section)
-                    if !tasksForSection.isEmpty {
-                        TaskSectionView(
-                            section: section,
-                            tasks: tasksForSection,
-                            isExpanded: sectionExpandedStates[section] ?? false,
-                            toggleExpansion: {
-                                withAnimation {
-                                    sectionExpandedStates[section]?.toggle()
-                                }
-                            },
-                            selectedTask: $selectedTask,
-                            showTaskSheet: $showTaskSheet
-                        )
-                    }
+                .buttonStyle(.bordered)
+                .tint(.accentColor)
+            }
+            
+            ForEach(TaskSection.allCases, id: \.self) { section in
+                let tasksForSection = tasksForSection(section)
+                if !tasksForSection.isEmpty {
+                    TaskSectionView(
+                        section: section,
+                        tasks: tasksForSection,
+                        isExpanded: sectionExpandedStates[section] ?? false,
+                        toggleExpansion: {
+                            withAnimation {
+                                sectionExpandedStates[section]?.toggle()
+                            }
+                        },
+                        selectedTask: $selectedTask,
+                        showTaskSheet: $showTaskSheet
+                    )
                 }
             }
-            .navigationTitle(account.name)
-            .sheet(isPresented: Binding(
-                get: { showTaskSheet && selectedTask != nil },
-                set: { newValue in showTaskSheet = newValue }
-            )) {
-                if let selectedTaskBinding = Binding($selectedTask) {
-                    TaskDetailView(task: selectedTaskBinding, account: account)
-                        .presentationDragIndicator(.visible)
-                }
+        }
+        .navigationTitle("Tasks")
+        .sheet(isPresented: $isShowingAddTaskSheet) {
+            AddTaskView(company: company)
+        }
+        .sheet(isPresented: Binding(
+            get: { showTaskSheet && selectedTask != nil },
+            set: { newValue in showTaskSheet = newValue }
+        )) {
+            if let selectedTask = selectedTask {
+                TaskDetailView(taskId: selectedTask.id)
+                    .presentationDragIndicator(.visible)
             }
         }
     }
     
     private func tasksForSection(_ section: TaskSection) -> [Task] {
+        let tasks = dataModel.tasksForCompany(company)
         let today = Calendar.current.startOfDay(for: Date())
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
         
         switch section {
         case .pastDue:
-            return account.tasks.filter { $0.isOverdue && !$0.isDone }.sorted(by: { $0.dueDate < $1.dueDate })
+            return tasks.filter { $0.isOverdue && !$0.isDone }.sorted(by: { $0.dueDate < $1.dueDate })
         case .today:
-            return account.tasks.filter { Calendar.current.isDate($0.dueDate, inSameDayAs: today) && !$0.isDone }
+            return tasks.filter { Calendar.current.isDate($0.dueDate, inSameDayAs: today) && !$0.isDone }
                 .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
         case .upcoming:
-            return account.tasks.filter { $0.dueDate >= tomorrow && !$0.isDone }.sorted(by: { $0.dueDate < $1.dueDate })
+            return tasks.filter { $0.dueDate >= tomorrow && !$0.isDone }.sorted(by: { $0.dueDate < $1.dueDate })
         case .completed:
-            return account.tasks.filter { $0.isDone }.sorted(by: { $0.dueDate > $1.dueDate })
+            return tasks.filter { $0.isDone }.sorted(by: { $0.dueDate > $1.dueDate })
         }
     }
 }
 
 struct TaskSectionView: View {
+    @EnvironmentObject var dataModel: DataModel
     var section: TaskListView.TaskSection
     var tasks: [Task]
     var isExpanded: Bool
@@ -109,6 +108,7 @@ struct TaskSectionView: View {
                     }
                     .foregroundStyle(.primary)
                 }
+                .onDelete(perform: deleteTasks)
             }
         } header: {
             Button(action: toggleExpansion) {
@@ -125,6 +125,12 @@ struct TaskSectionView: View {
                 }
             }
             .buttonStyle(PlainButtonStyle())
+        }
+    }
+    
+    private func deleteTasks(at offsets: IndexSet) {
+        for index in offsets {
+            dataModel.deleteTask(tasks[index])
         }
     }
 }

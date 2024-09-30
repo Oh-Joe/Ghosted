@@ -1,64 +1,70 @@
-//
-//  InteractionListView.swift
-//  Ghosted
-//
-//  Created by Antoine Moreau on 9/4/24.
-//
-
 import SwiftUI
 
 struct InteractionListView: View {
+    @EnvironmentObject var dataModel: DataModel
     @State private var isShowingAddInteractionSheet: Bool = false
     @State private var showInteractionSheet: Bool = false
     @State private var selectedInteraction: Interaction? = nil
-    var account: Account
+    var company: Company
     
     var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    Button {
-                        isShowingAddInteractionSheet.toggle()
-                    } label: {
-                        Label("New Interaction", systemImage: "plus.bubble.fill")
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(.accentColor)
-                    .sheet(isPresented: $isShowingAddInteractionSheet) {
-                        AddInteractionView(account: account)
-                    }
-                    if !account.interactions.isEmpty {
-                        ForEach(account.interactions.sorted(by: { $0.date > $1.date }), id: \.id) { interaction in
-                            
-                            Button {
-                                selectedInteraction = interaction
-                                showInteractionSheet = true
-                            } label: {
-                                HStack {
-                                    Text(interaction.date, format: .dateTime.month(.abbreviated).day().year())
-                                    Text(" -  \(interaction.title)")
-                                }
-                                .foregroundStyle(Color.primary)
-                                .lineLimit(1)
-                                .truncationMode(.tail)
+        List {
+            Section {
+                Button {
+                    isShowingAddInteractionSheet.toggle()
+                } label: {
+                    Label("New Interaction", systemImage: "plus.bubble.fill")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .tint(.accentColor)
+            } header: {
+                Text("")
+            }
+            
+            
+                let interactions = dataModel.interactionsForCompany(company)
+                if !interactions.isEmpty {
+                    Section {
+                    ForEach(interactions.sorted(by: { $0.date > $1.date })) { interaction in
+                        Button {
+                            selectedInteraction = interaction
+                            showInteractionSheet = true
+                        } label: {
+                            HStack {
+                                Text(interaction.title)
+                                Spacer()
+                                Text(interaction.date, format: .dateTime.month(.abbreviated).day().year())
                             }
+                            .foregroundStyle(Color.primary)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
                         }
                     }
-                } header: {
-                    Text("") // just for the space
-                }
+                    .onDelete(perform: deleteInteractions)
+                    }
             }
-            .navigationTitle(account.name)
-            .sheet(isPresented: Binding(
-                get: { showInteractionSheet && selectedInteraction != nil },
-                set: { newValue in showInteractionSheet = newValue }
-            )) {
-                InteractionDetailView(interaction: selectedInteraction!)
+        }
+        .navigationTitle("Interactions")
+        .sheet(isPresented: $isShowingAddInteractionSheet) {
+            AddInteractionView(company: company)
+        }
+        .sheet(isPresented: Binding(
+            get: { showInteractionSheet && selectedInteraction != nil },
+            set: { newValue in showInteractionSheet = newValue }
+        )) {
+            if let interaction = selectedInteraction {
+                InteractionDetailView(interaction: interaction)
                     .presentationDragIndicator(.visible)
             }
         }
     }
+    
+    private func deleteInteractions(at offsets: IndexSet) {
+        let interactionsToDelete = offsets.map { dataModel.interactionsForCompany(company).sorted(by: { $0.date > $1.date })[$0] }
+        for interaction in interactionsToDelete {
+            dataModel.deleteInteraction(interaction)
+        }
+    }
 }
-

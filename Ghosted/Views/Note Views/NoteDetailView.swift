@@ -1,17 +1,10 @@
-//
-//  NoteDetailView.swift
-//  eYes
-//
-//  Created by Antoine Moreau on 8/29/24.
-//
-
 import SwiftUI
 
 struct NoteDetailView: View {
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var modelData: ModelData
+    @EnvironmentObject var dataModel: DataModel
     
-    var note: Contact.Note
+    var note: Note
     
     var body: some View {
         NavigationStack {
@@ -29,17 +22,17 @@ struct NoteDetailView: View {
             }
             .padding()
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Text(note.title)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark")
                     }
-                }
-                ToolbarItem(placement: .topBarLeading) {
-                    Text(note.title)
-                        .font(.title2)
-                        .fontWeight(.bold)
                 }
             }
         }

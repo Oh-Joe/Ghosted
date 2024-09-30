@@ -9,7 +9,6 @@ import SwiftUI
 
 struct InteractionDetailView: View {
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var modelData: ModelData
     
     var interaction: Interaction
     

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AddOrderView: View {
-    @EnvironmentObject var modelData: ModelData
+    @EnvironmentObject var dataModel: DataModel
     @Environment(\.dismiss) var dismiss
     
     @State var issuedDate = Date()
@@ -17,7 +17,7 @@ struct AddOrderView: View {
         return orderAmount > 0 && !orderNumber.isEmpty && !dueDate.description.isEmpty
     }
     
-    var account: Account
+    var company: Company
     
     var body: some View {
         NavigationStack {
@@ -67,8 +67,8 @@ struct AddOrderView: View {
                                              orderNumber: orderNumber,
                                              isFullyPaid: isFullyPaid
                         )
-                        modelData.addOrder(newOrder, to: account)
-                        modelData.objectWillChange.send()
+                        dataModel.addOrder(newOrder, to: company)
+                        dataModel.objectWillChange.send()
                         dismiss()
                     } label: {
                         Text("Save")

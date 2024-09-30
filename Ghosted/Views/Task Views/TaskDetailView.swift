@@ -1,19 +1,16 @@
-//
-//  TaskDetailView.swift
-//  Ghosted
-//
-//  Created by Antoine Moreau on 9/8/24.
-//
-
 import SwiftUI
 
 struct TaskDetailView: View {
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var modelData: ModelData
+    @EnvironmentObject var dataModel: DataModel
     
-    @Binding var task: Task
+    @State private var task: Task
+    let taskId: UUID
     
-    var account: Account
+    init(taskId: UUID) {
+        self.taskId = taskId
+        _task = State(initialValue: Task.emptyTask) // Placeholder, will be updated in onAppear
+    }
     
     var body: some View {
         NavigationStack {
@@ -31,7 +28,7 @@ struct TaskDetailView: View {
                             get: { task.isDone },
                             set: { newValue in
                                 task.isDone = newValue
-                                modelData.updateTask(task, in: account)
+                                dataModel.updateTask(task)
                             }
                         ))
                     }
@@ -57,5 +54,11 @@ struct TaskDetailView: View {
                 }
             }
         }
+        .onAppear {
+            if let loadedTask = dataModel.tasks[taskId] {
+                task = loadedTask
+            }
+        }
     }
 }
+

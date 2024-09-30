@@ -1,22 +1,25 @@
 import SwiftUI
 
-struct AddTaskView: View {
+struct AddNoteView: View {
     @EnvironmentObject var dataModel: DataModel
     @Environment(\.dismiss) var dismiss
     @State private var title: String = ""
-    @State private var contents: String = ""
-    @State private var dueDate: Date = Date()
-    var company: Company
+    @State private var content: String = ""
+    @State private var noteDate: Date = Date()
+    var contact: Contact
     
     var body: some View {
         NavigationView {
             Form {
+                DatePicker("Date",
+                           selection: $noteDate,
+                           displayedComponents: [.date]
+                )
                 TextField("Title", text: $title)
-                DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
-                TextEditor(text: $contents)
-                    .frame(height: 100)
+                TextEditor(text: $content)
+                    .frame(height: 250)
             }
-            .navigationTitle("New Task")
+            .navigationTitle("New Note")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -24,19 +27,19 @@ struct AddTaskView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        let newTask = Task(
+                        let newNote = Note(
                             id: UUID(),
+                            contactID: contact.id,
+                            date: noteDate,
                             title: title,
-                            contents: contents,
-                            isDone: false,
-                            dueDate: dueDate)
-                        dataModel.addTask(newTask, to: company)
+                            content: content
+                        )
+                        dataModel.addNote(newNote)
                         dismiss()
                     }
-                    .disabled(title.isEmpty)
+                    .disabled(title.isEmpty && content.isEmpty)
                 }
             }
-            .presentationDragIndicator(.visible)
         }
     }
 }

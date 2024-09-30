@@ -1,15 +1,8 @@
-//
-//  GhostedApp.swift
-//  Ghosted
-//
-//  Created by Antoine Moreau on 8/31/24.
-//
-
 import SwiftUI
 
 @main
 struct GhostedApp: App {
-    @StateObject private var modelData = ModelData()
+    @StateObject private var dataModel = DataModel()
     
     init() {
             NotificationManager.shared.requestPermission()
@@ -18,7 +11,7 @@ struct GhostedApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(modelData)
+                .environmentObject(dataModel)
         }
     }
 }
