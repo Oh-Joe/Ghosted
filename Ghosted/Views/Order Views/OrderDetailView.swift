@@ -18,28 +18,44 @@ struct OrderDetailView: View {
     var body: some View {
         NavigationStack {
             List {
+                
                 Section {
-                    Text(localOrder.orderAmount, format: .currency(code: localOrder.currency.rawValue))
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                    HStack {
+                        Text("Order #:")
+                        Spacer()
+                        Text(localOrder.orderNumber)
+                    }
+                    HStack {
+                        Text("Issued date:")
+                        Spacer()
+                        Text(localOrder.issuedDate.formatted(.dateTime.day().month(.abbreviated).year()))
+                    }
+                    HStack {
+                        Text("Due date:")
+                        Spacer()
+                        Text(localOrder.dueDate.formatted(.dateTime.day().month(.abbreviated).year()))
+                            .foregroundStyle(localOrder.isOverdue ? Color.red : .primary)
+                    }
+                } header: {
+                    Text("Order Details")
+                }
+                
+                Section {
+                    
+                    HStack {
+                        Text("Amount:")
+                        Spacer()
+                        Text(localOrder.orderAmount, format: .currency(code: localOrder.currency.rawValue))
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
                     HStack {
                         Toggle("Paid?", isOn: $localOrder.isFullyPaid)
                     }
                 } header: {
-                    HStack {
-                        Image(systemName: "dollarsign.circle.fill")
-                            .foregroundStyle(.opacity(0.3))
-                        Text("Dollar dollar bills")
+                    Text("Payment status")
                     }
-                }
                 
-                Section {
-                    Text("Order #\(localOrder.orderNumber)")
-                    Text("Due date: \(localOrder.dueDate, format: .dateTime.day().month())")
-                        .foregroundStyle(!localOrder.isFullyPaid && localOrder.dueDate < Date() ? .red : .primary)
-                } header: {
-                    Text("Order Details")
-                }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

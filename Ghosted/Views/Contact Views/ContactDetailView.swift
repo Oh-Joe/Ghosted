@@ -48,8 +48,9 @@ struct ContactDetailView: View {
                             showNoteSheet = true
                         } label: {
                             HStack {
-                                Text(note.date, format: .dateTime.month(.abbreviated).day().year())
-                                Text(" -  \(note.title)")
+                                Text(note.title)
+                                Spacer()
+                                Text(note.date, format: .dateTime.day().month(.abbreviated).year())
                             }
                             .foregroundStyle(Color.primary)
                             .lineLimit(1)

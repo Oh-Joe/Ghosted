@@ -26,6 +26,8 @@ struct CompanyListView: View {
         .closedLost: true
     ]
     
+    
+    
     var body: some View {
         Group {
             if dataModel.companies.isEmpty {
@@ -269,9 +271,22 @@ struct CompanyRow: View {
                 .padding(3)
                 .background(RoundedRectangle(cornerRadius: 5).fill(.secondary).opacity(0.3))
                 .foregroundStyle(Color.secondary)
+            
             Text(company.name)
-            Spacer()
+            
+            if dataModel.ordersForCompany(company).contains(where: { $0.isOverdue }) || dataModel.tasksForCompany(company).contains(where: { $0.isOverdue }) {
+                Spacer()
+                Spacer()
+                Text("• o v e r d u e •")
+                    .font(.caption2)
+                    .padding(.horizontal, 4)
+                    .foregroundStyle(.red)
+                    .background(Color.red.opacity(0.3))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                Spacer()
+            }
         }
+        
         .contextMenu {
             Button {
                 selectedCompany = company

@@ -33,6 +33,8 @@ struct TaskListView: View {
                 }
                 .buttonStyle(.bordered)
                 .tint(.accentColor)
+            } header: {
+                Text("") // just for the space
             }
             
             ForEach(TaskSection.allCases, id: \.self) { section in
