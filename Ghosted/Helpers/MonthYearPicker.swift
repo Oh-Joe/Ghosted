@@ -60,9 +60,6 @@ struct MonthYearPicker: View {
     }
 }
 
-#Preview {
-    MonthYearPicker(selectedDate: .constant(Date()))
-}
 
 extension Date {
     func year() -> Int {

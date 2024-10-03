@@ -5,7 +5,7 @@ struct TaskRowView: View {
     
     private var taskStatusIcon: (String, Color) {
         if task.isOverdue {
-            return ("exclamationmark.triangle", Color.red)
+            return ("exclamationmark.triangle.fill", Color.red)
         } else if task.isDone {
             return ("checkmark.circle.fill", .green)
         } else {
@@ -21,6 +21,7 @@ struct TaskRowView: View {
             Spacer()
             Text(task.dueDate, format: .dateTime.day().month(.abbreviated).year())
         }
+        .foregroundStyle(task.isOverdue ? .red : .primary)
     }
 }
 

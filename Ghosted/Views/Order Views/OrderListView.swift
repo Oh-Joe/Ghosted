@@ -126,7 +126,7 @@ struct OrderSectionView: View {
                     Text(section.rawValue)
                     Text("\(orders.count)")
                         .font(.caption)
-                        .frame(width: 15, height: 15)
+                        .frame(width: 18, height: 18)
                         .background(Circle().fill(Color.accentColor).opacity(0.3))
                     Text(totalValue, format: .currency(code: orders.first?.currency.rawValue ?? "USD"))
                         .font(.caption2)

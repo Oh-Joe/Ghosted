@@ -1,10 +1,5 @@
 import SwiftUI
 
-//MARK: AccountListView
-import SwiftUI
-
-import SwiftUI
-
 struct CompanyListView: View {
     @EnvironmentObject var dataModel: DataModel
     @State private var isOn = false
@@ -33,7 +28,7 @@ struct CompanyListView: View {
             if dataModel.companies.isEmpty {
                 EmptyStateView(showAlert: $showAlert, playSound: playSound)
             } else {
-                AccountListContent(
+                CompanyListContent(
                     sectionExpandedStates: $sectionExpandedStates,
                     selectedCompany: $selectedCompany,
                     showAddOrderSheet: $showAddOrderSheet,
@@ -131,7 +126,7 @@ struct CompanyListView: View {
     }
 }
 
-struct AccountListContent: View {
+struct CompanyListContent: View {
     @EnvironmentObject var dataModel: DataModel
     @Binding var sectionExpandedStates: [Company.Status: Bool]
     @Binding var selectedCompany: Company?
@@ -198,7 +193,7 @@ struct CompanySectionView: View {
             Section {
                 if isExpanded {
                     ForEach(companies.sorted(by: { $0.country.countryCode < $1.country.countryCode })) { company in
-                        NavigationLink(destination: CompaniesHomeView(company: company)) {
+                        NavigationLink(destination: CompaniesHomeView(selectedTab: selectedTab(for: company), company: company)) {
                             CompanyRow(company: company, selectedCompany: $selectedCompany, showAddOrderSheet: $showAddOrderSheet, showAddContactSheet: $showAddContactSheet, showAddInteractionSheet: $showAddInteractionSheet, showAddTaskSheet: $showAddTaskSheet, showEditAccountSheet: $showEditAccountSheet)
                         }
                         .swipeActions {
@@ -218,13 +213,35 @@ struct CompanySectionView: View {
         }
     }
     
+    private func dueItemsForCompany(_ company: Company) -> (orders: [Order], tasks: [Task]) {
+        let today = Calendar.current.startOfDay(for: Date())
+        
+        let dueOrders = company.orderIDs.compactMap { dataModel.orders[$0] }
+            .filter { $0.isOverdue || (Calendar.current.isDate($0.dueDate, inSameDayAs: today) && !$0.isFullyPaid) }
+        
+        let dueTasks = company.taskIDs.compactMap { dataModel.tasks[$0] }
+            .filter { $0.isOverdue || (Calendar.current.isDate($0.dueDate, inSameDayAs: today) && !$0.isDone) }
+        
+        return (dueOrders, dueTasks)
+    }
+    
+    private func selectedTab(for company: Company) -> CompaniesHomeView.Tab {
+        let dueItems = dueItemsForCompany(company)
+        if !dueItems.orders.isEmpty || (!dueItems.orders.isEmpty && !dueItems.tasks.isEmpty) {
+            return .orders // Go to orders tab if there are due orders or both orders and tasks
+        } else if !dueItems.tasks.isEmpty {
+            return .tasks // Go to tasks tab if there are due tasks
+        }
+        return .details // Default to details tab if no due items
+    }
+    
     private var sectionHeaderView: some View {
         HStack {
             HStack {
                 Text("\(statusDisplayName)")
                 Text("\(companyCount)")
                     .font(.caption)
-                    .frame(width: 15, height: 15)
+                    .frame(width: 18, height: 18)
                     .background(Circle().fill(companyCount == 0 ? Color.secondary : Color.accentColor).opacity(0.3))
             }
             Spacer()
@@ -275,15 +292,17 @@ struct CompanyRow: View {
             Text(company.name)
             
             if dataModel.ordersForCompany(company).contains(where: { $0.isOverdue }) || dataModel.tasksForCompany(company).contains(where: { $0.isOverdue }) {
-                Spacer()
-                Spacer()
-                Text("• o v e r d u e •")
+                
+                let overdueOrderCount = dataModel.ordersForCompany(company).count(where: { $0.isOverdue })
+                let overdueTaskCount = dataModel.tasksForCompany(company).count(where: { $0.isOverdue })
+                let overdueItems = overdueOrderCount + overdueTaskCount
+                
+                Text("\(overdueItems)")
                     .font(.caption2)
-                    .padding(.horizontal, 4)
+                    .padding(6)
                     .foregroundStyle(.red)
                     .background(Color.red.opacity(0.3))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                Spacer()
+                    .clipShape(Circle())
             }
         }
         

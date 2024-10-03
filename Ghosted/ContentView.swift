@@ -4,8 +4,8 @@ struct ContentView: View {
     @EnvironmentObject var dataModel: DataModel
     @State private var selectedTab: Tab = .companies
 
-    var randoAccounts: Int = Int.random(in: 1...5)
-    var randoSalesChart: Int = Int.random(in: 1...6)
+    var randoToday: Int = Int.random(in: 1...3)
+    var randoCompanies: Int = Int.random(in: 1...6)
     var randoSalesDashboard: Int = Int.random(in: 1...4)
 
     enum Tab {
@@ -17,98 +17,91 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack {
-            TabView(selection: $selectedTab) {
-                NavigationLink(destination: CompanyListView()) {
-                    VStack {
-                        Image("SectionImageClientAccounts\(randoAccounts)")
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                        Spacer()
-                        VStack {
-                            Text("Accounts")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                            Text("Create and manage accounts, their contacts, orders, and control your tasks and interactions with them. Always be closing.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .padding(.top, 8)
+            ScrollView {
+                VStack(spacing: 24) {
+                    
+                    NavigationLink(destination: TodayView()) {
+                        ZStack(alignment: .bottomLeading) {
+                            Image("SectionToday\(randoToday)")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(maxWidth: .infinity, maxHeight: 180)
+
+                            VStack(alignment: .leading) {
+                                Text("Today")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+
+                                Text("Quickly view what needs to be done today.")
+                                    .font(.caption)
+                                    .multilineTextAlignment(.leading)
+                            }
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.secondary.opacity(0.85))
                         }
-                        Spacer()
-                        Spacer()
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
-                    .foregroundStyle(Color.primary)
-                    .padding()
-                }
-                .tag(Tab.companies)
-                
-//                NavigationLink(destination: SalesChartView()) {
-//                    VStack {
-//                        Image("SectionSales\(randoSalesChart)")
-//                            .resizable()
-//                            .scaledToFit()
-//                            .clipShape(RoundedRectangle(cornerRadius: 12))
-//                        Spacer()
-//                        VStack {
-//                            Text("Sales Charts")
-//                                .font(.title2)
-//                                .fontWeight(.bold)
-//                            Text("View company sales by month, year, or all time.")
-//                                .font(.caption)
-//                                .foregroundStyle(.secondary)
-//                                .padding(.top, 8)
-//                        }
-//                        Spacer()
-//                        Spacer()
-//                    }
-//                    .foregroundStyle(Color.primary)
-//                    .padding()
-//                }
-//                .tag(Tab.salesCharts)
-                
-                NavigationLink(destination: ChartsView()) {
-                    VStack {
-                        Image("SectionSalesDashboard\(randoSalesDashboard)")
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                        Spacer()
-                        VStack {
-                            Text("Sales Chart")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                            Text("Colors and bars and shit.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .padding(.top, 8)
+                    
+                    NavigationLink(destination: CompanyListView()) {
+                        ZStack(alignment: .bottomLeading) {
+                            Image("SectionCompanies\(randoCompanies)")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(maxWidth: .infinity, maxHeight: 180)
+
+                            VStack(alignment: .leading) {
+                                Text("Accounts")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+
+                                Text("Create and manage accounts, their contacts, and orders;\ncontrol your tasks and interactions with them.")
+                                    .font(.caption)
+                                    .multilineTextAlignment(.leading)
+                            }
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.secondary.opacity(0.85))
                         }
-                        Spacer()
-                        Spacer()
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
-                    .foregroundStyle(Color.primary)
-                    .padding()
+
+                    NavigationLink(destination: ChartsView()) {
+                        ZStack(alignment: .bottomLeading) {
+                            Image("SectionSalesDashboard\(randoSalesDashboard)")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(maxWidth: .infinity, maxHeight: 180)
+
+                            VStack(alignment: .leading) {
+                                Text("Sales Charts")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+
+                                Text("Colors and bars and shit.")
+                                    .font(.caption)
+                                    .multilineTextAlignment(.leading)
+                            }
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.secondary.opacity(0.85))
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    
+                    Spacer()
                 }
-                .tag(Tab.salesDashboard)
-                
             }
-            .tabViewStyle(PageTabViewStyle())
-            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+            .foregroundStyle(Color.primary)
+            .padding()
             .navigationTitle("Home")
         }
     }
-    
-    // MARK: functions & helpers
-    private var pageTitle: String {
-        switch selectedTab {
-        case .companies:
-            return "Accounts"
-        case .salesCharts:
-            return "Sales Charts"
-        case .salesDashboard:
-            return "Sales Dashboard"
-        case .contacts:
-            return "Contacts"
-        }
-    }
 }
-
+                

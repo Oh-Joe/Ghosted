@@ -5,7 +5,14 @@ struct ChartsView: View {
     @EnvironmentObject var dataModel: DataModel
     @State private var scrollPosition: String?
     @State private var selectedMonth: String?
-    @State private var monthsPerScreen: Int = 6
+    @State private var monthsPerScreen: Int = {
+        // Set the default value based on the device type
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return 6 // Default for iPhone
+        } else {
+            return 12 // Default for iPad
+        }
+    }()
     
     var body: some View {
         VStack(spacing: 20) {
@@ -21,7 +28,6 @@ struct ChartsView: View {
             .padding(.horizontal)
             Spacer()
             chartView
-//                .frame(height: 300)
                 .padding()
             
             Spacer()
@@ -58,6 +64,7 @@ struct ChartsView: View {
             AxisMarks(position: .trailing)
         }
         .chartScrollableAxes(.horizontal)
+        .chartScrollPosition(initialX: initialScrollPosition)
         .chartXVisibleDomain(length: monthsPerScreen)
         .chartLegend(position: .bottom, alignment: .leading)
     }
@@ -106,6 +113,10 @@ struct ChartsView: View {
         }
         
         return monthlySales
+    }
+    
+    private var initialScrollPosition: String {
+        return monthlySalesData.last?.monthYear ?? monthlySalesData.first?.monthYear ?? ""
     }
     
     private func generateColors(for count: Int) -> [Color] {

@@ -91,6 +91,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		27C8206E2CAD674000E9708E /* Today Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Today Views"; sourceTree = "<group>"; };
 		27DF20DF2CA7D55400F6A01F /* Models */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Models; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -120,7 +121,6 @@
 				27502E522C9BF98D006133F7 /* SalesChartView.swift */,
 				27D7CA4B2CA935BF00A1CAF6 /* ChartsView.swift */,
 				27502E552C9D03D4006133F7 /* SalesDashboardView.swift */,
-				27DF0E592C9E77450092EA2E /* MonthYearPicker.swift */,
 			);
 			path = "Sales Views";
 			sourceTree = "<group>";
@@ -229,6 +229,7 @@
 				6C784FAC2C8351DC00E64FF0 /* SafariView.swift */,
 				6C784FAD2C8351DC00E64FF0 /* Countries.swift */,
 				6C4EB17B2C86B03300CA508E /* AudioPlayer.swift */,
+				27DF0E592C9E77450092EA2E /* MonthYearPicker.swift */,
 				27AD606F2CA00B2900257E74 /* NotificationManager.swift */,
 			);
 			path = Helpers;
@@ -237,6 +238,7 @@
 		6C784FAF2C8351DC00E64FF0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				27C8206E2CAD674000E9708E /* Today Views */,
 				6C784FA22C8351DB00E64FF0 /* Company Views */,
 				6C784F982C8351DA00E64FF0 /* Contact Views */,
 				272DDAA22CA8130B00FFE43D /* Note Views */,
@@ -264,6 +266,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				27C8206E2CAD674000E9708E /* Today Views */,
 				27DF20DF2CA7D55400F6A01F /* Models */,
 			);
 			name = Ghosted;

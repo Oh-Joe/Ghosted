@@ -1,5 +1,6 @@
 import SwiftUI
 import Charts
+import UIKit
 
 struct CompanyDetailView: View {
     @EnvironmentObject var dataModel: DataModel
@@ -7,7 +8,7 @@ struct CompanyDetailView: View {
     @State private var isShowingSafariView: Bool = false
     @State private var isShowingInvalidURLAlert: Bool = false
     @State private var isShowingLastYearLineChart: Bool = false
-    
+    @State private var selectedMonth: String?
     
     var company: Company
     
@@ -67,7 +68,7 @@ struct CompanyDetailView: View {
                 
                 salesComparisonChart
                     .frame(height: 300)
-                    .padding()
+
             } header: {
                 Text("Sales Chart")
             }
@@ -110,17 +111,18 @@ struct CompanyDetailView: View {
             }
         }
         .chartYAxis {
-            AxisMarks(position: .leading)
+            AxisMarks(position: .trailing)
         }
         .chartLegend(position: .bottom)
         .chartScrollableAxes(.horizontal)
-        .chartXVisibleDomain(length: 12)
+        .chartScrollPosition(initialX: initialScrollPosition)
+        .chartXVisibleDomain(length: visibleMonths)
     }
     
     private func thisYearBarMark(for monthData: CompanySalesData) -> some ChartContent {
         BarMark(
             x: .value("Month", monthData.month),
-            y: .value("This Year", monthData.thisYearSales)
+            y: .value("This Year", monthData.sales)
         )
         .foregroundStyle(Color.green)
     }
@@ -138,16 +140,9 @@ struct CompanyDetailView: View {
                 .symbol() {
                     Circle()
                         .fill(.pink)
-                        .frame (width: 6, height: 6)
+                        .frame(width: 6, height: 6)
                 }
-                .symbolSize (45)
-                
-                //                PointMark(
-                //                    x: .value("Month", monthData.month),
-                //                    y: .value("Last Year", lastYearSales)
-                //                )
-                //                .foregroundStyle(Color.red)
-                //                .symbolSize(30)
+                .symbolSize(45)
             }
         }
     }
@@ -155,44 +150,56 @@ struct CompanyDetailView: View {
     private var monthlySalesData: [CompanySalesData] {
         let calendar = Calendar.current
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMM"
+        dateFormatter.dateFormat = "M/yyyy"
         
-        let now = Date()
-        let startOfThisYear = calendar.date(from: calendar.dateComponents([.year], from: now))!
-        let startOfLastYear = calendar.date(byAdding: .year, value: -1, to: startOfThisYear)!
+        let relevantOrders = dataModel.orders.values.filter { company.orderIDs.contains($0.id) }
+        guard let firstOrderDate = relevantOrders.map({ $0.issuedDate }).min() else { return [] }
         
-        let relevantOrders = dataModel.orders.values.filter { order in
-            company.orderIDs.contains(order.id) && order.issuedDate >= startOfLastYear
-        }
+        let startDate = calendar.startOfMonth(for: firstOrderDate)
+        let endDate = Date()
         
+        var currentDate = startDate
         var monthlyData: [CompanySalesData] = []
         
-        for month in 0..<12 {
-            let currentMonthThisYear = calendar.date(byAdding: .month, value: month, to: startOfThisYear)!
-            let currentMonthLastYear = calendar.date(byAdding: .month, value: month, to: startOfLastYear)!
-            
-            let thisYearSales = relevantOrders
-                .filter { calendar.isDate($0.issuedDate, equalTo: currentMonthThisYear, toGranularity: .month) }
+        while currentDate <= endDate {
+            let monthSales = relevantOrders
+                .filter { calendar.isDate($0.issuedDate, equalTo: currentDate, toGranularity: .month) }
                 .reduce(0) { $0 + $1.orderAmount }
             
+            let lastYearDate = calendar.date(byAdding: .year, value: -1, to: currentDate)!
             let lastYearSales = relevantOrders
-                .filter { calendar.isDate($0.issuedDate, equalTo: currentMonthLastYear, toGranularity: .month) }
+                .filter { calendar.isDate($0.issuedDate, equalTo: lastYearDate, toGranularity: .month) }
                 .reduce(0) { $0 + $1.orderAmount }
             
             monthlyData.append(CompanySalesData(
-                month: dateFormatter.string(from: currentMonthThisYear),
-                thisYearSales: thisYearSales,
+                month: dateFormatter.string(from: currentDate),
+                sales: monthSales,
                 lastYearSales: lastYearSales > 0 ? lastYearSales : nil
             ))
+            
+            currentDate = calendar.date(byAdding: .month, value: 1, to: currentDate)!
         }
         
         return monthlyData
+    }
+    
+    private var initialScrollPosition: String {
+        return monthlySalesData.last?.month ?? monthlySalesData.first?.month ?? ""
+    }
+    
+    private var visibleMonths: Int {
+        // Check if the device is an iPad
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return 6 // Use 6 for iPhone
+        } else {
+            return 12 // Use 12 for other devices
+        }
     }
 }
 
 struct CompanySalesData: Identifiable {
     let id = UUID()
     let month: String
-    let thisYearSales: Double
+    let sales: Double
     let lastYearSales: Double?
 }
