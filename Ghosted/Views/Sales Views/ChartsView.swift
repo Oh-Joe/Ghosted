@@ -100,7 +100,8 @@ struct ChartsView: View {
             
             for company in dataModel.companies {
                 let companyOrders = allOrders.filter { order in
-                    company.orderIDs.contains(order.id) &&
+//                    company.orderIDs.contains(order.id) && // for old data structure with single-way linking where Company has a [orderID] but Order doesn't have a companyID property.
+                    order.companyID == company.id && // new structure where Order has a companyID property
                     calendar.isDate(order.issuedDate, equalTo: currentDate, toGranularity: .month)
                 }
                 let totalAmount = companyOrders.reduce(0) { $0 + $1.orderAmount }

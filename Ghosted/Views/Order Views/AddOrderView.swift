@@ -22,7 +22,6 @@ struct AddOrderView: View {
     var body: some View {
         NavigationStack {
             Form {
-                
                 TextField("Order number", text: $orderNumber)
                 
                 Section {
@@ -45,7 +44,6 @@ struct AddOrderView: View {
                     }
                 }
                 Toggle("Fully paid yet?", isOn: $isFullyPaid)
-                
             }
             .navigationTitle("New Order")
             .toolbar {
@@ -59,16 +57,17 @@ struct AddOrderView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        let newOrder = Order(id: UUID(),
-                                             issuedDate: issuedDate,
-                                             dueDate: dueDate ?? Date.now,
-                                             orderAmount: orderAmount ?? 0,
-                                             currency: currency,
-                                             orderNumber: orderNumber,
-                                             isFullyPaid: isFullyPaid
+                        let newOrder = Order(
+                            id: UUID(),
+                            issuedDate: issuedDate,
+                            dueDate: dueDate ?? Date(),
+                            orderAmount: orderAmount ?? 0,
+                            currency: currency,
+                            orderNumber: orderNumber,
+                            isFullyPaid: isFullyPaid,
+                            companyID: company.id
                         )
                         dataModel.addOrder(newOrder, to: company)
-                        dataModel.objectWillChange.send()
                         dismiss()
                     } label: {
                         Text("Save")

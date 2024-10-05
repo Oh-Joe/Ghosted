@@ -1,10 +1,3 @@
-//
-//  SafariView.swift
-//  eYes
-//
-//  Created by Antoine Moreau on 8/29/24.
-//
-
 import SwiftUI
 import SafariServices
 

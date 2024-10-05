@@ -25,10 +25,14 @@ struct OrderListView: View {
                 Button {
                     isShowingAddOrderSheet.toggle()
                 } label: {
-                    Label("New Order", systemImage: "dollarsign.square")
+                    HStack {
+                        OrderSymbolView(size: 20)
+                    }
+                    
                         .foregroundStyle(Color.green)
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
+//                    Label("New Order", systemImage: "dollarsign.square")
                 }
                 .buttonStyle(.bordered)
                 .tint(.green)
@@ -36,25 +40,30 @@ struct OrderListView: View {
                 Text("") // just for the space
             }
             
-            ForEach(OrderSection.allCases, id: \.self) { section in
-                let ordersForSection = ordersForSection(section)
-                if !ordersForSection.isEmpty {
-                    OrderSectionView(
-                        section: section,
-                        orders: ordersForSection,
-                        isExpanded: sectionExpandedStates[section] ?? false,
-                        toggleExpansion: {
-                            withAnimation {
-                                sectionExpandedStates[section]?.toggle()
+            let orders = dataModel.ordersForCompany(company)
+            if orders.isEmpty {
+                ContentUnavailableView("It's empty in here", systemImage: "wind.snow", description: Text("Cheddar doesn't grow on trees. Gotta get some orders in."))
+            } else {
+                ForEach(OrderSection.allCases, id: \.self) { section in
+                    let ordersForSection = ordersForSection(section)
+                    if !ordersForSection.isEmpty {
+                        OrderSectionView(
+                            section: section,
+                            orders: ordersForSection,
+                            isExpanded: sectionExpandedStates[section] ?? false,
+                            toggleExpansion: {
+                                withAnimation {
+                                    sectionExpandedStates[section]?.toggle()
+                                }
+                            },
+                            selectedOrder: $selectedOrder,
+                            showOrderSheet: $showOrderSheet,
+                            totalValue: totalValueForSection(ordersForSection),
+                            onDelete: { indexSet in
+                                deleteOrders(at: indexSet, in: ordersForSection)
                             }
-                        },
-                        selectedOrder: $selectedOrder,
-                        showOrderSheet: $showOrderSheet,
-                        totalValue: totalValueForSection(ordersForSection),
-                        onDelete: { indexSet in
-                            deleteOrders(at: indexSet, in: ordersForSection)
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }

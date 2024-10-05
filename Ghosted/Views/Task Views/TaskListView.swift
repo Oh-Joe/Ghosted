@@ -37,21 +37,26 @@ struct TaskListView: View {
                 Text("") // just for the space
             }
             
-            ForEach(TaskSection.allCases, id: \.self) { section in
-                let tasksForSection = tasksForSection(section)
-                if !tasksForSection.isEmpty {
-                    TaskSectionView(
-                        section: section,
-                        tasks: tasksForSection,
-                        isExpanded: sectionExpandedStates[section] ?? false,
-                        toggleExpansion: {
-                            withAnimation {
-                                sectionExpandedStates[section]?.toggle()
-                            }
-                        },
-                        selectedTask: $selectedTask,
-                        showTaskSheet: $showTaskSheet
-                    )
+            let tasks = dataModel.tasksForCompany(company)
+            if tasks.isEmpty {
+                ContentUnavailableView("Nothing to do… yet", systemImage: "gamecontroller.fill", description: Text("Enjoy the free time while it lasts!"))
+            } else {
+                ForEach(TaskSection.allCases, id: \.self) { section in
+                    let tasksForSection = tasksForSection(section)
+                    if !tasksForSection.isEmpty {
+                        TaskSectionView(
+                            section: section,
+                            tasks: tasksForSection,
+                            isExpanded: sectionExpandedStates[section] ?? false,
+                            toggleExpansion: {
+                                withAnimation {
+                                    sectionExpandedStates[section]?.toggle()
+                                }
+                            },
+                            selectedTask: $selectedTask,
+                            showTaskSheet: $showTaskSheet
+                        )
+                    }
                 }
             }
         }

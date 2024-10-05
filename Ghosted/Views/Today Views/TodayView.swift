@@ -2,16 +2,16 @@ import SwiftUI
 
 struct TodayView: View {
     @EnvironmentObject var dataModel: DataModel
-    var randoFarmer: Int = Int.random(in: 1...4)
+    var randoToday: Int = Int.random(in: 1...6)
     
     var body: some View {
         if companiesWithDueItems.isEmpty {
             VStack(spacing: 18) {
-                Image("NothingUrgent\(randoFarmer)")
+                Image("NothingUrgent\(randoToday)")
                     .resizable()
                     .scaledToFit()
                     .clipShape(RoundedRectangle(cornerRadius: 12))
-                Text("It's a good time to cultivate your accounts!")
+                Text((1...3).contains(randoToday) ? "It's a good time to cultivate your accounts!" : "But your boss doesn't need to know that.")
                     .foregroundStyle(.secondary)
                 Spacer()
             }

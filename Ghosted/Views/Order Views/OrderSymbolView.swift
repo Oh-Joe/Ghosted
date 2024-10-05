@@ -1,40 +1,32 @@
-//
-//  OrderSymbolView.swift
-//  Ghosted
-//
-//  Created by Antoine Moreau on 9/8/24.
-//
-
 import SwiftUI
 
 struct OrderSymbolView: View {
+    var size: CGFloat
+
     var body: some View {
         ZStack {
             Image(systemName: "clipboard")
-                .font(.system(size: 48))
+                .font(.system(size: size))
             Image(systemName: "dollarsign")
-                .font(.system(size: 24))
+                .font(.system(size: size * 0.5))
                 .fontWeight(.bold)
-                .offset(y: 4)
+                .offset(y: size * 0.05)
             
-                .overlay {
-                    Image(systemName: "circle.fill")
-                        .font(.system(size: 26))
-                        .offset(x: 16, y: 26)
-                    Image(systemName: "plus")
-                        .foregroundStyle(.white)
-                        .font(.system(size: 16))
-                        .fontWeight(.bold)
-                        .offset(x: 16, y: 26)
-                        
-                        
-                }
-            
-            
+            .overlay {
+                Image(systemName: "circle.fill")
+                    .font(.system(size: size * 0.55))
+                    .offset(x: size * 0.33, y: size * 0.5)
+                Image(systemName: "plus")
+                    .foregroundStyle(.greenTint)
+                    .font(.system(size: size * 0.4))
+                    .fontWeight(.bold)
+                    .offset(x: size * 0.33, y: size * 0.5)
+            }
         }
+        .offset(y: -2)
     }
 }
 
 #Preview {
-    OrderSymbolView()
+    OrderSymbolView(size: 48)
 }

@@ -3,33 +3,52 @@ import SwiftUI
 struct CompaniesHomeView: View {
     @EnvironmentObject var dataModel: DataModel
     @State private var selectedCompany: Company?
-    @State private var overdueOrderCount: Int? = nil
-    @State private var overdueTaskCount: Int? = nil
     
     @State var selectedTab: Tab
 
-        enum Tab {
-            case details
-            case contacts
-            case interactions
-            case orders
-            case tasks
-        }
+    enum Tab {
+        case details
+        case orders
+        case tasks
+        case contacts
+        case interactions
+    }
     
     var company: Company
     
     var body: some View {
+        // Calculate overdue counts
+        let overdueOrderCount = dataModel.ordersForCompany(company).filter { $0.isOverdue }.count
+        let overdueTaskCount = dataModel.tasksForCompany(company).filter { $0.isOverdue }.count
         
-        let overdueOrderCount = dataModel.ordersForCompany(company).count(where: { $0.isOverdue })
-            
-        let overdueTaskCount = dataModel.tasksForCompany(company).count(where: { $0.isOverdue })
+        // Update the app badge count
+        let totalOverdueCount = dataModel.companies.reduce(0) { total, company in
+            total + dataModel.ordersForCompany(company).filter { $0.isOverdue }.count +
+            dataModel.tasksForCompany(company).filter { $0.isOverdue }.count
+        }
         
-        TabView(selection: $selectedTab) {
+        NotificationManager.shared.updateAppBadgeCount(to: totalOverdueCount)
+
+        return TabView(selection: $selectedTab) { // Ensure to return the TabView
             CompanyDetailView(company: company)
                 .tabItem {
                     Label("Details", systemImage: "list.bullet.clipboard")
                 }
                 .tag(Tab.details)
+            
+            OrderListView(company: company)
+                .tabItem {
+                    Label("Orders", systemImage: "dollarsign.circle.fill")
+                }
+                .badge(overdueOrderCount) // Show badge if overdue orders exist
+                .tag(Tab.orders)
+            
+            TaskListView(company: company)
+                .tabItem {
+                    Label("Tasks", systemImage: "checklist")
+                }
+                .badge(overdueTaskCount) // Show badge if overdue tasks exist
+                .tag(Tab.tasks)
             
             ContactListView(company: company)
                 .tabItem {
@@ -42,20 +61,6 @@ struct CompaniesHomeView: View {
                     Label("Interactions", systemImage: "bubble.left.and.bubble.right.fill")
                 }
                 .tag(Tab.interactions)
-            
-            OrderListView(company: company)
-                .tabItem {
-                    Label("Orders", systemImage: "dollarsign.circle.fill")
-                }
-                .badge(overdueOrderCount)
-                .tag(Tab.orders)
-            
-            TaskListView(company: company)
-                .tabItem {
-                    Label("Tasks", systemImage: "checklist")
-                }
-                .badge(overdueTaskCount)
-                .tag(Tab.tasks)
         }
         .navigationTitle(company.name)
     }

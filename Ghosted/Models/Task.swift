@@ -5,6 +5,7 @@ struct Task: Hashable, Codable, Identifiable {
     var title: String
     var contents: String
     var isDone: Bool
+    var companyID: UUID?
     var isOverdue: Bool {
         let startOfToday = Calendar.current.startOfDay(for: Date.now)
         return dueDate < startOfToday && !isDone

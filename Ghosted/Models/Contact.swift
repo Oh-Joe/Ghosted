@@ -8,4 +8,5 @@ struct Contact: Hashable, Codable, Identifiable {
     var email: String
     var phoneNumber: String
     var photoName: String
+    var companyID: UUID?
 }

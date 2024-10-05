@@ -3,6 +3,7 @@ import Foundation
 struct Note: Hashable, Codable, Identifiable {
     var id: UUID
     var contactID: UUID
+    var companyID: UUID?
     var date: Date
     var title: String
     var content: String

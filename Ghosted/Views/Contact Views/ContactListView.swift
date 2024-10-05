@@ -25,16 +25,18 @@ struct ContactListView: View {
                     Text("") // just for the space
                 }
                 
+                let contacts = dataModel.contactsForCompany(company)
+                if contacts.isEmpty {
+                    ContentUnavailableView("No one yet", systemImage: "figure.fall", description: Text("It's fine. I'm sure they'll come."))
+                } else {
                 Section {
-                    let contacts = dataModel.contactsForCompany(company)
-                    if !contacts.isEmpty {
                         ForEach(contacts, id: \.id) { contact in
                             NavigationLink(destination: ContactDetailView(contact: contact)) {
                                 ContactRowView(contact: contact)
                             }
                         }
                         .onDelete(perform: deleteContacts)
-                    } 
+                    }
                 }
             }
             .navigationTitle(company.name)

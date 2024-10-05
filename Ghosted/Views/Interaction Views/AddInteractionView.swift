@@ -9,7 +9,7 @@ struct AddInteractionView: View {
     var company: Company
     
     var isFormValid: Bool {
-        !date.description.isEmpty && !title.isEmpty && !content.isEmpty
+        !title.isEmpty && !content.isEmpty
     }
     
     var body: some View {
@@ -35,7 +35,8 @@ struct AddInteractionView: View {
                             id: UUID(),
                             date: date,
                             title: title,
-                            content: content
+                            content: content,
+                            companyID: company.id
                         )
                         dataModel.addInteraction(newInteraction, to: company)
                         dismiss()

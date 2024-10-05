@@ -61,16 +61,18 @@ struct CompanyDetailView: View {
                 }
             }
             
-            Section {
-                HStack {
-                    Toggle("Show previous year:", isOn: $isShowingLastYearLineChart)
+            if !monthlySalesData.isEmpty {
+                Section {
+                    HStack {
+                        Toggle("Show previous year:", isOn: $isShowingLastYearLineChart)
+                    }
+                    
+                    salesComparisonChart
+                        .frame(height: 300)
+                    
+                } header: {
+                    Text("Sales Chart")
                 }
-                
-                salesComparisonChart
-                    .frame(height: 300)
-
-            } header: {
-                Text("Sales Chart")
             }
         }
         .navigationTitle(company.name)
@@ -188,7 +190,7 @@ struct CompanyDetailView: View {
     }
     
     private var visibleMonths: Int {
-        // Check if the device is an iPad
+        // Check if the device is an iPhone
         if UIDevice.current.userInterfaceIdiom == .phone {
             return 6 // Use 6 for iPhone
         } else {

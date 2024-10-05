@@ -8,6 +8,7 @@ struct Order: Hashable, Codable, Identifiable {
     var currency: Currency
     var orderNumber: String
     var isFullyPaid: Bool
+    var companyID: UUID?
     var isOverdue: Bool {
             let startOfToday = Calendar.current.startOfDay(for: Date())
             return dueDate < startOfToday && !isFullyPaid

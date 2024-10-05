@@ -72,6 +72,25 @@ class DataModel: ObservableObject {
         saveJSON(Array(notes.values), to: notesFilePath)
     }
     
+    // MARK: - Image Saving
+    
+    func saveImage(_ image: UIImage, forContact contactID: UUID) -> String? {
+        let imageName = "\(contactID.uuidString).jpg"
+        let fileManager = FileManager.default
+        guard let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        let fileURL = documentsDirectory.appendingPathComponent(imageName)
+        
+        guard let data = image.jpegData(compressionQuality: 0.8) else { return nil }
+        
+        do {
+            try data.write(to: fileURL)
+            return imageName
+        } catch {
+            print("Error saving image: \(error)")
+            return nil
+        }
+    }
+    
     // MARK: - Company Methods
     
     func addCompany(_ company: Company) {
@@ -87,6 +106,20 @@ class DataModel: ObservableObject {
     }
     
     func deleteCompany(_ company: Company) {
+        // Remove associated contacts, orders, interactions, and tasks
+        for contactID in company.contactIDs {
+            contacts.removeValue(forKey: contactID)
+        }
+        for orderID in company.orderIDs {
+            orders.removeValue(forKey: orderID)
+        }
+        for interactionID in company.interactionIDs {
+            interactions.removeValue(forKey: interactionID)
+        }
+        for taskID in company.taskIDs {
+            tasks.removeValue(forKey: taskID)
+        }
+        
         companies.removeAll { $0.id == company.id }
         saveAll()
     }
@@ -106,6 +139,9 @@ class DataModel: ObservableObject {
             companies[index].contactIDs.append(newContact.id)
             saveAll()
         }
+        
+        // Set the companyID for the new contact
+        contacts[newContact.id]?.companyID = company.id
     }
 
     func updateContact(_ contact: Contact, with image: UIImage?) {
@@ -115,23 +151,6 @@ class DataModel: ObservableObject {
         }
         contacts[updatedContact.id] = updatedContact
         saveAll()
-    }
-    
-    func saveImage(_ image: UIImage, forContact contactID: UUID) -> String? {
-        let imageName = "\(contactID.uuidString).jpg"
-        let fileManager = FileManager.default
-        guard let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
-        let fileURL = documentsDirectory.appendingPathComponent(imageName)
-        
-        guard let data = image.jpegData(compressionQuality: 0.8) else { return nil }
-        
-        do {
-            try data.write(to: fileURL)
-            return imageName
-        } catch {
-            print("Error saving image: \(error)")
-            return nil
-        }
     }
     
     func deleteContact(_ contact: Contact) {
@@ -188,11 +207,13 @@ class DataModel: ObservableObject {
     // MARK: - Order Methods
     
     func addOrder(_ order: Order, to company: Company) {
-        orders[order.id] = order
+        var newOrder = order
+        newOrder.companyID = company.id // Set the companyID
+        orders[newOrder.id] = newOrder
         if let index = companies.firstIndex(where: { $0.id == company.id }) {
-            companies[index].orderIDs.append(order.id)
+            companies[index].orderIDs.append(newOrder.id)
             saveAll()
-            NotificationManager.shared.scheduleNotification(for: order)
+            NotificationManager.shared.scheduleNotification(for: newOrder)
         }
     }
     
@@ -213,9 +234,11 @@ class DataModel: ObservableObject {
     // MARK: - Interaction Methods
     
     func addInteraction(_ interaction: Interaction, to company: Company) {
-        interactions[interaction.id] = interaction
+        var newInteraction = interaction
+        newInteraction.companyID = company.id // Set the companyID
+        interactions[newInteraction.id] = newInteraction
         if let index = companies.firstIndex(where: { $0.id == company.id }) {
-            companies[index].interactionIDs.append(interaction.id)
+            companies[index].interactionIDs.append(newInteraction.id)
             saveAll()
         }
     }
@@ -236,11 +259,13 @@ class DataModel: ObservableObject {
     // MARK: - Task Methods
     
     func addTask(_ task: Task, to company: Company) {
-        tasks[task.id] = task
+        var newTask = task
+        newTask.companyID = company.id // Set the companyID
+        tasks[newTask.id] = newTask
         if let index = companies.firstIndex(where: { $0.id == company.id }) {
-            companies[index].taskIDs.append(task.id)
+            companies[index].taskIDs.append(newTask.id)
             saveAll()
-            NotificationManager.shared.scheduleNotification(for: task)
+            NotificationManager.shared.scheduleNotification(for: newTask)
         }
     }
     
@@ -276,4 +301,3 @@ class DataModel: ObservableObject {
         return company.taskIDs.compactMap { tasks[$0] }
     }
 }
-

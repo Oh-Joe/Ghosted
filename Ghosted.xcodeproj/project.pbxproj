@@ -42,12 +42,26 @@
 		6C784FBC2C8351DC00E64FF0 /* AddCompanyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784FA62C8351DB00E64FF0 /* AddCompanyView.swift */; };
 		6C784FBF2C8351DC00E64FF0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784FAA2C8351DB00E64FF0 /* ContentView.swift */; };
 		6C784FC02C8351DC00E64FF0 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784FAC2C8351DC00E64FF0 /* SafariView.swift */; };
-		6C784FC12C8351DC00E64FF0 /* Countries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C784FAD2C8351DC00E64FF0 /* Countries.swift */; };
 		6C9183712C85743300623A44 /* AddInteractionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9183702C85743300623A44 /* AddInteractionView.swift */; };
 		6C9183732C85796D00623A44 /* InteractionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9183722C85796D00623A44 /* InteractionDetailView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		274F2FF12CB1444F0030C509 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		274F2FDC2CB1444D0030C509 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		274F2FDE2CB1444D0030C509 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		27502E522C9BF98D006133F7 /* SalesChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SalesChartView.swift; sourceTree = "<group>"; };
 		27502E552C9D03D4006133F7 /* SalesDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SalesDashboardView.swift; sourceTree = "<group>"; };
 		27AD606F2CA00B2900257E74 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
@@ -85,7 +99,6 @@
 		6C784FA62C8351DB00E64FF0 /* AddCompanyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCompanyView.swift; sourceTree = "<group>"; };
 		6C784FAA2C8351DB00E64FF0 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		6C784FAC2C8351DC00E64FF0 /* SafariView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
-		6C784FAD2C8351DC00E64FF0 /* Countries.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Countries.swift; sourceTree = "<group>"; };
 		6C9183702C85743300623A44 /* AddInteractionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddInteractionView.swift; sourceTree = "<group>"; };
 		6C9183722C85796D00623A44 /* InteractionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -113,6 +126,15 @@
 				6C784F9C2C8351DA00E64FF0 /* AddNoteView.swift */,
 			);
 			path = "Note Views";
+			sourceTree = "<group>";
+		};
+		274F2FDB2CB1444D0030C509 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				274F2FDC2CB1444D0030C509 /* WidgetKit.framework */,
+				274F2FDE2CB1444D0030C509 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		27502E542C9BFD6D006133F7 /* Sales Views */ = {
@@ -160,6 +182,7 @@
 			isa = PBXGroup;
 			children = (
 				6C784F882C83517F00E64FF0 /* Ghosted */,
+				274F2FDB2CB1444D0030C509 /* Frameworks */,
 				6C784F872C83517F00E64FF0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -227,7 +250,6 @@
 			isa = PBXGroup;
 			children = (
 				6C784FAC2C8351DC00E64FF0 /* SafariView.swift */,
-				6C784FAD2C8351DC00E64FF0 /* Countries.swift */,
 				6C4EB17B2C86B03300CA508E /* AudioPlayer.swift */,
 				27DF0E592C9E77450092EA2E /* MonthYearPicker.swift */,
 				27AD606F2CA00B2900257E74 /* NotificationManager.swift */,
@@ -260,6 +282,7 @@
 				6C784F822C83517F00E64FF0 /* Sources */,
 				6C784F832C83517F00E64FF0 /* Frameworks */,
 				6C784F842C83517F00E64FF0 /* Resources */,
+				274F2FF12CB1444F0030C509 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -281,7 +304,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1520;
+				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1520;
 				TargetAttributes = {
 					6C784F852C83517F00E64FF0 = {
@@ -335,7 +358,6 @@
 				6C4EB1982C880F9000CA508E /* CompanyDetailView.swift in Sources */,
 				6C9183712C85743300623A44 /* AddInteractionView.swift in Sources */,
 				6C784FB72C8351DC00E64FF0 /* OrderRowView.swift in Sources */,
-				6C784FC12C8351DC00E64FF0 /* Countries.swift in Sources */,
 				27502E532C9BF98D006133F7 /* SalesChartView.swift in Sources */,
 				27D7CA4C2CA935BF00A1CAF6 /* ChartsView.swift in Sources */,
 				6C784FB42C8351DC00E64FF0 /* AddNoteView.swift in Sources */,

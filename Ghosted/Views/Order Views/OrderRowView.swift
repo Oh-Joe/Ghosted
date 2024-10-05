@@ -1,10 +1,3 @@
-//
-//  OrderRowView.swift
-//  eYes
-//
-//  Created by Antoine Moreau on 8/31/24.
-//
-
 import SwiftUI
 
 struct OrderRowView: View {

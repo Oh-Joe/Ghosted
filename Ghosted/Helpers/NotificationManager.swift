@@ -51,4 +51,12 @@ class NotificationManager {
             }
         }
     }
+    
+    func updateAppBadgeCount(to count: Int) {
+        UNUserNotificationCenter.current().setBadgeCount(count) { error in
+            if let error = error {
+                print("Error setting badge count: \(error.localizedDescription)")
+            }
+        }
+    }
 }

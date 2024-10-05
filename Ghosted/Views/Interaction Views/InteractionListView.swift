@@ -24,9 +24,12 @@ struct InteractionListView: View {
             }
             
             
-                let interactions = dataModel.interactionsForCompany(company)
-                if !interactions.isEmpty {
-                    Section {
+            let interactions = dataModel.interactionsForCompany(company)
+            if interactions.isEmpty {
+                ContentUnavailableView("Not the talkative type, eh?", systemImage: "ellipsis.bubble.fill", description: Text("No worries, just work on your ice-breakers a bit!"))
+                
+            } else {
+                Section {
                     ForEach(interactions.sorted(by: { $0.date > $1.date })) { interaction in
                         Button {
                             selectedInteraction = interaction
@@ -38,12 +41,10 @@ struct InteractionListView: View {
                                 Text(interaction.date, format: .dateTime.month(.abbreviated).day().year())
                             }
                             .foregroundStyle(Color.primary)
-                            .lineLimit(1)
-                            .truncationMode(.tail)
                         }
                     }
                     .onDelete(perform: deleteInteractions)
-                    }
+                }
             }
         }
         .navigationTitle("Interactions")

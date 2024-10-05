@@ -9,7 +9,7 @@ struct AddTaskView: View {
     var company: Company
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 TextField("Title", text: $title)
                 DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
@@ -29,7 +29,9 @@ struct AddTaskView: View {
                             title: title,
                             contents: contents,
                             isDone: false,
-                            dueDate: dueDate)
+                            companyID: company.id,
+                            dueDate: dueDate
+                        )
                         dataModel.addTask(newTask, to: company)
                         dismiss()
                     }

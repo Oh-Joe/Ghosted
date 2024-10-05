@@ -1,10 +1,3 @@
-//
-//  Countries.swift
-//  eYes
-//
-//  Created by Antoine Moreau on 8/31/24.
-//
-
 import Foundation
 
 enum Country: String, CaseIterable, Identifiable, Codable {

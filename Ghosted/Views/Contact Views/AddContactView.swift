@@ -131,13 +131,14 @@ struct AddContactView: View {
             jobTitle: jobTitle,
             email: email,
             phoneNumber: phoneNumber,
-            photoName: contactToEdit?.photoName ?? "" // Keep existing photoName if editing
+            photoName: contactToEdit?.photoName ?? "", // Keep existing photoName if editing
+            companyID: company.id // Set the companyID for the new contact
         )
         
         if isEditing {
             dataModel.updateContact(contact, with: image)
         } else {
-            dataModel.addContact(contact, with: image, to: company)
+            dataModel.addContact(contact, with: image, to: company) // Ensure the company is passed
         }
     }
 }

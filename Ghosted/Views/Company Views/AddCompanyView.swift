@@ -71,7 +71,7 @@ struct AddCompanyView: View {
     
     private func save() {
         let newCompany = Company(
-            id: companyToEdit?.id ?? UUID(),
+            id: companyToEdit?.id ?? UUID(), // Use existing ID if editing, otherwise generate a new one
             name: name,
             companyType: companyType,
             country: country,
@@ -87,7 +87,7 @@ struct AddCompanyView: View {
         if isEditing {
             dataModel.updateCompany(newCompany)
         } else {
-            dataModel.addCompany(newCompany)
+            dataModel.addCompany(newCompany) // Add the new company to the data model
         }
     }
 }
