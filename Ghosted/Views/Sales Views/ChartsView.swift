@@ -133,6 +133,18 @@ struct ChartsView: View {
             }
         }
     }
+    
+    private var totalSalesByCompany: [UUID: Double] {
+        var salesByCompany: [UUID: Double] = [:]
+        
+        for order in dataModel.orders.values {
+            if let companyID = order.companyID {
+                salesByCompany[companyID, default: 0] += order.orderAmount
+            }
+        }
+        
+        return salesByCompany
+    }
 }
 
 struct MonthlySalesData: Identifiable {

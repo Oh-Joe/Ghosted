@@ -10,6 +10,7 @@ import SwiftUI
 struct CompanyForm: View {
     @Binding var name: String
     @Binding var companyType: Company.CompanyType
+    @Binding var paymentTerms: Company.PaymentTerms
     @Binding var country: Country
     @Binding var status: Company.Status
     @Binding var website: String
@@ -29,6 +30,13 @@ struct CompanyForm: View {
                 Divider()
                 ForEach(Company.CompanyType.allCases, id: \.self) { companyType in
                     Text(companyType.rawValue).tag(companyType)
+                }
+            }
+            Picker("Payment terms:", selection: $paymentTerms) {
+                Text("How long until they pay?")
+                Divider()
+                ForEach(Company.PaymentTerms.allCases, id: \.self) { paymentTerms in
+                    Text(paymentTerms.rawValue).tag(paymentTerms)
                 }
             }
             Picker("Country:", selection: $country) {

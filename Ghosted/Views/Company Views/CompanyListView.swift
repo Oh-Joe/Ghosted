@@ -21,12 +21,10 @@ struct CompanyListView: View {
         .closedLost: true
     ]
     
-    
-    
     var body: some View {
         Group {
             if dataModel.companies.isEmpty {
-                EmptyStateView(showAlert: $showAlert, playSound: playSound)
+                EmptyStateView(showAlert: $showAlert)
             } else {
                 CompanyListContent(
                     sectionExpandedStates: $sectionExpandedStates,
@@ -104,18 +102,6 @@ struct CompanyListView: View {
         let companiesToDelete = offsets.map { sortedCompanies(status: status)[$0] }
         for company in companiesToDelete {
             dataModel.deleteCompany(company)
-        }
-    }
-    
-    private func playSound(soundName: String) {
-        guard let url = Bundle.main.url(forResource: soundName, withExtension: "m4a") else {
-            print("Sound file not found")
-            return
-        }
-        
-        isOn.toggle()
-        audioManager.playSound(with: url) {
-            self.isOn.toggle()
         }
     }
     
@@ -313,41 +299,35 @@ struct CompanyRow: View {
                     showEditAccountSheet = true
                 }
             } label: {
-                Text("Edit Company")
-                Spacer()
-                Image(systemName: "square.and.pencil")
+                Label("Edit Company", systemImage: "square.and.pencil")
             }
-            Button {
-                selectedCompany = company
-                showAddContactSheet = true
-            } label: {
-                Text("Add new Contact")
-                Spacer()
-                Image(systemName: "person.crop.circle.badge.plus")
-            }
-            Button {
-                selectedCompany = company
-                showAddInteractionSheet = true
-            } label: {
-                Text("Add new Interaction")
-                Spacer()
-                Image(systemName: "plus.bubble")
-            }
+            
             Button {
                 selectedCompany = company
                 showAddOrderSheet = true
             } label: {
-                Text("Add new Order")
-                Spacer()
-                Image(systemName: "dollarsign.circle")
+                Label("Add new Order", systemImage: "dollarsign.circle")
             }
+            
             Button {
                 selectedCompany = company
                 showAddTaskSheet = true
             } label: {
-                Text("Add new Task")
-                Spacer()
-                Image(systemName: "checklist")
+                Label("Add new task", systemImage: "checklist")
+            }
+            
+            Button {
+                selectedCompany = company
+                showAddInteractionSheet = true
+            } label: {
+                Label("Add new Interaction", systemImage: "plus.bubble")
+            }
+            
+            Button {
+                selectedCompany = company
+                showAddContactSheet = true
+            } label: {
+                Label("Add new Contact", systemImage: "person.crop.circle.badge.plus")
             }
         }
     }
@@ -355,13 +335,11 @@ struct CompanyRow: View {
 
 struct EmptyStateView: View {
     @Binding var showAlert: Bool
-    var playSound: (String) -> Void
     
     var body: some View {
         VStack {
             Spacer()
             Button {
-                playSound("Sheeit")
                 showAlert.toggle()
             } label: {
                 Image("confusedGhosty")
@@ -380,10 +358,7 @@ struct EmptyStateView: View {
             Spacer()
         }
         .alert("You think you're funny?", isPresented: $showAlert) {
-            Button("OK") {
-                playSound("okay")
-            }
-        } message: {
+            } message: {
             Text("Just tap the + in the top right corner, OK?")
         }
     }
@@ -398,13 +373,22 @@ struct EmptyStateView: View {
         oneWord.foregroundColor = .secondary
         
         message.append(oneWord)
-        message.append(AttributedString(" potential client?\n\nAnyway, see that "))
+        
+        var potentialClient = AttributedString(" potential client?\n\nAnyway, see that ")
+        potentialClient.font = .caption
+        potentialClient.foregroundColor = .secondary
+        message.append(potentialClient)
         
         var plusSign = AttributedString("+")
         plusSign.foregroundColor = .accentColor
         
         message.append(plusSign)
-        message.append(AttributedString(" sign in the top right corner?"))
+        
+        var endOfMessage = AttributedString(" button in the top right corner?.")
+        endOfMessage.font = .caption
+        endOfMessage.foregroundColor = .secondary
+        
+        message.append(endOfMessage)
         
         return message
     }

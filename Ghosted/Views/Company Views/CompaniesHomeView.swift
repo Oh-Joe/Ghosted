@@ -10,8 +10,8 @@ struct CompaniesHomeView: View {
         case details
         case orders
         case tasks
-        case contacts
         case interactions
+        case contacts
     }
     
     var company: Company
@@ -50,17 +50,18 @@ struct CompaniesHomeView: View {
                 .badge(overdueTaskCount) // Show badge if overdue tasks exist
                 .tag(Tab.tasks)
             
+            InteractionListView(company: company)
+                .tabItem {
+                    Label("Interactions", systemImage: "bubble.left.and.bubble.right.fill")
+                }
+                .tag(Tab.interactions)
+            
             ContactListView(company: company)
                 .tabItem {
                     Label("Contacts", systemImage: "person.2.fill")
                 }
                 .tag(Tab.contacts)
             
-            InteractionListView(company: company)
-                .tabItem {
-                    Label("Interactions", systemImage: "bubble.left.and.bubble.right.fill")
-                }
-                .tag(Tab.interactions)
         }
         .navigationTitle(company.name)
     }

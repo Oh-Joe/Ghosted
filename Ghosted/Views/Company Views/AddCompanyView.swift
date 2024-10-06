@@ -6,6 +6,7 @@ struct AddCompanyView: View {
     @Binding var isPresented: Bool
     @State private var name: String = ""
     @State private var companyType: Company.CompanyType = .distri
+    @State private var paymentTerms: Company.PaymentTerms = .prePay
     @State private var country: Country = .afghanistan
     @State private var status: Company.Status = .activeClient
     @State private var website: String = ""
@@ -27,6 +28,7 @@ struct AddCompanyView: View {
                 CompanyForm(
                     name: $name,
                     companyType: $companyType,
+                    paymentTerms: $paymentTerms,
                     country: $country,
                     status: $status,
                     website: $website,
@@ -60,6 +62,7 @@ struct AddCompanyView: View {
             if let company = companyToEdit {
                 name = company.name
                 companyType = company.companyType
+                paymentTerms = company.paymentTerms
                 country = company.country
                 status = company.status
                 website = company.website
@@ -74,6 +77,7 @@ struct AddCompanyView: View {
             id: companyToEdit?.id ?? UUID(), // Use existing ID if editing, otherwise generate a new one
             name: name,
             companyType: companyType,
+            paymentTerms: paymentTerms,
             country: country,
             status: status,
             website: website,
@@ -87,7 +91,7 @@ struct AddCompanyView: View {
         if isEditing {
             dataModel.updateCompany(newCompany)
         } else {
-            dataModel.addCompany(newCompany) // Add the new company to the data model
+            dataModel.addCompany(newCompany)
         }
     }
 }

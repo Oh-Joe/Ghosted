@@ -5,16 +5,14 @@ struct AddOrderView: View {
     @Environment(\.dismiss) var dismiss
     
     @State var issuedDate = Date()
-    @State var dueDate: Date? = nil
     @State var orderAmount: Double? = nil
     @State var currency: Order.Currency = .usd
     @State var orderNumber: String = ""
     @State var isFullyPaid: Bool = false
     
     var isFormValid: Bool {
-        guard let orderAmount = orderAmount,
-              let dueDate = dueDate else { return false }
-        return orderAmount > 0 && !orderNumber.isEmpty && !dueDate.description.isEmpty
+        guard let orderAmount = orderAmount else { return false }
+        return orderAmount > 0 && !orderNumber.isEmpty
     }
     
     var company: Company
@@ -26,10 +24,11 @@ struct AddOrderView: View {
                 
                 Section {
                     DatePicker("Issued on:", selection: $issuedDate, displayedComponents: .date)
-                    DatePicker("Due date:", selection: Binding(
-                        get: { dueDate ?? Date() },
-                        set: { dueDate = $0 }
-                    ), displayedComponents: .date)
+                    // Due date no longer needed now that it's a computed property
+//                    DatePicker("Due date:", selection: Binding(
+//                        get: { dueDate ?? Date() },
+//                        set: { dueDate = $0 }
+//                    ), displayedComponents: .date)
                 }
                 
                 Section {
@@ -57,14 +56,16 @@ struct AddOrderView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
+                        let expectedPaidDate = Calendar.current.date(byAdding: .day, value: company.paymentTerms.paymentTermsInt, to: issuedDate)!
                         let newOrder = Order(
                             id: UUID(),
                             issuedDate: issuedDate,
-                            dueDate: dueDate ?? Date(),
+                            dueDate: expectedPaidDate,
                             orderAmount: orderAmount ?? 0,
                             currency: currency,
                             orderNumber: orderNumber,
                             isFullyPaid: isFullyPaid,
+                            paidDate: expectedPaidDate,
                             companyID: company.id
                         )
                         dataModel.addOrder(newOrder, to: company)

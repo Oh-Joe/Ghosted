@@ -21,16 +21,20 @@ struct CompanyDetailView: View {
                     Text(company.status.rawValue)
                 }
                 HStack {
-                    Image(systemName: "mappin.and.ellipse")
+                    Image(systemName: "clock.arrow.circlepath")
                         .foregroundStyle(Color.secondary)
-                    Text("\(company.country.rawValue)")
+                    Text("Payment Terms: \(company.paymentTerms.rawValue)")
                 }
                 HStack {
                     Image(systemName: "list.clipboard")
                         .foregroundStyle(Color.secondary)
                     Text(company.companyType.rawValue)
                 }
-                
+                HStack {
+                    Image(systemName: "mappin.and.ellipse")
+                        .foregroundStyle(Color.secondary)
+                    Text("\(company.country.rawValue)")
+                }
                 Button {
                     var urlString = company.website
                     if !urlString.hasPrefix("http://") && !urlString.hasPrefix("https://") {

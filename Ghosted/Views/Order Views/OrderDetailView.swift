@@ -52,6 +52,7 @@ struct OrderDetailView: View {
                     HStack {
                         Toggle("Paid?", isOn: $localOrder.isFullyPaid)
                     }
+                    DatePicker("Paid date:", selection: $localOrder.paidDate, displayedComponents: .date)
                 } header: {
                     Text("Payment status")
                     }
