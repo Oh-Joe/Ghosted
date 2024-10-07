@@ -32,11 +32,15 @@ struct TaskDetailView: View {
                             }
                         ))
                     }
+                    DatePicker("Completion date:", selection: $task.completedDate, displayedComponents: .date)
+                } header: {
+                    Text("Details")
                 }
+                
                 Section {
                     Text(task.contents)
                 } header: {
-                    Text("Task description")
+                    Text("Description")
                 }
             }
             .toolbar {

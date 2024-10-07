@@ -30,7 +30,8 @@ struct AddTaskView: View {
                             contents: contents,
                             isDone: false,
                             companyID: company.id,
-                            dueDate: dueDate
+                            dueDate: dueDate,
+                            completedDate: dueDate
                         )
                         dataModel.addTask(newTask, to: company)
                         dismiss()

@@ -5,6 +5,7 @@ struct ChartsView: View {
     @EnvironmentObject var dataModel: DataModel
     @State private var scrollPosition: String?
     @State private var selectedMonth: String?
+    @State var showSalesReportSheet: Bool = false
     @State private var monthsPerScreen: Int = {
         // Set the default value based on the device type
         if UIDevice.current.userInterfaceIdiom == .phone {
@@ -38,6 +39,18 @@ struct ChartsView: View {
             }
         }
         .navigationTitle("Monthly Sales")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showSalesReportSheet = true
+                } label: {
+                    Text("Report")
+                }
+            }
+        }
+        .sheet(isPresented: $showSalesReportSheet) {
+            SalesReportView()
+        }
     }
     
     private var chartView: some View {

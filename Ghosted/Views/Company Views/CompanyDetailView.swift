@@ -9,6 +9,7 @@ struct CompanyDetailView: View {
     @State private var isShowingInvalidURLAlert: Bool = false
     @State private var isShowingLastYearLineChart: Bool = false
     @State private var selectedMonth: String?
+    @State var showInfoAlert: Bool = false
     
     var company: Company
     
@@ -21,7 +22,7 @@ struct CompanyDetailView: View {
                     Text(company.status.rawValue)
                 }
                 HStack {
-                    Image(systemName: "clock.arrow.circlepath")
+                    Image(systemName: "calendar.badge.clock")
                         .foregroundStyle(Color.secondary)
                     Text("Payment Terms: \(company.paymentTerms.rawValue)")
                 }
@@ -67,9 +68,21 @@ struct CompanyDetailView: View {
             
             if !monthlySalesData.isEmpty {
                 Section {
+
                     HStack {
-                        Toggle("Show previous year:", isOn: $isShowingLastYearLineChart)
+                        Text("Show previous year")
+                        
+                        Image(systemName: "info.circle.fill")
+                            .foregroundStyle(Color.secondary)
+                            .onTapGesture {
+                                showInfoAlert = true
+                            }
+                        
+                        Toggle("", isOn: $isShowingLastYearLineChart)
                     }
+                    
+                    
+                    
                     
                     salesComparisonChart
                         .frame(height: 300)
@@ -78,6 +91,10 @@ struct CompanyDetailView: View {
                     Text("Sales Chart")
                 }
             }
+        }
+        .alert("Display previous year data", isPresented: $showInfoAlert) {
+        } message: {
+            Text("\nThis option overlays a line over the bars, showing the sales amount for the same month of the previous year - if any, that is.")
         }
         .navigationTitle(company.name)
         .fullScreenCover(isPresented: $isShowingSafariView) {

@@ -28,11 +28,9 @@ struct OrderListView: View {
                     HStack {
                         OrderSymbolView(size: 20)
                     }
-                    
-                        .foregroundStyle(Color.green)
-                        .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity)
-//                    Label("New Order", systemImage: "dollarsign.square")
+                    .foregroundStyle(Color.green)
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
                 .tint(.green)

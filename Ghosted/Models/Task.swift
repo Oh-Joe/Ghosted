@@ -11,6 +11,7 @@ struct Task: Hashable, Codable, Identifiable {
         return dueDate < startOfToday && !isDone
     }
     var dueDate: Date
+    var completedDate: Date
 }
 
 extension Task {
@@ -20,7 +21,8 @@ extension Task {
             title: "",
             contents: "",
             isDone: false,
-            dueDate: Date()
+            dueDate: Date(),
+            completedDate: Date()
         )
     }
 }

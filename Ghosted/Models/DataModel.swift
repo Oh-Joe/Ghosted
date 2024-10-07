@@ -300,4 +300,48 @@ class DataModel: ObservableObject {
     func tasksForCompany(_ company: Company) -> [Task] {
         return company.taskIDs.compactMap { tasks[$0] }
     }
+    
+    func companyName(for order: Order) -> String {
+        guard let companyID = order.companyID,
+              let company = companies.first(where: { $0.id == companyID }) else {
+            return "Unknown Company"
+        }
+        return company.name
+    }
+    
+    func companyName(for task: Task) -> String {
+        guard let companyID = task.companyID,
+              let company = companies.first(where: { $0.id == companyID }) else {
+            return "Unknown Company"
+        }
+        return company.name
+    }
+    
+    func companyName(for interaction: Interaction) -> String {
+        guard let companyID = interaction.companyID,
+              let company = companies.first(where: { $0.id == companyID }) else {
+            return "Unknown Company"
+        }
+        return company.name
+    }
+    
+    func companyName(for contact: Contact) -> String {
+        guard let companyID = contact.companyID,
+              let company = companies.first(where: { $0.id == companyID }) else {
+            return "Unknown Company"
+        }
+        return company.name
+    }
+    
+    func companyName(for note: Note) -> String {
+        guard let companyID = note.companyID,
+              let company = companies.first(where: { $0.id == companyID }) else {
+            return "Unknown Company"
+        }
+        return company.name
+    }
+    // MARK: - Company Mapping
+    var companyMapping: [UUID: Company] {
+        Dictionary(uniqueKeysWithValues: companies.map { ($0.id, $0) })
+    }
 }

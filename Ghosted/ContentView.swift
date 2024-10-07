@@ -79,11 +79,11 @@ struct ContentView: View {
                                     .frame(maxWidth: .infinity, maxHeight: geometry.size.height / 3.3)
                                 
                                 VStack(alignment: .leading) {
-                                    Text("Sales Charts")
+                                    Text("Sales Charts & Reports")
                                         .font(.title2)
                                         .fontWeight(.bold)
                                     
-                                    Text("Colors and bars and shit.")
+                                    Text("View sales graphs, see and export a weekly/monthly report.")
                                         .font(.caption)
                                         .multilineTextAlignment(.leading)
                                 }
