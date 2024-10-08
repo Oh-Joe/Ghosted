@@ -14,8 +14,14 @@ struct OrderRowView: View {
                     .font(.subheadline)
                     .fontWeight(.semibold)
                 let displayDueDate = order.dueDate.formatted(.dateTime.day().month(.abbreviated).year())
-                Text("Due: \(displayDueDate)")
-                    .font(.caption)
+                let displayPaidDate = order.paidDate?.formatted(.dateTime.day().month(.abbreviated).year())
+                if order.isFullyPaid {
+                    Text("Paid: \(displayPaidDate ?? "uhm, actually I'm not sure")")
+                        .font(.caption)
+                } else {
+                    Text("Due: \(displayDueDate)")
+                        .font(.caption)
+                }
             }
             Spacer()
             Text(order.orderAmount, format: .currency(code: order.currency.rawValue))

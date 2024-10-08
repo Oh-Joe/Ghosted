@@ -50,14 +50,14 @@ struct SalesReportView: View {
                     if hasSelectedStartDate && hasSelectedEndDate && startDate > endDate {
                         let randoError: Int = Int.random(in: 1...3)
                         VStack(spacing: 20) {
-                            Text("Invalid date range")
-                                .font(.title2)
-                                .fontWeight(.bold)
                             Image("error\(randoError)")
                                 .resizable()
                                 .scaledToFit()
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
-                            Text("The end date must be after the start date, otherwise the space-time continuum tears,\nand bad things happen.")
+                            Text("Oh no!")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                            Text("Your start date is after your end date...\nBad things happen when you do that!")
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal)
@@ -72,11 +72,9 @@ struct SalesReportView: View {
                 if !filteredOrders().ordersIssued.isEmpty {
                     Section {
                         ForEach(filteredOrders().ordersIssued.sorted(by: {
-                            // Sort by company, then by issuedDate
-                            if $0.companyID == $1.companyID {
-                                return $0.issuedDate < $1.issuedDate
-                            }
-                            return $0.companyID! < $1.companyID!
+                            let companyName1 = dataModel.companyName(for: $0)
+                            let companyName2 = dataModel.companyName(for: $1)
+                            return companyName1 < companyName2 // Sort by company name
                         })) { order in
                             let companyName = dataModel.companyName(for: order)
                             SalesOrderRowView(order: order, companyName: companyName)
@@ -86,14 +84,13 @@ struct SalesReportView: View {
                     }
                 }
                 
+                // Orders Due Section
                 if !filteredOrders().ordersDue.isEmpty {
                     Section {
                         ForEach(filteredOrders().ordersDue.sorted(by: {
-                            // Sort by company, then by dueDate
-                            if $0.companyID == $1.companyID {
-                                return $0.dueDate < $1.dueDate
-                            }
-                            return $0.companyID! < $1.companyID!
+                            let companyName1 = dataModel.companyName(for: $0)
+                            let companyName2 = dataModel.companyName(for: $1)
+                            return companyName1 < companyName2 // Sort by company name
                         })) { order in
                             let companyName = dataModel.companyName(for: order)
                             SalesOrderRowView(order: order, companyName: companyName)
@@ -103,14 +100,13 @@ struct SalesReportView: View {
                     }
                 }
                 
+                // Orders Paid Section
                 if !filteredOrders().ordersPaid.isEmpty {
                     Section {
                         ForEach(filteredOrders().ordersPaid.sorted(by: {
-                            // Sort by company, then by paidDate
-                            if $0.companyID == $1.companyID {
-                                return $0.paidDate < $1.paidDate
-                            }
-                            return $0.companyID! < $1.companyID!
+                            let companyName1 = dataModel.companyName(for: $0)
+                            let companyName2 = dataModel.companyName(for: $1)
+                            return companyName1 < companyName2 // Sort by company name
                         })) { order in
                             let companyName = dataModel.companyName(for: order)
                             SalesOrderRowView(order: order, companyName: companyName)
@@ -227,14 +223,17 @@ struct SalesReportView: View {
             start = calendar.date(from: calendar.dateComponents([.year, .month], from: Date()))!
             end = calendar.date(byAdding: .month, value: 1, to: start)!
         case .custom:
-            end = endDate
             start = startDate
+            end = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: endDate)!
         }
         
         return OrdersIssuedDuePaid(
             ordersIssued: orders.filter { $0.issuedDate >= start && $0.issuedDate <= end },
             ordersDue: orders.filter { $0.dueDate >= start && $0.dueDate <= end && !$0.isFullyPaid },
-            ordersPaid: orders.filter { $0.isFullyPaid && $0.paidDate >= start && $0.paidDate <= end }
+            ordersPaid: orders.filter {
+                $0.isFullyPaid &&
+                ($0.paidDate.map { $0 >= start && $0 <= end } ?? false) // Use map to check paidDate
+            }
         )
     }
     

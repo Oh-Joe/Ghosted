@@ -65,7 +65,7 @@ struct AddOrderView: View {
                             currency: currency,
                             orderNumber: orderNumber,
                             isFullyPaid: isFullyPaid,
-                            paidDate: expectedPaidDate,
+//                            paidDate: expectedPaidDate,
                             companyID: company.id
                         )
                         dataModel.addOrder(newOrder, to: company)

@@ -10,9 +10,10 @@ struct SalesOrderRowView: View {
             
             VStack(alignment: .leading) {
                 Text(companyName)
-                Text(order.orderNumber)
-                Text("Amount: \(formattedAmount(order.orderAmount))")
                     .fontWeight(.bold)
+                Text(order.orderNumber)
+                Text(formattedAmount(order.orderAmount))
+
             }
             .font(.caption)
             
@@ -22,7 +23,11 @@ struct SalesOrderRowView: View {
                 Text("Issued: \(order.issuedDate, formatter: dateFormatter)")
                 Text("Due: \(order.dueDate, formatter: dateFormatter)")
                 if order.isFullyPaid {
-                    Text("Paid on: \(order.paidDate, formatter: dateFormatter)")
+                    if let paidDate = order.paidDate {
+                        Text("Paid on: \(paidDate, formatter: dateFormatter)")
+                    } else {
+                        Text("Not paid yet") // Fallback message if paidDate is nil
+                    }
                 }
             }
             .font(.caption)
