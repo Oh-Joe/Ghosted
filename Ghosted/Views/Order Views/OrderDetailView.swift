@@ -64,10 +64,6 @@ struct OrderDetailView: View {
                             get: { localOrder.paidDate ?? Date() },
                             set: { localOrder.paidDate = $0 }
                         ), displayedComponents: .date)
-                    } else {
-                        // Show a message or placeholder when not paid
-                        Text("Not paid yet")
-                            .foregroundColor(.gray)
                     }
                 } header: {
                     Text("Payment status")

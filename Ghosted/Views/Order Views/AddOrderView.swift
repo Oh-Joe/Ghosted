@@ -5,10 +5,12 @@ struct AddOrderView: View {
     @Environment(\.dismiss) var dismiss
     
     @State var issuedDate = Date()
+    @State var orderAmountInput: String = ""
     @State var orderAmount: Double? = nil
     @State var currency: Order.Currency = .usd
     @State var orderNumber: String = ""
     @State var isFullyPaid: Bool = false
+    @FocusState private var isOrderAmountFocused: Bool
     
     var isFormValid: Bool {
         guard let orderAmount = orderAmount else { return false }
@@ -24,19 +26,24 @@ struct AddOrderView: View {
                 
                 Section {
                     DatePicker("Issued on:", selection: $issuedDate, displayedComponents: .date)
-                    // Due date no longer needed now that it's a computed property
-//                    DatePicker("Due date:", selection: Binding(
-//                        get: { dueDate ?? Date() },
-//                        set: { dueDate = $0 }
-//                    ), displayedComponents: .date)
                 }
                 
                 Section {
-                    TextField("Order amount:", value: $orderAmount.animation(), format: .currency(code: currency.rawValue))
+                    TextField("Order amount", text: $orderAmountInput)
                         .keyboardType(.decimalPad)
+                        .focused($isOrderAmountFocused)
+                        .onChange(of: isOrderAmountFocused) { oldValue, focused in
+                            if !focused {
+                                // Apply currency formatting only when the TextField loses focus
+                                if let amount = Double(orderAmountInput) {
+                                    orderAmount = amount
+                                    orderAmountInput = String(format: "%.2f", amount)
+                                } else {
+                                    orderAmount = nil // Reset if input is invalid
+                                }
+                            }
+                        }
                     Picker("Currency:", selection: $currency) {
-                        Text("Currency for this order:")
-                        Divider()
                         ForEach(Order.Currency.allCases, id: \.self) { currency in
                             Text(currency.rawValue).tag(currency)
                         }
@@ -65,7 +72,6 @@ struct AddOrderView: View {
                             currency: currency,
                             orderNumber: orderNumber,
                             isFullyPaid: isFullyPaid,
-//                            paidDate: expectedPaidDate,
                             companyID: company.id
                         )
                         dataModel.addOrder(newOrder, to: company)

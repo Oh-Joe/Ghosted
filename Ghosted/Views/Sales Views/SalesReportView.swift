@@ -32,12 +32,15 @@ struct SalesReportView: View {
             if selectedPeriod == .custom {
                 VStack(spacing: 50) {
                     HStack {
+                        
                         DatePicker("From:", selection: $startDate, displayedComponents: .date)
                             .datePickerStyle(.compact)
                             .padding(.horizontal)
                             .onChange(of: startDate) { oldValue, newValue in
                                 hasSelectedStartDate = true
                             }
+                        
+                        Spacer()
                         
                         DatePicker("To:", selection: $endDate, displayedComponents: .date)
                             .datePickerStyle(.compact)
@@ -46,18 +49,26 @@ struct SalesReportView: View {
                                 hasSelectedEndDate = true
                             }
                     }
+                    .fixedSize()
                     
                     if hasSelectedStartDate && hasSelectedEndDate && startDate > endDate {
                         let randoError: Int = Int.random(in: 1...3)
+                        let messages: [String] = [
+                            "Did you do that on purpose?",
+                            "Now what?!",
+                            "What were you thinking?!"
+                            ]
+                        let randoMessage = messages.randomElement()!
                         VStack(spacing: 20) {
                             Image("error\(randoError)")
                                 .resizable()
                                 .scaledToFit()
+                                .frame(maxHeight: 300)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                             Text("Oh no!")
                                 .font(.title2)
                                 .fontWeight(.bold)
-                            Text("Your start date is after your end date...\nBad things happen when you do that!")
+                            Text("Your start date is after your end date...\n\(randoMessage)")
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal)
@@ -311,7 +322,7 @@ enum Period {
             guard let start = startDate, let end = endDate else { return "between dates" }
             let dateFormatter = DateFormatter()
             dateFormatter.dateStyle = .short
-            return "\(dateFormatter.string(from: start)) through \(dateFormatter.string(from: end))"
+            return "\(dateFormatter.string(from: start)) - \(dateFormatter.string(from: end))"
         }
     }
 }

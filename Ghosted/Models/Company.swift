@@ -34,6 +34,7 @@ struct Company: Hashable, Codable, Identifiable {
         case days15 = "15 days"
         case days30 = "30 days"
         case days60 = "60 days"
+        case days61 = "61 days"
         case days90 = "90 days"
         case days120 = "120 days"
         case days180 = "180 days"
@@ -49,6 +50,8 @@ struct Company: Hashable, Codable, Identifiable {
                 return 30
             case .days60:
                 return 60
+            case .days61:
+                return 61
             case .days90:
                 return 90
             case .days120:

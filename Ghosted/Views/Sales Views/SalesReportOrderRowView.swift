@@ -16,6 +16,7 @@ struct SalesOrderRowView: View {
 
             }
             .font(.caption)
+            .foregroundStyle(order.isOverdue ? .red : .primary)
             
             Spacer()
             
@@ -31,6 +32,7 @@ struct SalesOrderRowView: View {
                 }
             }
             .font(.caption)
+            .foregroundStyle(order.isOverdue ? .red : .primary)
         }
     }
 
@@ -47,7 +49,7 @@ struct SalesOrderRowView: View {
             return Image(systemName: "checkmark.circle.fill") // Green checkmark if paid
                 .foregroundColor(.green)
         } else if order.isOverdue {
-            return Image(systemName: "exclamationmark.triangle") // Red warning sign if overdue
+            return Image(systemName: "exclamationmark.triangle.fill") // Red warning sign if overdue
                 .foregroundColor(.red)
         } else {
             return Image(systemName: "checkmark.circle") // Gray checkmark if open

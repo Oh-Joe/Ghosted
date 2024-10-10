@@ -339,6 +339,10 @@ struct EmptyStateView: View {
     var body: some View {
         VStack {
             Spacer()
+            
+            Text("Wow, such empty.")
+                .font(.title2)
+                .fontWeight(.bold)
             Button {
                 showAlert.toggle()
             } label: {
@@ -349,7 +353,6 @@ struct EmptyStateView: View {
                     .padding(.horizontal, 50)
             }
             
-            Text("Wow, such empty.")
             Text(emptyStateMessage)
                 .multilineTextAlignment(.center)
                 .padding(20)
@@ -384,7 +387,7 @@ struct EmptyStateView: View {
         
         message.append(plusSign)
         
-        var endOfMessage = AttributedString(" button in the top right corner?.")
+        var endOfMessage = AttributedString(" button in the top right corner?")
         endOfMessage.font = .caption
         endOfMessage.foregroundColor = .secondary
         

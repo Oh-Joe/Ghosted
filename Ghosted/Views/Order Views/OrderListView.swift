@@ -27,6 +27,8 @@ struct OrderListView: View {
                 } label: {
                     HStack {
                         OrderSymbolView(size: 20)
+                        Text("New Order")
+                            .fontWeight(.semibold)
                     }
                     .foregroundStyle(Color.green)
                     .fontWeight(.semibold)

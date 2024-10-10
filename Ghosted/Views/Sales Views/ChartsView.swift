@@ -1,5 +1,6 @@
 import SwiftUI
 import Charts
+import FirebaseAnalytics
 
 struct ChartsView: View {
     @EnvironmentObject var dataModel: DataModel
@@ -16,26 +17,32 @@ struct ChartsView: View {
     }()
     
     var body: some View {
-        VStack(spacing: 20) {
-            VStack(alignment: .leading) {
-                Text("Months displayed: \(monthsPerScreen)")
-                HStack {
-                    Stepper("", value: $monthsPerScreen, in: 1...12)
-                    .fixedSize()
+        Group {
+            if monthlySalesData.isEmpty {
+                ContentUnavailableView("Sales so low…", systemImage: "magnifyingglass", description: Text("You gotta pump those numbers up!"))
+            } else {
+                VStack(spacing: 20) {
+                    VStack(alignment: .leading) {
+                        Text("Months displayed: \(monthsPerScreen)")
+                        HStack {
+                            Stepper("", value: $monthsPerScreen, in: 1...12)
+                                .fixedSize()
+                            Spacer()
+                        }
+                        .padding(.horizontal, -8)
+                    }
+                    .padding(.horizontal)
                     Spacer()
+                    chartView
+                        .padding()
+                    
+                    Spacer()
+                    
+                    if let selectedMonth = selectedMonth,
+                       let monthData = monthlySalesData.first(where: { $0.monthYear == selectedMonth }) {
+                        selectedMonthView(monthData: monthData)
+                    }
                 }
-                .padding(.horizontal, -8)
-            }
-            .padding(.horizontal)
-            Spacer()
-            chartView
-                .padding()
-            
-            Spacer()
-            
-            if let selectedMonth = selectedMonth,
-               let monthData = monthlySalesData.first(where: { $0.monthYear == selectedMonth }) {
-                selectedMonthView(monthData: monthData)
             }
         }
         .navigationTitle("Monthly Sales")
@@ -46,11 +53,13 @@ struct ChartsView: View {
                 } label: {
                     Text("Report")
                 }
+                .disabled(monthlySalesData.isEmpty)
             }
         }
         .sheet(isPresented: $showSalesReportSheet) {
             SalesReportView()
         }
+        .analyticsScreen(name: "\(ChartsView.self)")
     }
     
     private var chartView: some View {
@@ -113,7 +122,7 @@ struct ChartsView: View {
             
             for company in dataModel.companies {
                 let companyOrders = allOrders.filter { order in
-//                    company.orderIDs.contains(order.id) && // for old data structure with single-way linking where Company has a [orderID] but Order doesn't have a companyID property.
+                    //                    company.orderIDs.contains(order.id) && // for old data structure with single-way linking where Company has a [orderID] but Order doesn't have a companyID property.
                     order.companyID == company.id && // new structure where Order has a companyID property
                     calendar.isDate(order.issuedDate, equalTo: currentDate, toGranularity: .month)
                 }
