@@ -29,7 +29,6 @@ struct LoginView: View {
                     Text("LOG IN")
                         .frame(maxWidth: 300)
                         .padding()
-                        .padding(.horizontal, 32)
                         .foregroundStyle(.white)
                         .fontWeight(.bold)
                         .background(.accent)
@@ -57,7 +56,7 @@ struct LoginView: View {
         }
         
         // Simulate a login check
-        if username == "user" && password == "password" {
+        if username == "User" && password == "pass" {
             isLoginSuccessful = true // This will trigger the navigation to Home
         } else {
             alertMessage = "Invalid username or password."

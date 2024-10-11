@@ -21,28 +21,11 @@ struct OrderListView: View {
     
     var body: some View {
         List {
-            Section {
-                Button {
-                    isShowingAddOrderSheet.toggle()
-                } label: {
-                    HStack {
-                        OrderSymbolView(size: 20)
-                        Text("New Order")
-                            .fontWeight(.semibold)
-                    }
-                    .foregroundStyle(Color.green)
-                    .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-                .tint(.green)
-            } header: {
-                Text("") // just for the space
-            }
+            addOrderButtonSection
             
             let orders = dataModel.ordersForCompany(company)
             if orders.isEmpty {
-                ContentUnavailableView("It's empty in here", systemImage: "wind.snow", description: Text("Cheddar doesn't grow on trees. Gotta get some orders in."))
+                emptyOrdersView
             } else {
                 ForEach(OrderSection.allCases, id: \.self) { section in
                     let ordersForSection = ordersForSection(section)
@@ -51,17 +34,11 @@ struct OrderListView: View {
                             section: section,
                             orders: ordersForSection,
                             isExpanded: sectionExpandedStates[section] ?? false,
-                            toggleExpansion: {
-                                withAnimation {
-                                    sectionExpandedStates[section]?.toggle()
-                                }
-                            },
+                            toggleExpansion: { withAnimation { sectionExpandedStates[section]?.toggle() } },
                             selectedOrder: $selectedOrder,
                             showOrderSheet: $showOrderSheet,
                             totalValue: totalValueForSection(ordersForSection),
-                            onDelete: { indexSet in
-                                deleteOrders(at: indexSet, in: ordersForSection)
-                            }
+                            onDelete: { indexSet in deleteOrders(at: indexSet, in: ordersForSection) }
                         )
                     }
                 }
@@ -80,6 +57,30 @@ struct OrderListView: View {
                     .presentationDragIndicator(.visible)
             }
         }
+    }
+    
+    private var addOrderButtonSection: some View {
+        Section {
+            Button {
+                isShowingAddOrderSheet.toggle()
+            } label: {
+                HStack {
+                    OrderSymbolView(size: 20)
+                    Text("New Order")
+                        .fontWeight(.semibold)
+                }
+                .foregroundStyle(Color.green)
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .tint(.green)
+        } header: {
+            Text("") // Just for spacing
+        }
+    }
+    
+    private var emptyOrdersView: some View {
+        ContentUnavailableView("It's empty in here", systemImage: "wind.snow", description: Text("Cheddar doesn't grow on trees. Gotta get some orders in."))
     }
     
     private func ordersForSection(_ section: OrderSection) -> [Order] {
@@ -107,6 +108,7 @@ struct OrderListView: View {
 }
 
 struct OrderSectionView: View {
+    @EnvironmentObject var dataModel: DataModel
     var section: OrderListView.OrderSection
     var orders: [Order]
     var isExpanded: Bool
@@ -126,8 +128,26 @@ struct OrderSectionView: View {
                     } label: {
                         OrderRowView(order: order)
                     }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        // Delete action
+                        Button(role: .destructive) {
+                            if let index = orders.firstIndex(where: { $0.id == order.id }) {
+                                onDelete(IndexSet(integer: index))
+                            }
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
+                    .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                        // Mark as paid action
+                        Button {
+                            markOrderAsPaid(order)
+                        } label: {
+                            Text("Mark as Paid")
+                        }
+                        .tint(.green)
+                    }
                 }
-                .onDelete(perform: onDelete)
             }
         } header: {
             Button(action: toggleExpansion) {
@@ -148,5 +168,15 @@ struct OrderSectionView: View {
             }
             .buttonStyle(PlainButtonStyle())
         }
+    }
+    
+    private func markOrderAsPaid(_ order: Order) {
+        // Create a new order instance with updated properties
+        var updatedOrder = order
+        updatedOrder.isFullyPaid = true
+        updatedOrder.paidDate = Date() // Set the paid date to now
+        
+        // Update the order in the data model
+        dataModel.updateOrder(updatedOrder)
     }
 }
