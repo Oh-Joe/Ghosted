@@ -138,14 +138,14 @@ struct OrderSectionView: View {
                             Label("Delete", systemImage: "trash")
                         }
                     }
-                    .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         // Mark as paid action
                         Button {
-                            markOrderAsPaid(order)
+                            togglePaidStatus(order)
                         } label: {
-                            Text("Mark as Paid")
+                            Text(order.isFullyPaid ? "Not paid" : "Paid")
                         }
-                        .tint(.green)
+                        .tint(order.isFullyPaid ? .gray : .green)
                     }
                 }
             }
@@ -170,13 +170,14 @@ struct OrderSectionView: View {
         }
     }
     
-    private func markOrderAsPaid(_ order: Order) {
-        // Create a new order instance with updated properties
+    private func togglePaidStatus(_ order: Order) {
         var updatedOrder = order
-        updatedOrder.isFullyPaid = true
-        updatedOrder.paidDate = Date() // Set the paid date to now
-        
-        // Update the order in the data model
+        if updatedOrder.isFullyPaid {
+            updatedOrder.paidDate = nil
+        } else {
+            updatedOrder.paidDate = Date()
+        }
+        updatedOrder.isFullyPaid.toggle()
         dataModel.updateOrder(updatedOrder)
     }
 }

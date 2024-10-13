@@ -11,7 +11,7 @@ struct Task: Hashable, Codable, Identifiable {
         return dueDate < startOfToday && !isDone
     }
     var dueDate: Date
-    var completedDate: Date
+    var completedDate: Date?
 }
 
 extension Task {

@@ -4,12 +4,14 @@ struct TaskDetailView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var dataModel: DataModel
     
-    @State private var task: Task
-    let taskId: UUID
+    @Binding var task: Task
+    @State private var localTask: Task
     
-    init(taskId: UUID) {
-        self.taskId = taskId
-        _task = State(initialValue: Task.emptyTask) // Placeholder, will be updated in onAppear
+    var company: Company
+    init(task: Binding<Task>, company: Company) {
+        self._task = task
+        self._localTask = State(initialValue: task.wrappedValue)
+        self.company = company
     }
     
     var body: some View {
@@ -24,15 +26,21 @@ struct TaskDetailView: View {
                             .foregroundStyle(task.isOverdue ? .red : .primary)
                     }
                     HStack {
-                        Toggle("Done?", isOn: Binding(
-                            get: { task.isDone },
-                            set: { newValue in
-                                task.isDone = newValue
-                                dataModel.updateTask(task)
+                        Toggle("Done?", isOn: $localTask.isDone)
+                            .onChange(of: localTask.isDone) { oldValue, isOn in
+                                if isOn {
+                                    localTask.completedDate = Date()
+                                } else {
+                                    localTask.completedDate = nil
+                                }
                             }
-                        ))
                     }
-                    DatePicker("Completion date:", selection: $task.completedDate, displayedComponents: .date)
+                    if localTask.isDone {
+                        DatePicker("Completion date:", selection: Binding(
+                            get: { localTask.completedDate ?? Date() },
+                            set: { localTask.completedDate = $0 }
+                        ), displayedComponents: .date)
+                    }
                 } header: {
                     Text("Details")
                 }
@@ -58,10 +66,9 @@ struct TaskDetailView: View {
                 }
             }
         }
-        .onAppear {
-            if let loadedTask = dataModel.tasks[taskId] {
-                task = loadedTask
-            }
+        .onDisappear {
+            task = localTask
+        dataModel.updateTask(localTask)
         }
     }
 }

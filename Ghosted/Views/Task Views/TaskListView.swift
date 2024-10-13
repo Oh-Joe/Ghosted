@@ -68,8 +68,8 @@ struct TaskListView: View {
             get: { showTaskSheet && selectedTask != nil },
             set: { newValue in showTaskSheet = newValue }
         )) {
-            if let selectedTask = selectedTask {
-                TaskDetailView(taskId: selectedTask.id)
+            if let task = selectedTask {
+                TaskDetailView(task: .constant(task), company: company)
                     .presentationDragIndicator(.visible)
             }
         }
@@ -114,6 +114,14 @@ struct TaskSectionView: View {
                         TaskRowView(task: task)
                     }
                     .foregroundStyle(.primary)
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button {
+                            toggleCompletionStatus(task)
+                        } label: {
+                            Label(task.isDone ? "Not done" : "Done", systemImage: task.isDone ? "xmark.circle" : "checkmark.circle")
+                        }
+                        .tint(task.isDone ? .gray : .green)
+                    }
                 }
                 .onDelete(perform: deleteTasks)
             }
@@ -139,5 +147,16 @@ struct TaskSectionView: View {
         for index in offsets {
             dataModel.deleteTask(tasks[index])
         }
+    }
+    
+    private func toggleCompletionStatus(_ task: Task) {
+        var updatedTask = task
+        if updatedTask.isDone {
+            updatedTask.completedDate = nil
+        } else {
+            updatedTask.completedDate = Date()
+        }
+        updatedTask.isDone.toggle()
+        dataModel.updateTask(updatedTask)
     }
 }
