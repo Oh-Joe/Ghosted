@@ -2,48 +2,46 @@ import SwiftUI
 import FirebaseAuth
 
 struct SignInView: View {
+    @EnvironmentObject var authManager: AuthManager
+    @Binding var isUserLoggedIn: Bool
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var errorMessage: String = ""
-    @State private var isSignInSuccessful: Bool = false
 
     var body: some View {
-            VStack {
-                TextField("Email", text: $email)
-                    .keyboardType(.emailAddress)
-                    .autocapitalization(.none)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
+        VStack {
+            TextField("Email", text: $email)
+                .keyboardType(.emailAddress)
+                .autocapitalization(.none)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
 
-                SecureField("Password", text: $password)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
+            SecureField("Password", text: $password)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
 
-                Button("Sign In") {
-                    signIn()
-                }
-                .buttonStyle(.bordered)
-                .buttonBorderShape(.roundedRectangle(radius: 12))
-                .tint(.accent)
-                .controlSize(.large)
-
-                if !errorMessage.isEmpty {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                }
+            Button("Sign In") {
+                signIn()
             }
-            .padding()
-            .navigationDestination(isPresented: $isSignInSuccessful) {
-                Home() // Navigate to Home when sign-in is successful
+            .buttonStyle(.bordered)
+            .buttonBorderShape(.roundedRectangle(radius: 12))
+            .tint(.accent)
+            .controlSize(.large)
+
+            if let errorMessage = authManager.errorMessage {
+                Text(errorMessage)
+                    .foregroundColor(.red)
             }
+        }
+        .padding()
+        .onChange(of: authManager.isUserLoggedIn) { oldValue, newValue in
+            if newValue {
+                isUserLoggedIn = true // Update the binding when logged in
+            }
+        }
     }
 
     private func signIn() {
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            if let error = error {
-                errorMessage = error.localizedDescription
-                return
-            }
-        }
+        authManager.signIn(email: email, password: password) // Use the AuthManager to sign in
     }
 }

@@ -118,7 +118,7 @@ struct TaskSectionView: View {
                         Button {
                             toggleCompletionStatus(task)
                         } label: {
-                            Label(task.isDone ? "Not done" : "Done", systemImage: task.isDone ? "xmark.circle" : "checkmark.circle")
+                            Label(task.isDone ? "Not done" : "Done", systemImage: task.isDone ? "circle" : "checkmark.circle")
                         }
                         .tint(task.isDone ? .gray : .green)
                     }

@@ -7,6 +7,7 @@ import FirebaseAuth
 struct GhostedApp: App {
     @StateObject private var dataModel = DataModel()
     
+    
     init() {
             NotificationManager.shared.requestPermission()
         }

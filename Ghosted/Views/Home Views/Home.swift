@@ -2,6 +2,8 @@ import SwiftUI
 
 struct Home: View {
     @EnvironmentObject var dataModel: DataModel
+    @EnvironmentObject var authManager: AuthManager
+    @Binding var isUserLoggedIn: Bool // Binding to track login state
     @State private var selectedTab: Tab = .companies
     
     var randoToday: Int = Int.random(in: 1...3)
@@ -20,7 +22,6 @@ struct Home: View {
             GeometryReader { geometry in
                 ScrollView {
                     VStack(spacing: 24) {
-                        
                         NavigationLink(destination: TodayView()) {
                             ZStack(alignment: .bottomLeading) {
                                 Image("SectionToday\(randoToday)")
@@ -95,7 +96,6 @@ struct Home: View {
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
-                        
                     }
                 }
             }
@@ -104,10 +104,14 @@ struct Home: View {
             .navigationTitle("Home")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        
+                    Menu {
+                        Button(action: {
+                            authManager.signOut() // Sign out the user
+                        }) {
+                            Label("Sign Out", systemImage: "arrow.right.square")
+                        }
                     } label: {
-                        Image(systemName: "person.circle.fill")
+                        Label("Account", systemImage: "person.circle")
                     }
                 }
             }

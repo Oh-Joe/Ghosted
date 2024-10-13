@@ -1,10 +1,3 @@
-//
-//  AudioPlayer.swift
-//  Ghosted
-//
-//  Created by Antoine Moreau on 9/3/24.
-//
-
 import Foundation
 import AVFoundation
 

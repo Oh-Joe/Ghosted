@@ -9,7 +9,7 @@ struct TaskRowView: View {
         } else if task.isDone {
             return ("checkmark.circle.fill", .green)
         } else {
-            return ("checkmark.circle", .secondary)
+            return ("circle", .secondary)
         }
     }
     

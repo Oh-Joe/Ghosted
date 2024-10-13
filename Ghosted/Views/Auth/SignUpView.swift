@@ -2,10 +2,11 @@ import SwiftUI
 import FirebaseAuth
 
 struct SignUpView: View {
+    @EnvironmentObject var authManager: AuthManager // Access the AuthManager
+    @Binding var isUserLoggedIn: Bool // Binding to track login state
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var errorMessage: String = ""
-    @State private var isSignUpSuccessful: Bool = false
 
     var body: some View {
         VStack {
@@ -37,20 +38,14 @@ struct SignUpView: View {
             }
         }
         .padding()
-        .navigationDestination(isPresented: $isSignUpSuccessful) {
-            Home() // Navigate to Home when sign-in is successful
+        .onChange(of: authManager.isUserLoggedIn) { oldValue, newValue in
+            if newValue {
+                isUserLoggedIn = true // Update the binding when logged in
+            }
         }
     }
 
     private func signUp() {
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            if let error = error {
-                errorMessage = error.localizedDescription
-                return
-            }
-            // Sign-up successful
-            isSignUpSuccessful = true
-            // You can navigate to another view or perform other actions here
-        }
+        authManager.register(email: email, password: password) // Use the AuthManager to register
     }
 }
