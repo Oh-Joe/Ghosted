@@ -6,7 +6,7 @@ import FirebaseAuth
 @main
 struct GhostedApp: App {
     @StateObject private var dataModel = DataModel()
-    
+    @StateObject private var authManager = AuthManager()
     
     init() {
             NotificationManager.shared.requestPermission()
@@ -18,6 +18,7 @@ struct GhostedApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(dataModel)
+                .environmentObject(authManager)
         }
     }
 }

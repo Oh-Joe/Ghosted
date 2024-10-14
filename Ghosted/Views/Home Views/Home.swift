@@ -2,21 +2,20 @@ import SwiftUI
 
 struct Home: View {
     @EnvironmentObject var dataModel: DataModel
-    @EnvironmentObject var authManager: AuthManager
-    @Binding var isUserLoggedIn: Bool // Binding to track login state
+    @EnvironmentObject var authManager: AuthManager // AuthManager handles login state
     @State private var selectedTab: Tab = .companies
-    
+
     var randoToday: Int = Int.random(in: 1...3)
     var randoCompanies: Int = Int.random(in: 1...6)
     var randoSalesDashboard: Int = Int.random(in: 1...4)
-    
+
     enum Tab {
         case companies
         case salesCharts
         case salesDashboard
         case contacts
     }
-    
+
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -28,12 +27,12 @@ struct Home: View {
                                     .resizable()
                                     .scaledToFill()
                                     .frame(maxWidth: .infinity, maxHeight: geometry.size.height / 3.3)
-                                
+
                                 VStack(alignment: .leading) {
                                     Text("Today")
                                         .font(.title2)
                                         .fontWeight(.bold)
-                                    
+
                                     Text("Quickly view what needs to be done today.")
                                         .font(.caption)
                                         .multilineTextAlignment(.leading)
@@ -46,19 +45,19 @@ struct Home: View {
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
-                        
+
                         NavigationLink(destination: CompanyListView()) {
                             ZStack(alignment: .bottomLeading) {
                                 Image("SectionCompanies\(randoCompanies)")
                                     .resizable()
                                     .scaledToFill()
                                     .frame(maxWidth: .infinity, maxHeight: geometry.size.height / 3.3)
-                                
+
                                 VStack(alignment: .leading) {
                                     Text("Accounts")
                                         .font(.title2)
                                         .fontWeight(.bold)
-                                    
+
                                     Text("Create and manage accounts, their contacts, and orders;\ncontrol your tasks and interactions with them.")
                                         .font(.caption)
                                         .multilineTextAlignment(.leading)
@@ -71,19 +70,19 @@ struct Home: View {
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
-                        
+
                         NavigationLink(destination: ChartsView()) {
                             ZStack(alignment: .bottomLeading) {
                                 Image("SectionSalesDashboard\(randoSalesDashboard)")
                                     .resizable()
                                     .scaledToFill()
                                     .frame(maxWidth: .infinity, maxHeight: geometry.size.height / 3.3)
-                                
+
                                 VStack(alignment: .leading) {
                                     Text("Sales Charts & Reports")
                                         .font(.title2)
                                         .fontWeight(.bold)
-                                    
+
                                     Text("View sales graphs, see and export a weekly/monthly report.")
                                         .font(.caption)
                                         .multilineTextAlignment(.leading)
@@ -105,10 +104,12 @@ struct Home: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button(action: {
-                            authManager.signOut() // Sign out the user
-                        }) {
-                            Label("Sign Out", systemImage: "arrow.right.square")
+                        Button {
+                            withAnimation {
+                                authManager.signOut() // Sign out the user using AuthManager
+                            }
+                        } label: {
+                            Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.forward")
                         }
                     } label: {
                         Label("Account", systemImage: "person.circle")

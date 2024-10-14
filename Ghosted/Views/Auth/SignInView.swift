@@ -1,12 +1,10 @@
 import SwiftUI
-import FirebaseAuth
 
 struct SignInView: View {
     @EnvironmentObject var authManager: AuthManager
-    @Binding var isUserLoggedIn: Bool
     @State private var email: String = ""
     @State private var password: String = ""
-    @State private var errorMessage: String = ""
+    @State private var navigateToHome: Bool = false
 
     var body: some View {
         VStack {
@@ -34,14 +32,22 @@ struct SignInView: View {
             }
         }
         .padding()
+        .background(
+            NavigationLink(destination: ContentView().environmentObject(authManager),
+                           isActive: $navigateToHome) {
+                EmptyView()
+            }
+            .hidden() // Hide the navigation link
+        )
         .onChange(of: authManager.isUserLoggedIn) { oldValue, newValue in
             if newValue {
-                isUserLoggedIn = true // Update the binding when logged in
+                
+                navigateToHome = true // Trigger navigation to ContentView
             }
         }
     }
 
     private func signIn() {
-        authManager.signIn(email: email, password: password) // Use the AuthManager to sign in
+        authManager.signIn(email: email, password: password)
     }
 }
