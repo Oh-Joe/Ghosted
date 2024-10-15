@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct SignUpView: View {
-    @EnvironmentObject var authManager: AuthManager // Access the AuthManager
+    @EnvironmentObject var authManager: AuthManager
     @State private var email: String = ""
     @State private var password: String = ""
-    @State private var navigateToHome: Bool = false // State variable for navigation
+    @Binding var path: [AppRoute]
 
     var body: some View {
         VStack {
@@ -31,26 +31,18 @@ struct SignUpView: View {
             .controlSize(.large)
 
             if let errorMessage = authManager.errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
+                Text(errorMessage).foregroundColor(.red)
             }
         }
         .padding()
-        .background(
-            NavigationLink(destination: ContentView().environmentObject(authManager),
-                           isActive: $navigateToHome) {
-                EmptyView()
-            }
-            .hidden() // Hide the navigation link
-        )
         .onChange(of: authManager.isUserLoggedIn) { oldValue, newValue in
             if newValue {
-                navigateToHome = true // Trigger navigation to ContentView
+                path = [] // Reset path on successful registration
             }
         }
     }
 
     private func signUp() {
-        authManager.register(email: email, password: password) // Use the AuthManager to register
+        authManager.register(email: email, password: password) // Use AuthManager to register
     }
 }

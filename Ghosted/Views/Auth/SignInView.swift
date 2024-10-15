@@ -4,7 +4,7 @@ struct SignInView: View {
     @EnvironmentObject var authManager: AuthManager
     @State private var email: String = ""
     @State private var password: String = ""
-    @State private var navigateToHome: Bool = false
+    @Binding var path: [AppRoute]
 
     var body: some View {
         VStack {
@@ -27,22 +27,13 @@ struct SignInView: View {
             .controlSize(.large)
 
             if let errorMessage = authManager.errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
+                Text(errorMessage).foregroundColor(.red)
             }
         }
         .padding()
-        .background(
-            NavigationLink(destination: ContentView().environmentObject(authManager),
-                           isActive: $navigateToHome) {
-                EmptyView()
-            }
-            .hidden() // Hide the navigation link
-        )
         .onChange(of: authManager.isUserLoggedIn) { oldValue, newValue in
             if newValue {
-                
-                navigateToHome = true // Trigger navigation to ContentView
+                path = [] // Reset path on successful login
             }
         }
     }
@@ -51,3 +42,4 @@ struct SignInView: View {
         authManager.signIn(email: email, password: password)
     }
 }
+
