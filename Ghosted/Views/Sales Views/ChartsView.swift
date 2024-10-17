@@ -45,7 +45,7 @@ struct ChartsView: View {
                 }
             }
         }
-        .navigationTitle("Monthly Sales")
+        .navigationTitle(monthlySalesData.isEmpty ? "Sales? What Sales?" : "Monthly Sales")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {

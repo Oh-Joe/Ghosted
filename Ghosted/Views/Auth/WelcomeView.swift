@@ -17,11 +17,11 @@ struct WelcomeView: View {
             Button(action: {
                 path.append(.signIn)
             }) {
-                Text("Sign in with email")
+                Text("SIGN IN WITH EMAIL")
                     .font(.headline)
                     .foregroundStyle(.white)
                     .frame(height: 55)
-                    .frame(maxWidth: .infinity)
+                    .frame(width: 300)
                     .background(.accent)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
@@ -29,11 +29,11 @@ struct WelcomeView: View {
             Button(action: {
                 path.append(.signUp)
             }) {
-                Text("Sign up (new user)")
+                Text("SIGN UP (NEW USER)")
                     .font(.headline)
                     .foregroundStyle(.white)
                     .frame(height: 55)
-                    .frame(maxWidth: .infinity)
+                    .frame(width: 300)
                     .background(.accent)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }

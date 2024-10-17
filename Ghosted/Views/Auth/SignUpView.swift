@@ -5,12 +5,22 @@ struct SignUpView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @Binding var path: [AppRoute]
-
+    
+    let punchlines: [String] = [
+        "Welcome! If you thought job interviews were tough, wait until you meet clients.",
+        "Congrats! You’ve just signed up for a lifetime of ‘circling back’ and ‘touching base.’",
+        "Welcome to the glamorous world of sales. Spoiler: It’s mostly emails and coffee.",
+        "Ready to spend half your time tracking down leads, and the other half pretending you did?",
+        "Welcome to sales! May your coffee be strong and your clients… slightly interested.",
+        "New to sales? Don’t worry, you’ll be dreaming about quotas in no time."
+        ]
+    
     var body: some View {
+        var randomPunchline: String = punchlines.randomElement()!
         VStack {
-            Text("Sign Up")
-                .font(.largeTitle)
-                .padding()
+            Text(randomPunchline)
+                .font(.title2)
+                .fontWeight(.bold)
 
             TextField("Email", text: $email)
                 .keyboardType(.emailAddress)
@@ -22,13 +32,17 @@ struct SignUpView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
 
-            Button("Sign Up") {
+            Button {
                 signUp()
+            } label: {
+                Text("SIGN UP")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(height: 55)
+                    .frame(width: 300)
+                    .background(.accent)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
             }
-            .buttonStyle(.bordered)
-            .buttonBorderShape(.roundedRectangle(radius: 12))
-            .tint(.accent)
-            .controlSize(.large)
 
             if let errorMessage = authManager.errorMessage {
                 Text(errorMessage).foregroundColor(.red)
