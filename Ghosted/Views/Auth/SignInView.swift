@@ -4,33 +4,33 @@ struct SignInView: View {
     @EnvironmentObject var authManager: AuthManager
     @State private var email: String = ""
     @State private var password: String = ""
-    @Binding var path: [AppRoute]
+    @FocusState private var focusField: Field?
     
-    let punchlines: [String] = [
-        "Welcome back! Time to turn rejection into motivation…\nYeah, right.",
-        "Back for more rejection already?",
-        "Good news: You’re halfway through the week. Bad news: It’s Monday.",
-        "You could be closing deals, or just **cking around pretending to work. We're not judging!",
-        "Welcome back! Time to explain your pipeline to the boss… again.",
-        "Life could be worse. Like, you could be your own client.",
-        "Welcome to your personal sales toolbox. No refunds for lost sanity."
-        ]
+    enum Field: Hashable {
+        case email
+        case password
+    }
+    
+    @Binding var path: [AppRoute]
 
     var body: some View {
-        var randomPunchline: String = punchlines.randomElement()!
         VStack {
-            Text(randomPunchline)
-                .font(.title2)
-                .fontWeight(.bold)
-            
             TextField("Email", text: $email)
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
+                .focused($focusField, equals: .email)
+                .onSubmit {
+                    focusField = .password
+                }
+                .submitLabel(.next)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .frame(width: 300)
                 .padding()
 
             SecureField("Password", text: $password)
+                .focused($focusField, equals: .password)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .frame(width: 300)
                 .padding()
 
             Button {
@@ -44,7 +44,6 @@ struct SignInView: View {
                     .background(.accent)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
-            
 
             if let errorMessage = authManager.errorMessage {
                 Text(errorMessage).foregroundColor(.red)

@@ -16,12 +16,24 @@ struct CompanyForm: View {
     @Binding var website: String
     @Binding var generalNotes: String
     
+    @FocusState private var focusField: Field?
+    
+    enum Field: Hashable {
+        case companyName
+        case website
+    }
+    
     var body: some View {
         Section {
             TextField("Company name (required)", text: $name)
+                .focused($focusField, equals: .companyName)
+                .onSubmit {
+                    focusField = .website
+                }
                 .textInputAutocapitalization(.words)
                 .autocorrectionDisabled(true)
             TextField("Website", text: $website)
+                .focused($focusField, equals: .website)
                 .autocorrectionDisabled(true)
                 .keyboardType(.URL)
                 .autocapitalization(.none)

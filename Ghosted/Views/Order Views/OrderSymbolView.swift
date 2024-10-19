@@ -26,7 +26,3 @@ struct OrderSymbolView: View {
         .offset(y: -2)
     }
 }
-
-#Preview {
-    OrderSymbolView(size: 48)
-}

@@ -194,9 +194,37 @@ struct CompanySectionView: View {
                     }
                 }
             } header: {
-                sectionHeaderView
+                Button(action: toggleExpansion) {
+                    HStack {
+                        Text("\(statusDisplayName)")
+                        Text("\(companyCount)")
+                            .font(.caption)
+                            .frame(width: 18, height: 18)
+                            .background(Circle().fill(companyCount == 0 ? Color.secondary : Color.accentColor).opacity(0.3))
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                            .padding(.trailing, 8)
+                    }
+                    .contentShape(Rectangle()) // Makes the whole header tappable
+                    .padding(.vertical, 5)
+                    .background(Color(UIColor.systemGroupedBackground)) // Optional background for better visibility
+                }
+                .buttonStyle(PlainButtonStyle()) // Removes the button’s default styling
             }
         }
+    }
+    
+    private func selectedTab(for company: Company) -> CompaniesHomeView.Tab {
+        let dueItems = dueItemsForCompany(company)
+        if !dueItems.orders.isEmpty || (!dueItems.orders.isEmpty && !dueItems.tasks.isEmpty) {
+            return .orders
+        } else if !dueItems.tasks.isEmpty {
+            return .tasks
+        }
+        return .details
     }
     
     private func dueItemsForCompany(_ company: Company) -> (orders: [Order], tasks: [Task]) {
@@ -211,35 +239,6 @@ struct CompanySectionView: View {
         return (dueOrders, dueTasks)
     }
     
-    private func selectedTab(for company: Company) -> CompaniesHomeView.Tab {
-        let dueItems = dueItemsForCompany(company)
-        if !dueItems.orders.isEmpty || (!dueItems.orders.isEmpty && !dueItems.tasks.isEmpty) {
-            return .orders // Go to orders tab if there are due orders or both orders and tasks
-        } else if !dueItems.tasks.isEmpty {
-            return .tasks // Go to tasks tab if there are due tasks
-        }
-        return .details // Default to details tab if no due items
-    }
-    
-    private var sectionHeaderView: some View {
-        HStack {
-            HStack {
-                Text("\(statusDisplayName)")
-                Text("\(companyCount)")
-                    .font(.caption)
-                    .frame(width: 18, height: 18)
-                    .background(Circle().fill(companyCount == 0 ? Color.secondary : Color.accentColor).opacity(0.3))
-            }
-            Spacer()
-            if companyCount > 0 {
-                Button(action: toggleExpansion) {
-                    Image(systemName: "chevron.right")
-                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
-                }
-            }
-        }
-    }
-    
     private var statusDisplayName: String {
         switch status {
         case .activeClient:
@@ -249,12 +248,13 @@ struct CompanySectionView: View {
         case .coldLead:
             return "Cold Leads"
         case .ghosting:
-            return "Them Bitches Ghosting Me"
+            return "Them Bi**hes Ghosting Me"
         case .closedLost:
             return "Not Interested"
         }
     }
 }
+
 
 //MARK: CompanyRow
 struct CompanyRow: View {

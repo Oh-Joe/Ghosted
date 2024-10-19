@@ -6,6 +6,14 @@ struct AddInteractionView: View {
     @State var date: Date = Date()
     @State private var title: String = ""
     @State private var content: String = ""
+    
+    @FocusState private var focusField: Field?
+    
+    enum Field: Hashable {
+        case title
+        case content
+    }
+    
     var company: Company
     
     var isFormValid: Bool {
@@ -20,7 +28,14 @@ struct AddInteractionView: View {
                            displayedComponents: [.date]
                 )
                 TextField("Title", text: $title)
+                    .focused($focusField, equals: .title)
+                    .onSubmit {
+                        focusField = .content
+                    }
+                    .submitLabel(.next)
                 TextEditor(text: $content)
+                    .focused($focusField, equals: .content)
+                    .submitLabel(.done)
                     .frame(height: 250)
             }
             .navigationTitle("New Interaction")

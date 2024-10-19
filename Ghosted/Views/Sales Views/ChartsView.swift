@@ -19,7 +19,7 @@ struct ChartsView: View {
     var body: some View {
         Group {
             if monthlySalesData.isEmpty {
-                ContentUnavailableView("Sales so low…", systemImage: "magnifyingglass", description: Text("You gotta pump those numbers up!"))
+                ContentUnavailableView("Charts Are For Closers Only", systemImage: "magnifyingglass", description: Text("Come back when you've closed some deals!"))
             } else {
                 VStack(spacing: 20) {
                     VStack(alignment: .leading) {
@@ -45,7 +45,7 @@ struct ChartsView: View {
                 }
             }
         }
-        .navigationTitle(monthlySalesData.isEmpty ? "Sales? What Sales?" : "Monthly Sales")
+        .navigationTitle(monthlySalesData.isEmpty ? "" : "Monthly Charts")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {

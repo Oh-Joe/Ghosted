@@ -4,7 +4,16 @@ struct WelcomeView: View {
     @EnvironmentObject var authManager: AuthManager
     @Binding var path: [AppRoute]
 
+    let punchlines: [String] = [
+        "Good news: You’re halfway through the week. Bad news: It’s Monday.",
+        "Look, you could log in and close deals and stuff, or you could just **ck around and pretend to work. We're not judging!",
+        "Welcome to the glamorous world of sales. Spoiler: It’s mostly emails and coffee.",
+        "Ready to spend half your time tracking down leads, and the other half pretending you did?",
+        "Welcome to your personal sales toolbox. No refunds for lost sanity."
+        ]
+    
     var body: some View {
+        var randomPunchline: String = punchlines.randomElement()!
         VStack {
             Spacer()
             Image("bustASale")
@@ -12,6 +21,11 @@ struct WelcomeView: View {
                 .scaledToFit()
                 .clipShape(RoundedRectangle(cornerRadius: 12))
 
+            Text(randomPunchline)
+                .foregroundStyle(.secondary)
+                .italic()
+                .frame(width: 300)
+            
             Spacer()
             
             Button(action: {

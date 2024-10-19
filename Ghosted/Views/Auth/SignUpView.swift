@@ -4,32 +4,33 @@ struct SignUpView: View {
     @EnvironmentObject var authManager: AuthManager
     @State private var email: String = ""
     @State private var password: String = ""
+    @FocusState private var focusField: Field?
+    
+    enum Field: Hashable {
+        case email
+        case password
+    }
+    
     @Binding var path: [AppRoute]
     
-    let punchlines: [String] = [
-        "Welcome! If you thought job interviews were tough, wait until you meet clients.",
-        "Congrats! You’ve just signed up for a lifetime of ‘circling back’ and ‘touching base.’",
-        "Welcome to the glamorous world of sales. Spoiler: It’s mostly emails and coffee.",
-        "Ready to spend half your time tracking down leads, and the other half pretending you did?",
-        "Welcome to sales! May your coffee be strong and your clients… slightly interested.",
-        "New to sales? Don’t worry, you’ll be dreaming about quotas in no time."
-        ]
-    
     var body: some View {
-        var randomPunchline: String = punchlines.randomElement()!
         VStack {
-            Text(randomPunchline)
-                .font(.title2)
-                .fontWeight(.bold)
-
             TextField("Email", text: $email)
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
+                .focused($focusField, equals: .email)
+                .onSubmit {
+                    focusField = .password
+                }
+                .submitLabel(.next)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .frame(width: 300)
                 .padding()
 
             SecureField("Password", text: $password)
+                .focused($focusField, equals: .password)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .frame(width: 300)
                 .padding()
 
             Button {

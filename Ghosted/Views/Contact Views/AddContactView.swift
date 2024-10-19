@@ -14,6 +14,16 @@ struct AddContactView: View {
     @State private var image: UIImage?
     @State private var showingImagePicker = false
     @State private var sourceType: UIImagePickerController.SourceType?
+    
+    @FocusState private var focusField: Field?
+    
+    enum Field: Hashable {
+        case firstName
+        case lastName
+        case jobTitle
+        case email
+        case phoneNumber
+    }
 
     var isFormValid: Bool {
         !firstName.isEmpty && !lastName.isEmpty && !email.isEmpty
@@ -49,18 +59,40 @@ struct AddContactView: View {
             Form {
                 Section {
                     TextField("First name:", text: $firstName)
+                        .focused($focusField, equals: .firstName)
+                        .onSubmit {
+                            focusField = .lastName
+                        }
+                        .submitLabel(.next)
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled(true)
                     TextField("Last name:", text: $lastName)
+                        .focused($focusField, equals: .lastName)
+                        .onSubmit {
+                            focusField = .jobTitle
+                        }
+                        .submitLabel(.next)
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled(true)
                     TextField("Job:", text: $jobTitle)
+                        .focused($focusField, equals: .jobTitle)
+                        .onSubmit {
+                            focusField = .email
+                        }
+                        .submitLabel(.next)
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled(true)
                     TextField("Email:", text: $email)
+                        .focused($focusField, equals: .email)
+                        .onSubmit {
+                            focusField = .phoneNumber
+                        }
+                        .submitLabel(.next)
                         .keyboardType(.emailAddress)
                         .autocapitalization(.none)
                     TextField("Cell number:", text: $phoneNumber)
+                        .focused($focusField, equals: .phoneNumber)
+                        .submitLabel(.done)
                         .keyboardType(.phonePad)
                 } header: {
                     Text("Contact Information")
