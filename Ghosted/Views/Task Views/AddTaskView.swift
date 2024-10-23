@@ -14,7 +14,7 @@ struct AddTaskView: View {
                 TextField("Title", text: $title)
                 DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
                 TextEditor(text: $contents)
-                    .frame(height: 100)
+                    .frame(height: 250)
             }
             .navigationTitle("New Task")
             .navigationBarTitleDisplayMode(.inline)

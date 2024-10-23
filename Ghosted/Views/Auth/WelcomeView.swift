@@ -10,10 +10,10 @@ struct WelcomeView: View {
         "Welcome to the glamorous world of sales. Spoiler: It’s mostly emails and coffee.",
         "Ready to spend half your time tracking down leads, and the other half pretending you did?",
         "Welcome to your personal sales toolbox. No refunds for lost sanity."
-        ]
+    ]
     
     var body: some View {
-        var randomPunchline: String = punchlines.randomElement()!
+        let randomPunchline: String = punchlines.randomElement()!
         VStack {
             Spacer()
             Image("bustASale")
@@ -61,8 +61,8 @@ struct WelcomeView: View {
                 SignInView(path: $path).environmentObject(authManager)
             case .signUp:
                 SignUpView(path: $path).environmentObject(authManager)
-            default:
-                EmptyView()
+            case .home:
+                Home().environmentObject(authManager)
             }
         }
     }

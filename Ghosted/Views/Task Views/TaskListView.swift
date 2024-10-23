@@ -39,7 +39,7 @@ struct TaskListView: View {
             
             let tasks = dataModel.tasksForCompany(company)
             if tasks.isEmpty {
-                ContentUnavailableView("Nothing to do… yet", systemImage: "gamecontroller.fill", description: Text("Enjoy the free time while it lasts!"))
+                ContentUnavailableView("Nothing to do… yet", systemImage: "gamecontroller.fill", description: Text("When adding tasks, choose a simple title for easy reference; add details in the description field. Swipe right on a task to toggle completion status, or left to delete"))
             } else {
                 ForEach(TaskSection.allCases, id: \.self) { section in
                     let tasksForSection = tasksForSection(section)
@@ -118,7 +118,7 @@ struct TaskSectionView: View {
                         Button {
                             toggleCompletionStatus(task)
                         } label: {
-                            Label(task.isDone ? "Not done" : "Done", systemImage: task.isDone ? "circle" : "checkmark.circle")
+                            Label(task.isDone ? "Not done" : "Done", systemImage: task.isDone ? "minus.circle" : "checkmark.circle")
                         }
                         .tint(task.isDone ? .gray : .green)
                     }

@@ -182,7 +182,7 @@ struct CompanySectionView: View {
                         NavigationLink(destination: CompaniesHomeView(selectedTab: selectedTab(for: company), company: company)) {
                             CompanyRow(company: company, selectedCompany: $selectedCompany, showAddOrderSheet: $showAddOrderSheet, showAddContactSheet: $showAddContactSheet, showAddInteractionSheet: $showAddInteractionSheet, showAddTaskSheet: $showAddTaskSheet, showEditAccountSheet: $showEditAccountSheet)
                         }
-                        .swipeActions {
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
                                 if let index = companies.firstIndex(where: { $0.id == company.id }) {
                                     deleteAction(IndexSet(integer: index))

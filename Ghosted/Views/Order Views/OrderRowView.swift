@@ -6,7 +6,7 @@ struct OrderRowView: View {
     var body: some View {
         
         HStack {
-            Image(systemName: order.isFullyPaid ? "checkmark.circle.fill" : order.isOverdue ? "exclamationmark.triangle.fill" : "checkmark.circle")
+            Image(systemName: order.isFullyPaid ? "checkmark.circle.fill" : order.isOverdue ? "exclamationmark.triangle.fill" : "minus.circle")
                 .foregroundStyle(order.isFullyPaid ? .green : order.isOverdue ? .red : .secondary)
             
             VStack(alignment: .leading) {
@@ -16,7 +16,7 @@ struct OrderRowView: View {
                 let displayDueDate = order.dueDate.formatted(.dateTime.day().month(.abbreviated).year())
                 let displayPaidDate = order.paidDate?.formatted(.dateTime.day().month(.abbreviated).year())
                 if order.isFullyPaid {
-                    Text("Paid: \(displayPaidDate ?? "uhm, actually I'm not sure")")
+                    Text("Paid: \(displayPaidDate ?? "today (default)")")
                         .font(.caption)
                 } else {
                     Text("Due: \(displayDueDate)")

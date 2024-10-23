@@ -10,7 +10,7 @@ struct ContactListView: View {
             List {
                 Section {
                     Button {
-                        isShowingAddContactSheet.toggle()
+                        isShowingAddContactSheet = true
                     } label: {
                         Label("New Contact", systemImage: "person.crop.circle.badge.plus")
                             .fontWeight(.semibold)
@@ -27,7 +27,7 @@ struct ContactListView: View {
                 
                 let contacts = dataModel.contactsForCompany(company)
                 if contacts.isEmpty {
-                    ContentUnavailableView("No one yet", systemImage: "figure.fall", description: Text("It's fine. I'm sure they'll come."))
+                    ContentUnavailableView("No one yet", systemImage: "figure.fall", description: Text("Add contacts and their details. For each, add notes to remember key details or little tidbits that you want to remember. Swipe left on a contact to delete."))
                 } else {
                 Section {
                         ForEach(contacts, id: \.id) { contact in

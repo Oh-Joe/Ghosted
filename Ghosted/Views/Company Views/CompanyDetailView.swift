@@ -77,12 +77,17 @@ struct CompanyDetailView: View {
                             .onTapGesture {
                                 showInfoAlert = true
                             }
+//                            .popover(isPresented: $showInfoAlert) {
+//                                VStack{
+//                                    Text("This option overlays a line over the bars, showing the sales amount for the same month of the previous year - if any, that is.")
+//                                        .padding()
+//                                        .presentationCompactAdaptation(.popover)
+//                                }
+//                            }
+                        
                         
                         Toggle("", isOn: $isShowingLastYearLineChart)
                     }
-                    
-                    
-                    
                     
                     salesComparisonChart
                         .frame(height: 300)

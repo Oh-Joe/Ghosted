@@ -26,7 +26,7 @@ struct InteractionListView: View {
             
             let interactions = dataModel.interactionsForCompany(company)
             if interactions.isEmpty {
-                ContentUnavailableView("Not the talkative type, eh?", systemImage: "ellipsis.bubble.fill", description: Text("No worries, just work on your ice-breakers a bit!"))
+                ContentUnavailableView("Log calls, meetings, etc.", systemImage: "ellipsis.bubble.fill", description: Text("Give your interactions simple titles to easily identify them. Add more details in the desccription field. Swipe left on an interaction to delete."))
                 
             } else {
                 Section {
@@ -35,12 +35,7 @@ struct InteractionListView: View {
                             selectedInteraction = interaction
                             showInteractionSheet = true
                         } label: {
-                            HStack {
-                                Text(interaction.title)
-                                Spacer()
-                                Text(interaction.date, format: .dateTime.month(.abbreviated).day().year())
-                            }
-                            .foregroundStyle(Color.primary)
+                            InteractionRowView(interaction: interaction)
                         }
                     }
                     .onDelete(perform: deleteInteractions)

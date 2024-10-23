@@ -80,7 +80,7 @@ struct OrderListView: View {
     }
     
     private var emptyOrdersView: some View {
-        ContentUnavailableView("It's empty in here", systemImage: "wind.snow", description: Text("Cheddar doesn't grow on trees. Gotta get some orders in."))
+        ContentUnavailableView("Got sales?", systemImage: "wind.snow", description: Text("When adding an invoice, the due date is calculated based on the issue date + the account's payment terms. Swipe right on an invoice to toggle payment status, or left to delete."))
     }
     
     private func ordersForSection(_ section: OrderSection) -> [Order] {

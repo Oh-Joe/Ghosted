@@ -29,7 +29,7 @@ struct CompaniesHomeView: View {
         
         NotificationManager.shared.updateAppBadgeCount(to: totalOverdueCount)
 
-        return TabView(selection: $selectedTab) { // Ensure to return the TabView
+        return TabView(selection: $selectedTab) {
             CompanyDetailView(company: company)
                 .tabItem {
                     Label("Details", systemImage: "list.bullet.clipboard")
@@ -40,14 +40,14 @@ struct CompaniesHomeView: View {
                 .tabItem {
                     Label("Orders", systemImage: "dollarsign.circle.fill")
                 }
-                .badge(overdueOrderCount) // Show badge if overdue orders exist
+                .badge(overdueOrderCount)
                 .tag(Tab.orders)
             
             TaskListView(company: company)
                 .tabItem {
                     Label("Tasks", systemImage: "checklist")
                 }
-                .badge(overdueTaskCount) // Show badge if overdue tasks exist
+                .badge(overdueTaskCount)
                 .tag(Tab.tasks)
             
             InteractionListView(company: company)
