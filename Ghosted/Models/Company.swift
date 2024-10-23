@@ -31,7 +31,7 @@ struct Company: Hashable, Codable, Identifiable {
     
     enum PaymentTerms: String, CaseIterable, Codable {
         case prePay = "Pre-pay"
-        case days7 = "Pay unpon receipt"
+        case days7 = "Pay upon receipt"
         case days15 = "15 days"
         case days30 = "30 days"
         case days60 = "60 days"
